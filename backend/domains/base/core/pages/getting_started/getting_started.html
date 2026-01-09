@@ -1,0 +1,208 @@
+{% extends "_dashboard_base.html" %}
+
+{% block title %}Getting Started | DAEMON-ONE{% endblock %}
+
+{% block dashboard_content %}
+<!-- Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Documentation</h1>
+        <p class="text-slate-500 mt-1">A comprehensive guide to the DAEMON architecture</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <span class="px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-lg text-sm font-semibold text-indigo-600">
+            Protocol
+        </span>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left Column - Main Docs -->
+    <div class="lg:col-span-2 space-y-6">
+        <!-- System Pillars -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <span class="text-2xl">📦</span> System Pillars
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-indigo-600">Technical Foundation</span>
+                        <span class="text-xl">🏛️</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs font-mono text-slate-600">core</span>
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs font-mono text-slate-600">accounts</span>
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs font-mono text-slate-600">ai</span>
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs font-mono text-slate-600">health</span>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-emerald-600">Growth & Insights</span>
+                        <span class="text-xl">📈</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs font-mono text-slate-600">analytics</span>
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs font-mono text-slate-600">monitoring</span>
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs font-mono text-slate-600">seo</span>
+                        <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs font-mono text-slate-600">marketing</span>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="mt-4 text-sm text-slate-500">
+                We utilize a <strong>Flattened Domain Structure</strong>. Each domain in <code class="px-1 py-0.5 bg-slate-100 rounded text-xs">backend/domains/</code> 
+                represents a self-contained Bounded Context with its own logic, templates, and styles.
+            </p>
+        </div>
+
+        <!-- AI Strategy -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <span class="text-2xl">🤖</span> AI Strategy
+            </h2>
+            <p class="text-slate-500 mb-4">
+                DAEMON-ONE implements a tiered provider strategy to balance cost and quality.
+            </p>
+            
+            <div class="flex items-center justify-around p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-100 mb-4">
+                <div class="text-center">
+                    <div class="font-bold text-slate-800">HuggingFace</div>
+                    <div class="text-xs text-emerald-600 font-semibold">Free Tier</div>
+                </div>
+                <div class="text-slate-300">→</div>
+                <div class="text-center">
+                    <div class="font-bold text-slate-800">DeepSeek</div>
+                    <div class="text-xs text-indigo-600 font-semibold">High Quality</div>
+                </div>
+                <div class="text-slate-300">→</div>
+                <div class="text-center">
+                    <div class="font-bold text-slate-800">OpenRouter</div>
+                    <div class="text-xs text-indigo-600 font-semibold">Multi-Model</div>
+                </div>
+            </div>
+            
+            <div class="bg-slate-900 text-slate-100 p-4 rounded-xl font-mono text-sm overflow-x-auto">
+                <div class="text-slate-500"># interface.py</div>
+                <div><span class="text-purple-400">from</span> domains.ai.providers.interface <span class="text-purple-400">import</span> get_ai_client</div>
+                <div class="mt-2">client = get_ai_client()</div>
+                <div>response = client.complete(<span class="text-emerald-400">"Explain flattened domains"</span>)</div>
+            </div>
+        </div>
+
+        <!-- Command Protocols -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <span class="text-2xl">⌨️</span> Command Protocols
+            </h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="text-xs text-slate-400 bg-slate-50 uppercase">
+                        <tr>
+                            <th class="px-4 py-3 text-left rounded-l-lg">Protocol</th>
+                            <th class="px-4 py-3 text-left rounded-r-lg">Operation</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr>
+                            <td class="px-4 py-3"><code class="px-2 py-1 bg-slate-100 rounded text-xs font-mono">just dev</code></td>
+                            <td class="px-4 py-3 text-slate-600">Start development environment</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3"><code class="px-2 py-1 bg-slate-100 rounded text-xs font-mono">just prod</code></td>
+                            <td class="px-4 py-3 text-slate-600">Execute production runtime (Granian)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3"><code class="px-2 py-1 bg-slate-100 rounded text-xs font-mono">just new-domain [NAME]</code></td>
+                            <td class="px-4 py-3 text-slate-600">Scaffold a new domain context</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3"><code class="px-2 py-1 bg-slate-100 rounded text-xs font-mono">just domains</code></td>
+                            <td class="px-4 py-3 text-slate-600">List all auto-discovered domains</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column - Sidebar -->
+    <div class="space-y-6">
+        <!-- Quick Links -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h3 class="font-bold text-slate-800 mb-4">Quick Links</h3>
+            <div class="space-y-2">
+                <a href="/domains/" class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <span class="font-medium text-slate-700">Domain Registry</span>
+                </a>
+                <a href="/health/" class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl hover:bg-emerald-50 transition-colors">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <span class="font-medium text-slate-700">System Health</span>
+                </a>
+                <a href="/chat/" class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl hover:bg-purple-50 transition-colors">
+                    <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    </div>
+                    <span class="font-medium text-slate-700">AI Assistant</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- The Zen of xid -->
+        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-2xl shadow-sm text-white">
+            <h3 class="font-bold mb-4">The Zen of xid</h3>
+            <ul class="space-y-2 text-sm opacity-90">
+                <li class="flex items-start gap-2">
+                    <span>①</span>
+                    <span>Simple is better than complex</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span>②</span>
+                    <span>Strict Modularity (SRP & YAGNI)</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span>③</span>
+                    <span>Vertical Slicing (Locality)</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span>④</span>
+                    <span>Modernity & Performance</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Version Info -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h3 class="font-bold text-slate-800 mb-4">Stack</h3>
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Django</span>
+                    <span class="font-mono text-slate-800">5.x</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Python</span>
+                    <span class="font-mono text-slate-800">3.12+</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">HTMX</span>
+                    <span class="font-mono text-slate-800">2.x</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Alpine.js</span>
+                    <span class="font-mono text-slate-800">3.x</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

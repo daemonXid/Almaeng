@@ -1,0 +1,48 @@
+{% extends "account/_auth_base.html" %}
+
+{% block title %}Sign Up | DAEMON-ONE{% endblock %}
+
+{% block auth_content %}
+<div class="auth-header">
+    <div class="auth-logo">🚀</div>
+    <h1 class="auth-title">Create Account</h1>
+    <p class="auth-subtitle">Join the DAEMON network</p>
+</div>
+
+{% if form.non_field_errors %}
+<div class="alert-error">
+    {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+</div>
+{% endif %}
+
+<form method="POST" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+    
+    {% for field in form %}
+    <div class="form-group">
+        <label class="form-label">{{ field.label }}</label>
+        <input type="{% if 'password' in field.name %}password{% else %}{{ field.field.widget.input_type|default:'text' }}{% endif %}" 
+               name="{{ field.name }}" 
+               class="form-input"
+               placeholder="{% if field.name == 'email' %}you@example.com{% elif 'password' in field.name %}••••••••{% else %}{% endif %}"
+               {% if field.field.required %}required{% endif %}>
+        {% if field.help_text %}<p class="form-help">{{ field.help_text }}</p>{% endif %}
+        {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+    </div>
+    {% endfor %}
+
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+    {% endif %}
+
+    <button type="submit" class="btn-primary">Create Account</button>
+    
+    <p style="font-size: 0.75rem; color: var(--muted); text-align: center; margin-top: 1.25rem; line-height: 1.5;">
+        By signing up, you agree to our <a href="#" style="color: var(--accent);">Terms</a> and <a href="#" style="color: var(--accent);">Privacy Policy</a>.
+    </p>
+</form>
+
+<div class="auth-footer">
+    Already have an account? <a href="{% url 'account_login' %}">Sign in</a>
+</div>
+{% endblock %}

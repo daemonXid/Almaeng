@@ -1,0 +1,97 @@
+# ============================================
+# 😈 ALMAENG Production Stack
+# ============================================
+# Infrastructure: Hetzner / Coolify / Docker
+# ============================================
+
+services:
+  # --- 😈 ALMAENG App ---
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: almaeng_app
+    restart: unless-stopped
+    environment:
+      - DEBUG=false
+      - SECRET_KEY=${SECRET_KEY}
+      - POSTGRES_DB=${POSTGRES_DB:-almaeng_db}
+      - POSTGRES_USER=${POSTGRES_USER:-almaeng_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5467
+      - REDIS_HOST=redis
+      - REDIS_PORT=6456
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - SENTRY_DSN=${SENTRY_DSN:-}
+      - SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT:-true}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}
+    ports:
+      - "${APP_PORT:-8000}:3265"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3265/health/live/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - daemon_network
+
+  # --- 🐘 PostgreSQL with pgvector ---
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: almaeng_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-almaeng_db}
+      POSTGRES_USER: ${POSTGRES_USER:-almaeng_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-almaeng_user} -d ${POSTGRES_DB:-almaeng_db}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - daemon_network
+
+  # --- 🔴 Redis ---
+  redis:
+    image: redis:7-alpine
+    container_name: almaeng_redis
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - daemon_network
+
+volumes:
+  pg_data:
+  redis_data:
+
+
+networks:
+  daemon_network:
+    driver: bridge

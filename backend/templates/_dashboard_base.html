@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{# 🎨 Dashboard Base Template - Shared layout for all dashboard pages #}
+
+{% block layout %}
+<div class="flex h-screen bg-[#F4F5FA] overflow-hidden font-sans text-slate-800">
+    <!-- 🟢 Sidebar -->
+    <aside class="w-72 bg-white flex flex-col border-r border-slate-100 hidden md:flex shrink-0 z-20">
+        <!-- Logo (Links to Home) -->
+        <a href="/" class="h-20 flex items-center px-8 border-b border-slate-50 hover:bg-slate-50 transition-colors">
+            <div class="flex items-center gap-3 text-slate-900 font-bold text-xl tracking-tight">
+                <div class="w-8 h-8 rounded-xl bg-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+                DAEMON
+            </div>
+        </a>
+
+        <!-- Nav Menu -->
+        <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+            <!-- Dashboard -->
+            <a href="/" class="flex items-center gap-4 px-4 py-3 {% if request.path == '/' %}bg-indigo-500 text-white shadow-lg shadow-indigo-200{% else %}text-slate-400 hover:text-slate-600 hover:bg-slate-50{% endif %} rounded-xl transition-all">
+                <svg class="w-5 h-5 {% if request.path == '/' %}opacity-90{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                <span class="font-medium">Dashboard</span>
+            </a>
+
+            <!-- Domains -->
+            <a href="/domains/" class="flex items-center gap-4 px-4 py-3 {% if '/domains/' in request.path %}bg-indigo-500 text-white shadow-lg shadow-indigo-200{% else %}text-slate-400 hover:text-slate-600 hover:bg-slate-50{% endif %} rounded-xl transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <span class="font-medium">Domains</span>
+            </a>
+
+            <!-- Docs -->
+            <a href="/getting-started/" class="flex items-center gap-4 px-4 py-3 {% if '/getting-started/' in request.path %}bg-indigo-500 text-white shadow-lg shadow-indigo-200{% else %}text-slate-400 hover:text-slate-600 hover:bg-slate-50{% endif %} rounded-xl transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span class="font-medium">Docs</span>
+            </a>
+
+            <!-- Health -->
+            <a href="/health/" class="flex items-center gap-4 px-4 py-3 {% if '/health/' in request.path %}bg-indigo-500 text-white shadow-lg shadow-indigo-200{% else %}text-slate-400 hover:text-slate-600 hover:bg-slate-50{% endif %} rounded-xl transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="font-medium">Health</span>
+            </a>
+
+            <!-- AI Chat -->
+            <a href="/chat/" class="flex items-center gap-4 px-4 py-3 {% if '/chat/' in request.path %}bg-indigo-500 text-white shadow-lg shadow-indigo-200{% else %}text-slate-400 hover:text-slate-600 hover:bg-slate-50{% endif %} rounded-xl transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                <span class="font-medium">AI Chat</span>
+            </a>
+
+            <div class="pt-6 pb-2 px-4 text-xs font-bold text-slate-300 uppercase tracking-wider">General</div>
+            
+            <!-- Settings -->
+            <a href="/accounts/profile/" class="flex items-center gap-4 px-4 py-3 {% if '/accounts/profile/' in request.path %}bg-indigo-500 text-white shadow-lg shadow-indigo-200{% else %}text-slate-400 hover:text-slate-600 hover:bg-slate-50{% endif %} rounded-xl transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="font-medium">Settings</span>
+            </a>
+        </nav>
+
+        <!-- Add Project Btn -->
+        <div class="p-6 border-t border-slate-50">
+            <button class="w-full py-3 bg-indigo-50 border border-indigo-100 text-indigo-600 font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-indigo-100 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Add Domain
+            </button>
+        </div>
+    </aside>
+
+    <!-- 🔵 Main Content -->
+    <div class="flex-1 flex flex-col relative">
+        <!-- Top Header -->
+        <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 z-10">
+            <!-- Search -->
+            <div class="relative w-96">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+                <input type="text" placeholder="Search domains, docs..." class="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:bg-white transition-all">
+            </div>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <!-- Mail -->
+                    <button class="w-10 h-10 rounded-full bg-slate-50 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-center transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </button>
+                    <!-- Notifications -->
+                    <button class="w-10 h-10 rounded-full bg-slate-50 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-center transition-colors relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                    </button>
+                </div>
+
+                <div class="h-8 w-px bg-slate-200"></div>
+
+                <!-- User Profile -->
+                <div class="flex items-center gap-3">
+                    {% if user.is_authenticated %}
+                    <div class="text-right hidden lg:block">
+                        <div class="text-sm font-bold text-slate-800">{{ user.email|slice:":15" }}</div>
+                        <div class="text-xs text-slate-400">{% if user.is_superuser %}Admin{% else %}Member{% endif %}</div>
+                    </div>
+                    <a href="/accounts/profile/" class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold border border-indigo-200 hover:bg-indigo-200 transition-colors">
+                        {{ user.email|slice:":1"|upper }}
+                    </a>
+                    <a href="/accounts/logout/" hx-boost="false" class="text-xs text-slate-400 hover:text-indigo-600 transition-colors">Logout</a>
+                    {% else %}
+                    <a href="/accounts/login/" hx-boost="false" class="px-4 py-2 bg-indigo-500 text-white text-sm font-bold rounded-xl hover:bg-indigo-600 transition-colors">Log In</a>
+                    <a href="/accounts/signup/" hx-boost="false" class="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Main -->
+        <main class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+            {% block dashboard_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+{% endblock %}

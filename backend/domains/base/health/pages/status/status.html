@@ -1,0 +1,146 @@
+{% extends "_dashboard_base.html" %}
+
+{% block title %}System Status | DAEMON-ONE{% endblock %}
+
+{% block dashboard_content %}
+<!-- Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-slate-800 tracking-tight">System Health</h1>
+        <p class="text-slate-500 mt-1">Real-time monitoring for DAEMON-ONE infrastructure</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <span class="px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-lg text-sm font-semibold text-emerald-600 flex items-center gap-2">
+            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            All Systems Operational
+        </span>
+    </div>
+</div>
+
+<!-- Status Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+    <!-- Server -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-2xl">
+                🖥️
+            </div>
+            <span class="px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-full text-xs font-bold">OPERATIONAL</span>
+        </div>
+        <h3 class="font-bold text-slate-800 mb-1">Django Server</h3>
+        <p class="text-sm text-slate-500">Development runtime on port 1500</p>
+        <div class="mt-4 h-1 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500 w-full"></div>
+        </div>
+    </div>
+    
+    <!-- Database -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl">
+                🐘
+            </div>
+            <span class="px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-full text-xs font-bold">OPERATIONAL</span>
+        </div>
+        <h3 class="font-bold text-slate-800 mb-1">PostgreSQL</h3>
+        <p class="text-sm text-slate-500">Primary database on port 1501</p>
+        <div class="mt-4 h-1 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500 w-full"></div>
+        </div>
+    </div>
+    
+    <!-- Redis -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-2xl">
+                🔴
+            </div>
+            <span class="px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-full text-xs font-bold">OPERATIONAL</span>
+        </div>
+        <h3 class="font-bold text-slate-800 mb-1">Redis</h3>
+        <p class="text-sm text-slate-500">Cache & queue on port 1502</p>
+        <div class="mt-4 h-1 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500 w-full"></div>
+        </div>
+    </div>
+    
+    <!-- AI Providers -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-2xl">
+                🤖
+            </div>
+            <span class="px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-full text-xs font-bold">READY</span>
+        </div>
+        <h3 class="font-bold text-slate-800 mb-1">AI Providers</h3>
+        <p class="text-sm text-slate-500">HuggingFace / DeepSeek / OpenRouter</p>
+        <div class="mt-4 h-1 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500 w-full"></div>
+        </div>
+    </div>
+</div>
+
+<!-- API Endpoints -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Health Endpoints -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <h3 class="font-bold text-slate-800 mb-4">Health Endpoints</h3>
+        <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                <div class="flex items-center gap-3">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                    <code class="text-sm font-mono text-slate-700">/health/live/</code>
+                </div>
+                <span class="text-xs font-bold text-emerald-600">200 OK</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                <div class="flex items-center gap-3">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                    <code class="text-sm font-mono text-slate-700">/health/ready/</code>
+                </div>
+                <span class="text-xs font-bold text-emerald-600">200 OK</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                <div class="flex items-center gap-3">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                    <code class="text-sm font-mono text-slate-700">/api/health/status/</code>
+                </div>
+                <span class="text-xs font-bold text-emerald-600">200 OK</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Uptime -->
+    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-2xl shadow-sm text-white">
+        <h3 class="font-bold mb-6">Uptime Summary</h3>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="text-sm opacity-90">Server</span>
+                <span class="text-sm font-bold">100%</span>
+            </div>
+            <div class="h-2 bg-white/20 rounded-full overflow-hidden">
+                <div class="h-full bg-white w-full"></div>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-sm opacity-90">Database</span>
+                <span class="text-sm font-bold">100%</span>
+            </div>
+            <div class="h-2 bg-white/20 rounded-full overflow-hidden">
+                <div class="h-full bg-white w-full"></div>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-sm opacity-90">Cache</span>
+                <span class="text-sm font-bold">100%</span>
+            </div>
+            <div class="h-2 bg-white/20 rounded-full overflow-hidden">
+                <div class="h-full bg-white w-full"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Note -->
+<div class="text-center text-sm text-slate-400">
+    Last updated: <span id="last-updated">Just now</span> • Auto-refresh in 30s
+</div>
+{% endblock %}

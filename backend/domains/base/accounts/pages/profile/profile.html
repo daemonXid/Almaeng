@@ -1,0 +1,136 @@
+{% extends "_dashboard_base.html" %}
+
+{% block title %}Profile | DAEMON-ONE{% endblock %}
+
+{% block dashboard_content %}
+<!-- Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Profile Settings</h1>
+        <p class="text-slate-500 mt-1">Manage your account and preferences</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Profile Card -->
+    <div class="lg:col-span-2 space-y-6">
+        <!-- Profile Info -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-6 mb-6">
+                {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="Profile" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-100">
+                {% else %}
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-3xl font-bold text-white">
+                    {{ user.email|slice:":1"|upper }}
+                </div>
+                {% endif %}
+                
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">{{ user.email }}</h2>
+                    <p class="text-sm text-slate-500">Member since {{ user.date_joined|date:"M Y" }}</p>
+                    {% if user.is_superuser %}
+                    <span class="inline-block mt-2 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-semibold">Admin</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Profile Image Upload -->
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Profile Image</label>
+                    <input type="file" name="profile_image" accept="image/*" class="block w-full text-sm text-slate-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-full file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-indigo-50 file:text-indigo-700
+                        hover:file:bg-indigo-100
+                        cursor-pointer border border-slate-200 rounded-xl p-2
+                    ">
+                </div>
+                <button type="submit" name="action" value="update_image" class="px-6 py-2 bg-indigo-500 text-white font-semibold rounded-xl hover:bg-indigo-600 transition-colors">
+                    Update Image
+                </button>
+            </form>
+        </div>
+
+        <!-- Account Actions -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h3 class="font-bold text-slate-800 mb-4">Account Settings</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="/accounts/password/change/" hx-boost="false" class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group">
+                    <div class="w-10 h-10 rounded-lg bg-slate-200 group-hover:bg-indigo-100 flex items-center justify-center text-slate-600 group-hover:text-indigo-600 transition-colors">
+                        🔐
+                    </div>
+                    <div>
+                        <div class="font-semibold text-slate-800">Change Password</div>
+                        <div class="text-xs text-slate-500">Update your password</div>
+                    </div>
+                </a>
+                <a href="/accounts/email/" hx-boost="false" class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group">
+                    <div class="w-10 h-10 rounded-lg bg-slate-200 group-hover:bg-indigo-100 flex items-center justify-center text-slate-600 group-hover:text-indigo-600 transition-colors">
+                        📧
+                    </div>
+                    <div>
+                        <div class="font-semibold text-slate-800">Email Settings</div>
+                        <div class="text-xs text-slate-500">Manage your email</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="bg-white p-6 rounded-2xl border border-red-100 shadow-sm">
+            <h3 class="font-bold text-red-600 mb-4 flex items-center gap-2">
+                ⚠️ Danger Zone
+            </h3>
+            <p class="text-sm text-slate-500 mb-4">These actions are irreversible. Please be careful.</p>
+            <a href="/accounts/logout/" hx-boost="false" class="inline-block px-6 py-2 border border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-colors">
+                Log Out
+            </a>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+        <!-- Account Summary -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <h3 class="font-bold text-slate-800 mb-4">Account Summary</h3>
+            <div class="space-y-4 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Email</span>
+                    <span class="font-mono text-slate-800">{{ user.email|slice:":20" }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Status</span>
+                    <span class="font-semibold text-emerald-600">Active</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Role</span>
+                    <span class="font-semibold text-slate-800">{% if user.is_superuser %}Admin{% else %}Member{% endif %}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Joined</span>
+                    <span class="text-slate-800">{{ user.date_joined|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-2xl shadow-sm text-white">
+            <h3 class="font-bold mb-4">Quick Links</h3>
+            <div class="space-y-2">
+                <a href="/" class="block py-2 px-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm">
+                    🏠 Dashboard
+                </a>
+                <a href="/chat/" class="block py-2 px-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm">
+                    🤖 AI Chat
+                </a>
+                <a href="/health/" class="block py-2 px-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm">
+                    📊 System Status
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

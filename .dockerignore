@@ -1,0 +1,73 @@
+# ============================================
+# 😈 DAEMON-ONE Docker Ignore
+# ============================================
+
+# Git
+.git
+.gitignore
+
+# Virtual environments
+.venv
+venv
+env
+
+# Python cache
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov
+.tox
+.nox
+
+# Linting
+.ruff_cache
+.mypy_cache
+
+# Build artifacts (keep Rust source, exclude build output)
+*.egg-info
+dist
+build
+target
+
+# Node modules (rebuilt in Docker, but keep lock file)
+node_modules
+
+# Static output (rebuilt in Docker)
+backend/static/dist
+backend/static/css/output.css
+static_root
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs
+
+# OS
+.DS_Store
+Thumbs.db
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Development files
+docker-compose.yml
+Justfile
+*.example
+requirements.txt

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Email Settings | DAEMON-ONE{% endblock %}
+
+{% block content %}
+<div class="docs-page" style="padding-top: 5rem;">
+    <div class="docs-container" style="max-width: 600px;">
+        <a href="/accounts/profile/" class="back-link">← Back to Profile</a>
+
+        <header style="text-align: center; padding: 2rem 0; margin-bottom: 2rem;">
+            <div class="docs-badge">📧 Account</div>
+            <h1 class="docs-title">Email <span class="gradient-text">Settings</span></h1>
+        </header>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %}alert-error{% else %}glass-card{% endif %}" style="padding: 1rem; margin-bottom: 1.5rem; {% if message.tags != 'error' %}border-color: rgba(74, 222, 128, 0.3);{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Current Emails -->
+        <div class="glass-card" style="padding: 1.5rem; margin-bottom: 2rem;">
+            <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Your Email Addresses</h2>
+            
+            {% if emailaddresses %}
+            <form method="POST" action="{% url 'account_email' %}">
+                {% csrf_token %}
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    {% for emailaddress in emailaddresses %}
+                    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="email" value="{{ emailaddress.email }}" {% if emailaddress.primary %}checked{% endif %}>
+                        <span style="flex: 1;">
+                            {{ emailaddress.email }}
+                            {% if emailaddress.primary %}
+                            <span style="color: var(--accent-purple-light); font-size: 0.75rem; margin-left: 0.5rem;">Primary</span>
+                            {% endif %}
+                            {% if emailaddress.verified %}
+                            <span style="color: #4ade80; font-size: 0.75rem; margin-left: 0.5rem;">✓ Verified</span>
+                            {% else %}
+                            <span style="color: #fbbf24; font-size: 0.75rem; margin-left: 0.5rem;">⚠ Unverified</span>
+                            {% endif %}
+                        </span>
+                    </label>
+                    {% endfor %}
+                </div>
+                
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                    <button type="submit" name="action_primary" class="btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                        Make Primary
+                    </button>
+                    <button type="submit" name="action_send" class="btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                        Re-send Verification
+                    </button>
+                    <button type="submit" name="action_remove" class="btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem; border-color: rgba(239, 68, 68, 0.3); color: #f87171;">
+                        Remove
+                    </button>
+                </div>
+            </form>
+            {% else %}
+            <p style="color: var(--text-muted);">No email addresses on file.</p>
+            {% endif %}
+        </div>
+
+        <!-- Add Email -->
+        <div class="glass-card" style="padding: 1.5rem;">
+            <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Add Email Address</h2>
+            
+            <form method="POST" action="{% url 'account_email' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">New Email</label>
+                    <input type="email" 
+                           name="email"
+                           class="form-input"
+                           placeholder="newemail@example.com"
+                           required>
+                </div>
+                <button type="submit" name="action_add" class="btn-primary" style="width: 100%;">
+                    Add Email
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "_metadata.html" %}
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/output.css">
+    
+    <!-- JS -->
+    <script type="module" src="/static/dist/vendor-entry.js"></script>
+    
+    {% block head %}{% endblock %}
+    
+    <style>
+        :root {
+            --bg: #030712;
+            --surface: rgba(17, 24, 39, 0.6);
+            --surface-light: rgba(255, 255, 255, 0.02);
+            --text: #f9fafb;
+            --muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.2);
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body { 
+            font-family: var(--font-main);
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Premium Glassmorphism */
+        .glass {
+            background: var(--surface);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-panel {
+            background: var(--surface-light);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel:hover {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-2px);
+        }
+
+        .glass-btn {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(4px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* HTMX Loading Indicator */
+        .htmx-indicator {
+            display: none;
+        }
+        .htmx-request .htmx-indicator,
+        .htmx-request.htmx-indicator {
+            display: inline-flex;
+        }
+        
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(3, 7, 18, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent), #4f46e5);
+            border: none;
+            border-radius: 0.5rem;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { 
+            background: #1f2937; 
+            border-radius: 10px;
+            border: 2px solid var(--bg);
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+
+    </style>
+    {% block styles %}{% endblock %}
+</head>
+<body hx-boost="true" x-data="{ mobileMenuOpen: false }">
+    <!-- Premium Background Effects -->
+    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; overflow: hidden; pointer-events: none;">
+        <div style="position: absolute; top: -10%; left: -10%; width: 40%; height: 40%; background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%); filter: blur(60px); animation: pulse 15s infinite alternate;"></div>
+        <div style="position: absolute; bottom: -10%; right: -10%; width: 45%; height: 45%; background: radial-gradient(circle, rgba(244, 63, 94, 0.08) 0%, transparent 70%); filter: blur(80px); animation: pulse 20s infinite alternate-reverse;"></div>
+    </div>
+    
+    {% block layout %}
+    {% include "_header.html" %}
+    
+    <main style="padding-top: 72px; min-height: calc(100vh - 400px);">
+        {% block content %}{% endblock %}
+    </main>
+    {% include "_footer.html" %}
+    {% endblock %}
+
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.5; }
+            100% { transform: scale(1.2) translate(5%, 5%); opacity: 0.8; }
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        [x-cloak] { display: none !important; }
+    </style>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

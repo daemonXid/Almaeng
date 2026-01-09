@@ -1,0 +1,14 @@
+{# Chat message fragment - returned by HTMX #}
+<div class="chat-message {{ role }}">
+    <div class="message-content">
+        {{ content|safe }}
+    </div>
+    {% if sources %}
+    <div class="message-sources">
+        <strong>📁 Sources:</strong>
+        {% for source in sources %}
+        <code>{{ source }}</code>{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>

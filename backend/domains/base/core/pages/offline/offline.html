@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Offline | DAEMON-ONE{% endblock %}
+
+{% block content %}
+<section style="min-height: calc(100vh - 200px); display: flex; align-items: center; justify-content: center;">
+    <div class="container" style="max-width: 600px; text-align: center;">
+        <div class="glass-panel" style="padding: 4rem 3rem;">
+            <!-- Offline Icon -->
+            <div style="width: 80px; height: 80px; margin: 0 auto 2rem; background: linear-gradient(135deg, var(--accent), #f43f5e); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0.8;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                    <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+                    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+                    <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+                    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+                    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                    <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                </svg>
+            </div>
+            
+            <h1 style="font-size: 2.5rem; margin-bottom: 1rem; letter-spacing: -0.03em;">
+                You're <span class="gradient-text">Offline</span>
+            </h1>
+            
+            <p style="color: var(--muted); font-size: 1.1rem; line-height: 1.7; margin-bottom: 2.5rem;">
+                It looks like you've lost your internet connection. 
+                Don't worry — DAEMON-ONE will reconnect automatically when you're back online.
+            </p>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button onclick="window.location.reload()" class="btn-primary" style="padding: 1rem 2rem; border-radius: 999px;">
+                    🔄 Try Again
+                </button>
+                <a href="/" class="glass-btn" style="padding: 1rem 2rem; border-radius: 999px; text-decoration: none; color: #fff;">
+                    🏠 Go Home
+                </a>
+            </div>
+            
+            <!-- Status Indicator -->
+            <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; font-size: 0.9rem; color: var(--muted);">
+                    <div id="connection-status" style="width: 10px; height: 10px; background: #f43f5e; border-radius: 50%; box-shadow: 0 0 10px #f43f5e;"></div>
+                    <span id="connection-text">No Connection</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Auto-detect when back online
+    window.addEventListener('online', () => {
+        document.getElementById('connection-status').style.background = '#10b981';
+        document.getElementById('connection-status').style.boxShadow = '0 0 10px #10b981';
+        document.getElementById('connection-text').textContent = 'Connected! Refreshing...';
+        setTimeout(() => window.location.reload(), 1000);
+    });
+    
+    window.addEventListener('offline', () => {
+        document.getElementById('connection-status').style.background = '#f43f5e';
+        document.getElementById('connection-status').style.boxShadow = '0 0 10px #f43f5e';
+        document.getElementById('connection-text').textContent = 'No Connection';
+    });
+</script>
+{% endblock %}

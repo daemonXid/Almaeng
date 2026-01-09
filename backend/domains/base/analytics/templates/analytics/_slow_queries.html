@@ -1,0 +1,29 @@
+{% if queries %}
+<table style="width: 100%; font-size: 0.85rem;">
+    <thead>
+        <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+            <th style="padding: 0.75rem; text-align: left; color: var(--text-muted);">Query</th>
+            <th style="padding: 0.75rem; text-align: right; color: var(--text-muted);">Calls</th>
+            <th style="padding: 0.75rem; text-align: right; color: var(--text-muted);">Avg (ms)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for q in queries %}
+        <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+            <td style="padding: 0.75rem; max-width: 400px; overflow: hidden; text-overflow: ellipsis;">
+                <code style="font-size: 0.8rem;">{{ q.query }}</code>
+            </td>
+            <td style="padding: 0.75rem; text-align: right;">{{ q.calls }}</td>
+            <td style="padding: 0.75rem; text-align: right; color: {% if q.avg_time_ms > 500 %}#f87171{% elif q.avg_time_ms > 100 %}#fbbf24{% else %}#4ade80{% endif %};">
+                {{ q.avg_time_ms }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: var(--text-muted);">
+    No slow queries detected. 
+    <span style="font-size: 0.8rem;">(requires pg_stat_statements extension)</span>
+</p>
+{% endif %}

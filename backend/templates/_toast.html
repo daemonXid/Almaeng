@@ -1,0 +1,54 @@
+<!--
+    _toast.html - Toast Notification Fragment
+    
+    Usage with Alpine.js:
+        <div x-data="toast()">
+            {% include "_toast.html" %}
+            <button @click="show('Success!', 'success')">Show Toast</button>
+        </div>
+-->
+<div 
+    x-show="visible" 
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    :class="{
+        'toast-success': type === 'success',
+        'toast-error': type === 'error',
+        'toast-info': type === 'info'
+    }"
+    style="
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        padding: 1rem 1.5rem;
+        border-radius: 0.75rem;
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        backdrop-filter: blur(10px);
+        color: #f1f5f9;
+        font-size: 0.875rem;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    ">
+    <span x-text="icon"></span>
+    <span x-text="message"></span>
+    <button @click="visible = false" style="
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 0.25rem;
+    ">✕</button>
+</div>
+
+<style>
+    .toast-success { border-color: #22c55e !important; }
+    .toast-error { border-color: #ef4444 !important; }
+    .toast-info { border-color: #8b5cf6 !important; }
+</style>

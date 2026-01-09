@@ -1,0 +1,58 @@
+{
+  "name": "almaeng-frontend",
+  "version": "5.0.0",
+  "description": "ALMAENG: AI-First Django Monolith with Vertical Slices (HTMX + Alpine.js)",
+  "private": true,
+  "type": "module",
+  "author": "xid",
+  "license": "MIT",
+  "scripts": {
+    "vendor": "bun build backend/static/js/vendor-entry.js --outdir backend/static/dist --target=browser --external=path --external=fs --minify --sourcemap=external",
+    "vendor:dev": "bun build backend/static/js/vendor-entry.js --outdir backend/static/dist --target=browser --external=path --external=fs --sourcemap=external",
+    "tailwind": "tailwindcss -i ./backend/static/css/input.css -o ./backend/static/css/output.css",
+    "tailwind:watch": "tailwindcss -i ./backend/static/css/input.css -o ./backend/static/css/output.css --watch",
+    "tailwind:build": "tailwindcss -i ./backend/static/css/input.css -o ./backend/static/css/output.css --minify",
+    "build": "bun run vendor && bun run tailwind:build",
+    "dev": "bun run tailwind:watch",
+    "clean": "rm -rf backend/static/dist backend/static/css/output.css node_modules/.cache"
+  },
+  "dependencies": {
+    "@alpinejs/morph": "^3.14.8",
+    "@alpinejs/persist": "^3.14.8",
+    "@electric-sql/pglite": "^0.2.15",
+    "@theatre/core": "^0.7.2",
+    "alpinejs": "^3.14.8",
+    "baseline-browser-mapping": "^2.9.13",
+    "caniuse-lite": "^1.0.30001763",
+    "htmx.org": "^2.0.4",
+    "lenis": "^1.1.18",
+    "motion": "^12.23.26",
+    "splitting": "^1.1.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17",
+    "@tailwindcss/forms": "^0.5.9",
+    "@tailwindcss/typography": "^0.5.15"
+  },
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "not op_mini all"
+  ],
+  "keywords": [
+    "almaeng",
+    "htmx",
+    "hateoas",
+    "hypermedia",
+    "alpinejs",
+    "pglite",
+    "tailwindcss",
+    "django-ninja",
+    "ai-first",
+    "gemini"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  }
+}

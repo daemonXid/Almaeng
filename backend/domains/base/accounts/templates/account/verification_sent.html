@@ -1,0 +1,27 @@
+{% extends "account/_auth_base.html" %}
+
+{% block title %}Verify Email | DAEMON-ONE{% endblock %}
+
+{% block auth_content %}
+<div class="auth-header">
+    <div class="success-icon">📬</div>
+    <h1 class="auth-title">Verify Your Email</h1>
+    <p class="auth-subtitle">
+        We've sent a verification email to your address. 
+        Check your inbox and click the link to activate your account.
+    </p>
+</div>
+
+<div style="background: rgba(255,255,255,0.03); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem;">
+    <p style="font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.75rem;">Didn't receive it?</p>
+    <ul style="font-size: 0.8rem; color: #64748b; padding-left: 1.25rem; line-height: 1.8;">
+        <li>Check your spam folder</li>
+        <li>Make sure the email is correct</li>
+        <li>Wait a few minutes</li>
+    </ul>
+</div>
+
+<a href="{% url 'account_login' %}" class="btn-secondary" style="width: 100%; display: block;">
+    Back to Sign In
+</a>
+{% endblock %}

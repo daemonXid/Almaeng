@@ -1,0 +1,24 @@
+<!-- 
+    _loading_spinner.html - HTMX Loading Indicator Fragment
+    
+    Usage:
+        <div id="spinner" class="htmx-indicator">
+            {% include "_loading_spinner.html" %}
+        </div>
+-->
+<div class="spinner-container" style="display: flex; align-items: center; justify-content: center; padding: 2rem;">
+    <div class="spinner" style="
+        width: 2rem;
+        height: 2rem;
+        border: 3px solid rgba(139, 92, 246, 0.2);
+        border-top-color: #8b5cf6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    "></div>
+</div>
+
+<style>
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>

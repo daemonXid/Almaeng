@@ -1,0 +1,29 @@
+<nav class="glass" style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 72px;">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; height: 100%;">
+        <!-- Logo -->
+        <a href="/" class="nav-logo" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: #fff;">
+            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), #f43f5e); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; transform: rotate(-10deg);">
+                D
+            </div>
+            <span style="font-weight: 800; font-size: 1.25rem; letter-spacing: -0.05em;">{{ site.name|default:'ALMAENG' }}</span>
+        </a>
+
+        <!-- Links -->
+        <div class="nav-links" style="display: flex; align-items: center; gap: 2.5rem;">
+            <a href="/domains/" style="color: var(--muted); text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: color 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">Domains</a>
+            <a href="/getting-started/" style="color: var(--muted); text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: color 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">Docs</a>
+            <a href="/health/" style="color: var(--muted); text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: color 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">Status</a>
+            
+            <div style="width: 1px; height: 20px; background: var(--border);"></div>
+
+            {% if user.is_authenticated %}
+                <a href="/accounts/profile/" class="glass-btn" style="padding: 0.5rem 1rem; border-radius: 999px; text-decoration: none; color: #fff; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="opacity: 0.6;">@</span>{{ user.email|slice:":10" }}
+                </a>
+                <a href="/accounts/logout/" hx-boost="false" style="color: var(--muted); text-decoration: none; font-size: 0.85rem;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Logout</a>
+            {% else %}
+                <a href="/accounts/login/" class="btn-primary" hx-boost="false" style="padding: 0.6rem 1.5rem; border-radius: 999px; font-size: 0.85rem;">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>

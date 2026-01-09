@@ -1,0 +1,77 @@
+{% extends "_dashboard_base.html" %}
+
+{% block title %}Domain Ecosystem | DAEMON-ONE{% endblock %}
+
+{% block dashboard_content %}
+<!-- Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Domain Registry</h1>
+        <p class="text-slate-500 mt-1">Auto-discovered vertical slices in your DAEMON instance</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <span class="px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-lg text-sm font-semibold text-emerald-600 flex items-center gap-2">
+            <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+            {{ total_count|default:22 }} Active
+        </span>
+    </div>
+</div>
+
+<!-- Domain Categories -->
+{% for category, apps in categories.items %}
+<div class="mb-8">
+    <h2 class="text-lg font-bold text-slate-800 border-l-4 border-indigo-500 pl-4 mb-4">
+        {{ category }}
+    </h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {% for domain in apps %}
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all group">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-2xl group-hover:bg-indigo-100 transition-colors">
+                    {% if "ai" in domain.path %}🤖
+                    {% elif "accounts" in domain.path or "auth" in domain.path %}👤
+                    {% elif "health" in domain.path %}🏥
+                    {% elif "analytics" in domain.path %}📊
+                    {% elif "manual" in domain.path %}📖
+                    {% elif "tasks" in domain.path %}⚙️
+                    {% elif "core" in domain.path %}🏛️
+                    {% elif "settings" in domain.path %}⚙️
+                    {% elif "notifications" in domain.path %}🔔
+                    {% elif "security" in domain.path %}🔐
+                    {% elif "media" in domain.path %}🎬
+                    {% elif "seo" in domain.path %}🔍
+                    {% elif "marketing" in domain.path %}📣
+                    {% elif "events" in domain.path %}📅
+                    {% else %}📦{% endif %}
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full shadow-lg shadow-emerald-200"></span>
+                </div>
+            </div>
+            
+            <h3 class="text-lg font-bold text-slate-800 mb-2">{{ domain.display_name }}</h3>
+            <p class="text-sm text-slate-500 mb-4">
+                <code class="px-2 py-1 bg-slate-50 rounded text-xs font-mono text-indigo-600">{{ domain.path }}</code>
+            </p>
+            
+            <div class="flex flex-wrap gap-2">
+                <span class="px-2 py-1 bg-slate-50 border border-slate-100 rounded text-xs font-medium text-slate-500">Active</span>
+                {% if domain.is_core %}
+                <span class="px-2 py-1 bg-emerald-50 border border-emerald-100 rounded text-xs font-semibold text-emerald-600">Core</span>
+                {% else %}
+                <span class="px-2 py-1 bg-indigo-50 border border-indigo-100 rounded text-xs font-semibold text-indigo-600">Feature</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% empty %}
+<div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm text-center">
+    <div class="text-4xl mb-4">📦</div>
+    <h3 class="text-xl font-bold text-slate-800 mb-2">No Domains Found</h3>
+    <p class="text-slate-500">Run <code class="px-2 py-1 bg-slate-100 rounded text-sm font-mono">just new-domain [name]</code> to create your first domain.</p>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% if db_stats.largest_tables %}
+<table style="width: 100%; font-size: 0.9rem;">
+    <thead>
+        <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+            <th style="padding: 0.75rem; text-align: left; color: var(--text-muted);">Table</th>
+            <th style="padding: 0.75rem; text-align: right; color: var(--text-muted);">Size</th>
+            <th style="padding: 0.75rem; text-align: right; color: var(--text-muted);">Rows</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for table in db_stats.largest_tables %}
+        <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+            <td style="padding: 0.75rem;"><code>{{ table.name }}</code></td>
+            <td style="padding: 0.75rem; text-align: right;">{{ table.size }}</td>
+            <td style="padding: 0.75rem; text-align: right;">{{ table.rows }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: var(--text-muted);">No tables found or database not connected.</p>
+{% endif %}

@@ -1,0 +1,45 @@
+# ============================================
+# 😈 ALMAENG Infrastructure
+# ============================================
+# Standard ports (mapped to host):
+# - App: ${APP_PORT} (runs locally, not in Docker)
+# - PostgreSQL: 5432
+# - Redis: 6379
+# ============================================
+
+services:
+  # --- 🐘 PostgreSQL with pgvector ---
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: almaeng_app
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-almaeng_db}
+      POSTGRES_USER: ${POSTGRES_USER:-almaeng_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-almaeng_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-almaeng_user}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- 🔴 Redis ---
+  redis:
+    image: redis:alpine
+    container_name: almaeng_redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_data:
+  redis_data:
