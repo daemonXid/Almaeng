@@ -1,0 +1,86 @@
+[
+    {
+        "model": "prices.pricehistory",
+        "pk": 1,
+        "fields": {
+            "supplement_id": 1,
+            "platform": "iherb",
+            "price": "15900",
+            "original_price": "19900",
+            "discount_percent": 20,
+            "url": "https://kr.iherb.com/pr/vitamin-d3/12345",
+            "is_in_stock": true,
+            "recorded_at": "2026-01-10T12:00:00Z"
+        }
+    },
+    {
+        "model": "prices.pricehistory",
+        "pk": 2,
+        "fields": {
+            "supplement_id": 1,
+            "platform": "coupang",
+            "price": "17500",
+            "original_price": "22000",
+            "discount_percent": 20,
+            "url": "https://www.coupang.com/vp/products/12345",
+            "is_in_stock": true,
+            "recorded_at": "2026-01-10T12:00:00Z"
+        }
+    },
+    {
+        "model": "prices.pricehistory",
+        "pk": 3,
+        "fields": {
+            "supplement_id": 2,
+            "platform": "iherb",
+            "price": "28900",
+            "original_price": "35000",
+            "discount_percent": 17,
+            "url": "https://kr.iherb.com/pr/omega-3/23456",
+            "is_in_stock": true,
+            "recorded_at": "2026-01-10T12:00:00Z"
+        }
+    },
+    {
+        "model": "prices.pricehistory",
+        "pk": 4,
+        "fields": {
+            "supplement_id": 3,
+            "platform": "iherb",
+            "price": "12500",
+            "original_price": "15000",
+            "discount_percent": 17,
+            "url": "https://kr.iherb.com/pr/vitamin-c/34567",
+            "is_in_stock": true,
+            "recorded_at": "2026-01-10T12:00:00Z"
+        }
+    },
+    {
+        "model": "prices.pricehistory",
+        "pk": 5,
+        "fields": {
+            "supplement_id": 4,
+            "platform": "coupang",
+            "price": "25900",
+            "original_price": "29900",
+            "discount_percent": 13,
+            "url": "https://www.coupang.com/vp/products/45678",
+            "is_in_stock": true,
+            "recorded_at": "2026-01-10T12:00:00Z"
+        }
+    },
+    {
+        "model": "prices.pricehistory",
+        "pk": 6,
+        "fields": {
+            "supplement_id": 4,
+            "platform": "danawa",
+            "price": "24500",
+            "original_price": "29900",
+            "discount_percent": 18,
+            "url": "https://prod.danawa.com/info/?pcode=56789",
+            "is_in_stock": true,
+            "recorded_at": "2026-01-10T12:00:00Z"
+        }
+    }
+]

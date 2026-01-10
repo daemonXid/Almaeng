@@ -110,6 +110,9 @@ dependencies = [
     "outlines>=1.2.9",
     "pydantic-settings>=2.12.0",
     "django-redis>=5.0.0",
+    "playwright>=1.57.0",
+    "selectolax>=0.4.6",
+    "taskiq-redis>=1.2.1",
 ]
 
 [project.optional-dependencies]

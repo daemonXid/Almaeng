@@ -1,0 +1,222 @@
+[
+    {
+        "model": "supplements.supplement",
+        "pk": 1,
+        "fields": {
+            "name": "Nature Republic Vitamin D3 5000IU",
+            "brand": "Nature Republic",
+            "category": "vitamin",
+            "description": "고함량 비타민 D3 보충제",
+            "serving_size": "1정",
+            "servings_count": 120
+        }
+    },
+    {
+        "model": "supplements.supplement",
+        "pk": 2,
+        "fields": {
+            "name": "California Gold Nutrition Omega-3 Premium",
+            "brand": "California Gold Nutrition",
+            "category": "omega",
+            "description": "프리미엄 오메가-3 피쉬오일",
+            "serving_size": "2캡슐",
+            "servings_count": 120
+        }
+    },
+    {
+        "model": "supplements.supplement",
+        "pk": 3,
+        "fields": {
+            "name": "NOW Foods Vitamin C-1000",
+            "brand": "NOW Foods",
+            "category": "vitamin",
+            "description": "로즈힙 함유 비타민 C",
+            "serving_size": "1정",
+            "servings_count": 250
+        }
+    },
+    {
+        "model": "supplements.supplement",
+        "pk": 4,
+        "fields": {
+            "name": "종근당 락토핏 생유산균 골드",
+            "brand": "종근당",
+            "category": "probiotics",
+            "description": "한국인 맞춤 프로바이오틱스",
+            "serving_size": "1포",
+            "servings_count": 50
+        }
+    },
+    {
+        "model": "supplements.supplement",
+        "pk": 5,
+        "fields": {
+            "name": "Centrum 멀티비타민 실버",
+            "brand": "Centrum",
+            "category": "multivitamin",
+            "description": "50+ 종합 멀티비타민",
+            "serving_size": "1정",
+            "servings_count": 100
+        }
+    },
+    {
+        "model": "supplements.supplement",
+        "pk": 6,
+        "fields": {
+            "name": "Solgar Vitamin B-Complex 100",
+            "brand": "Solgar",
+            "category": "vitamin",
+            "description": "고함량 비타민 B 복합체",
+            "serving_size": "1캡슐",
+            "servings_count": 100
+        }
+    },
+    {
+        "model": "supplements.supplement",
+        "pk": 7,
+        "fields": {
+            "name": "뉴트리원 루테인 지아잔틴",
+            "brand": "뉴트리원",
+            "category": "eye",
+            "description": "눈 건강 루테인 보충제",
+            "serving_size": "1캡슐",
+            "servings_count": 90
+        }
+    },
+    {
+        "model": "supplements.supplement",
+        "pk": 8,
+        "fields": {
+            "name": "Doctor's Best Magnesium 100mg",
+            "brand": "Doctor's Best",
+            "category": "mineral",
+            "description": "고흡수 마그네슘 킬레이트",
+            "serving_size": "2정",
+            "servings_count": 120
+        }
+    },
+    {
+        "model": "supplements.supplement",
+        "pk": 9,
+        "fields": {
+            "name": "Jarrow Formulas Ubiquinol QH-Absorb",
+            "brand": "Jarrow Formulas",
+            "category": "coq10",
+            "description": "활성형 코엔자임 Q10",
+            "serving_size": "1캡슐",
+            "servings_count": 60
+        }
+    },
+    {
+        "model": "supplements.supplement",
+        "pk": 10,
+        "fields": {
+            "name": "Life Extension Super K",
+            "brand": "Life Extension",
+            "category": "vitamin",
+            "description": "비타민 K1 + K2 복합",
+            "serving_size": "1캡슐",
+            "servings_count": 90
+        }
+    },
+    {
+        "model": "supplements.ingredient",
+        "pk": 1,
+        "fields": {
+            "supplement": 1,
+            "name": "Vitamin D3",
+            "amount": "5000",
+            "unit": "IU"
+        }
+    },
+    {
+        "model": "supplements.ingredient",
+        "pk": 2,
+        "fields": {
+            "supplement": 2,
+            "name": "EPA",
+            "amount": "400",
+            "unit": "mg"
+        }
+    },
+    {
+        "model": "supplements.ingredient",
+        "pk": 3,
+        "fields": {
+            "supplement": 2,
+            "name": "DHA",
+            "amount": "200",
+            "unit": "mg"
+        }
+    },
+    {
+        "model": "supplements.ingredient",
+        "pk": 4,
+        "fields": {
+            "supplement": 3,
+            "name": "Vitamin C",
+            "amount": "1000",
+            "unit": "mg"
+        }
+    },
+    {
+        "model": "supplements.ingredient",
+        "pk": 5,
+        "fields": {
+            "supplement": 3,
+            "name": "Rose Hips",
+            "amount": "25",
+            "unit": "mg"
+        }
+    },
+    {
+        "model": "supplements.ingredient",
+        "pk": 6,
+        "fields": {
+            "supplement": 4,
+            "name": "Lactobacillus acidophilus",
+            "amount": "10",
+            "unit": "billion CFU"
+        }
+    },
+    {
+        "model": "supplements.ingredient",
+        "pk": 7,
+        "fields": {
+            "supplement": 7,
+            "name": "Lutein",
+            "amount": "20",
+            "unit": "mg"
+        }
+    },
+    {
+        "model": "supplements.ingredient",
+        "pk": 8,
+        "fields": {
+            "supplement": 7,
+            "name": "Zeaxanthin",
+            "amount": "4",
+            "unit": "mg"
+        }
+    },
+    {
+        "model": "supplements.ingredient",
+        "pk": 9,
+        "fields": {
+            "supplement": 8,
+            "name": "Magnesium",
+            "amount": "100",
+            "unit": "mg"
+        }
+    },
+    {
+        "model": "supplements.ingredient",
+        "pk": 10,
+        "fields": {
+            "supplement": 9,
+            "name": "Ubiquinol (CoQ10)",
+            "amount": "100",
+            "unit": "mg"
+        }
+    }
+]
