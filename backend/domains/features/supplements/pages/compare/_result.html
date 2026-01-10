@@ -1,0 +1,68 @@
+<!-- Comparison Result Partial -->
+<div class="space-y-6">
+    <!-- Match Percentage -->
+    <div class="text-center p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <div class="text-5xl font-bold mb-2
+                    {% if result.match_percentage >= 80 %}text-emerald-500
+                    {% elif result.match_percentage >= 50 %}text-amber-500
+                    {% else %}text-rose-500{% endif %}">
+            {{ result.match_percentage }}%
+        </div>
+        <p class="text-gray-600 dark:text-gray-400">성분 일치율</p>
+    </div>
+
+    <!-- Side-by-Side Comparison -->
+    <div class="grid md:grid-cols-2 gap-4">
+        <!-- Product A Info -->
+        <div class="p-4 rounded-xl bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800">
+            <h3 class="font-semibold text-sky-700 dark:text-sky-300 mb-2">
+                {{ result.product_a.brand }}
+            </h3>
+            <p class="text-gray-900 dark:text-white">{{ result.product_a.name }}</p>
+            <p class="text-sm text-gray-500">{{ result.product_a.serving_size }}</p>
+        </div>
+
+        <!-- Product B Info -->
+        <div class="p-4 rounded-xl bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
+            <h3 class="font-semibold text-purple-700 dark:text-purple-300 mb-2">
+                {{ result.product_b.brand }}
+            </h3>
+            <p class="text-gray-900 dark:text-white">{{ result.product_b.name }}</p>
+            <p class="text-sm text-gray-500">{{ result.product_b.serving_size }}</p>
+        </div>
+    </div>
+
+    <!-- Matching Ingredients -->
+    {% if result.matching_ingredients %}
+    <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+        <h4 class="font-medium text-emerald-700 dark:text-emerald-300 mb-3">
+            ✅ 동일 성분 ({{ result.matching_ingredients|length }}개)
+        </h4>
+        <div class="flex flex-wrap gap-2">
+            {% for ingredient in result.matching_ingredients %}
+            <span
+                class="px-3 py-1 text-sm rounded-full bg-emerald-100 dark:bg-emerald-800/50 text-emerald-700 dark:text-emerald-300">
+                {{ ingredient }}
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Different Ingredients -->
+    {% if result.different_ingredients %}
+    <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+        <h4 class="font-medium text-amber-700 dark:text-amber-300 mb-3">
+            ⚠️ 차이 나는 성분 ({{ result.different_ingredients|length }}개)
+        </h4>
+        <div class="flex flex-wrap gap-2">
+            {% for ingredient in result.different_ingredients %}
+            <span
+                class="px-3 py-1 text-sm rounded-full bg-amber-100 dark:bg-amber-800/50 text-amber-700 dark:text-amber-300">
+                {{ ingredient }}
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>

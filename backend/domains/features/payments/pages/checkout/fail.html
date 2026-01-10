@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "결제 실패" %} | ALMAENG{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto px-4 py-16 text-center">
+    <div class="text-6xl mb-6">😢</div>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+        {% trans "결제에 실패했습니다" %}
+    </h1>
+    <div class="mb-8 p-4 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400">
+        <p class="font-medium">{{ error_code }}</p>
+        <p class="text-sm">{{ error_message }}</p>
+    </div>
+    <div class="flex gap-4 justify-center">
+        <a href="{% url 'cart:cart' %}" class="px-6 py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium
+                  hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+            {% trans "장바구니로" %}
+        </a>
+        <a href="{% url 'payments:checkout' %}" class="px-6 py-3 rounded-xl bg-emerald-500 text-white font-medium
+                  hover:bg-emerald-600 transition-colors">
+            {% trans "다시 시도" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

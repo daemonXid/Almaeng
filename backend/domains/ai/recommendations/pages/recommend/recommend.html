@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "AI 추천" %} | ALMAENG{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            🎯 {% trans "AI 맞춤 추천" %}
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400">
+            {% trans "AI가 당신에게 필요한 영양제를 분석해드립니다" %}
+        </p>
+    </div>
+
+    <!-- Health Quiz CTA -->
+    <div class="mb-12 p-8 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 text-white text-center">
+        <h2 class="text-2xl font-bold mb-4">🩺 {% trans "건강 설문 시작하기" %}</h2>
+        <p class="mb-6 text-purple-100">
+            {% trans "간단한 설문으로 당신에게 필요한 영양소를 알아보세요" %}
+        </p>
+        <a href="{% url 'recommendations:quiz' %}" class="inline-block px-8 py-3 rounded-xl bg-white text-purple-600 font-semibold
+                  hover:bg-purple-50 transition-colors">
+            {% trans "설문 시작" %} →
+        </a>
+    </div>
+
+    <!-- Personalized Recommendations -->
+    {% if recommendations %}
+    <div>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+            ✨ {% trans "당신을 위한 추천" %}
+        </h2>
+        <div class="grid md:grid-cols-2 gap-4">
+            {% for rec in recommendations %}
+            <div class="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
+                        hover:border-purple-300 dark:hover:border-purple-600 transition-colors">
+                <div class="flex items-start gap-4">
+                    <div
+                        class="w-12 h-12 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-2xl">
+                        💊
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-gray-900 dark:text-white">{{ rec.name }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ rec.reason }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-12 text-gray-500">
+        <p>{% trans "로그인하면 맞춤 추천을 받을 수 있습니다" %}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

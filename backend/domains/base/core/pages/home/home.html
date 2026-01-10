@@ -1,215 +1,213 @@
-{% extends "_dashboard_base.html" %}
+{% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Dashboard | DAEMON-ONE{% endblock %}
+{% block title %}ALMAENG - {% trans "영양제 성분 비교 서비스" %}{% endblock %}
 
-{% block dashboard_content %}
-<!-- Header Section -->
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-    <div>
-        <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Dashboard</h1>
-        <p class="text-slate-500 mt-1">Monitor all of your domains and system health</p>
-    </div>
-    <div class="flex items-center gap-3">
-        <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:border-indigo-300 transition-colors flex items-center gap-2">
-            All Domains <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-        <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:border-indigo-300 transition-colors flex items-center gap-2">
-            This Week <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-    </div>
-</div>
+{% block content %}
+<!-- Hero Section -->
+<section class="relative py-20 overflow-hidden">
+    <!-- Background gradient -->
+    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-teal-500/10"></div>
 
-<!-- 1. Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-    <!-- Domains -->
-    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-        <h3 class="text-slate-500 font-medium mb-4">Active Domains</h3>
-        <div class="flex items-end justify-between">
-            <span class="text-3xl font-bold text-slate-800">{{ domains_count|default:22 }}</span>
-            <div class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                Healthy
+    <div class="container mx-auto px-4 relative">
+        <div class="text-center max-w-4xl mx-auto">
+            <!-- Badge -->
+            <div
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-medium mb-6">
+                <span>🧬</span>
+                <span>AI-Powered Supplement Analysis</span>
             </div>
-        </div>
-        <div class="text-xs text-slate-400 mt-2">Auto-discovered</div>
-    </div>
-    <!-- AI Provider -->
-    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-        <h3 class="text-slate-500 font-medium mb-4">AI Provider</h3>
-        <div class="flex items-end justify-between">
-            <span class="text-3xl font-bold text-slate-800 capitalize">{{ ai_provider|default:'HuggingFace' }}</span>
-            <div class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-xs font-semibold">
-                Active
-            </div>
-        </div>
-        <div class="text-xs text-slate-400 mt-2">Primary model</div>
-    </div>
-    <!-- Database -->
-    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-        <h3 class="text-slate-500 font-medium mb-4">Database</h3>
-        <div class="flex items-end justify-between">
-            <span class="text-3xl font-bold text-slate-800">PostgreSQL</span>
-            <div class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                Connected
-            </div>
-        </div>
-        <div class="text-xs text-slate-400 mt-2">Port {{ postgres_port|default:1501 }}</div>
-    </div>
-    <!-- Cache -->
-    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-        <h3 class="text-slate-500 font-medium mb-4">Cache</h3>
-        <div class="flex items-end justify-between">
-            <span class="text-3xl font-bold text-slate-800">Redis</span>
-            <div class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                Connected
-            </div>
-        </div>
-        <div class="text-xs text-slate-400 mt-2">Port {{ redis_port|default:1502 }}</div>
-    </div>
-</div>
 
-<!-- 2. Charts Row -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-    <!-- Domain Distribution -->
-    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="font-bold text-slate-800">Domain Structure</h3>
-            <a href="/domains/" class="text-xs text-indigo-600 hover:underline">View All →</a>
-        </div>
-        <div class="space-y-3">
-            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                <div class="flex items-center gap-3">
-                    <span class="w-3 h-3 rounded-full bg-indigo-500"></span>
-                    <span class="text-sm font-medium text-slate-700">Core Domains</span>
-                </div>
-                <span class="text-sm font-bold text-slate-800">5</span>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                <div class="flex items-center gap-3">
-                    <span class="w-3 h-3 rounded-full bg-purple-500"></span>
-                    <span class="text-sm font-medium text-slate-700">AI Domains</span>
-                </div>
-                <span class="text-sm font-bold text-slate-800">2</span>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                <div class="flex items-center gap-3">
-                    <span class="w-3 h-3 rounded-full bg-slate-300"></span>
-                    <span class="text-sm font-medium text-slate-700">Scaffolding</span>
-                </div>
-                <span class="text-sm font-bold text-slate-800">15</span>
+            <!-- Headline -->
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                {% trans "영양제 성분을" %}
+                <span class="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                    {% trans "AI로 분석" %}
+                </span>
+                {% trans "하고" %}<br>
+                {% trans "가성비 제품을 찾아보세요" %}
+            </h1>
+
+            <!-- Subheadline -->
+            <p class="text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">
+                {% trans "동일 성분 구성의 대체 제품을 찾고, 가격을 비교해 현명한 선택을 하세요" %}
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'supplements:search' %}"
+                    class="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold text-lg shadow-lg hover:shadow-emerald-500/30 hover:scale-105 transition-all duration-200">
+                    💊 {% trans "영양제 검색하기" %}
+                </a>
+                <a href="{% url 'supplements:upload' %}"
+                    class="px-8 py-4 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold text-lg hover:border-emerald-500 hover:scale-105 transition-all duration-200">
+                    📷 {% trans "라벨 스캔하기" %}
+                </a>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Quick Actions -->
-    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="font-bold text-slate-800">Quick Actions</h3>
+<!-- Features Section -->
+<section class="py-20 bg-gray-50 dark:bg-gray-900/50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                {% trans "주요 기능" %}
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400">
+                {% trans "ALMAENG이 제공하는 스마트한 영양제 비교 서비스" %}
+            </p>
         </div>
-        <div class="space-y-3">
-            <a href="/chat/" class="flex items-center gap-4 p-3 bg-indigo-50 border border-indigo-100 rounded-xl hover:bg-indigo-100 transition-colors">
-                <div class="w-10 h-10 rounded-lg bg-indigo-500 flex items-center justify-center text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Feature 1 -->
+            <div
+                class="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-emerald-500 hover:shadow-lg transition-all duration-200">
+                <div
+                    class="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-2xl mb-4">
+                    ⚖️
                 </div>
-                <div>
-                    <div class="text-sm font-bold text-indigo-700">Start AI Chat</div>
-                    <div class="text-xs text-indigo-500">Talk to your AI assistant</div>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{% trans "성분 비교" %}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {% trans "두 제품의 성분을 직접 비교하여 일치율과 차이점을 확인하세요" %}
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div
+                class="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-lg transition-all duration-200">
+                <div
+                    class="w-14 h-14 rounded-xl bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center text-2xl mb-4">
+                    📷
                 </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{% trans "AI 라벨 스캔" %}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {% trans "영양제 라벨 사진만 찍으면 AI가 성분을 자동으로 분석해요" %}
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div
+                class="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:shadow-lg transition-all duration-200">
+                <div
+                    class="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-2xl mb-4">
+                    💰
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{% trans "가격 추적" %}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {% trans "iHerb, 쿠팡 등 여러 플랫폼의 가격을 실시간으로 비교하세요" %}
+                </p>
+            </div>
+
+            <!-- Feature 4 -->
+            <div
+                class="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-rose-500 hover:shadow-lg transition-all duration-200">
+                <div
+                    class="w-14 h-14 rounded-xl bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center text-2xl mb-4">
+                    🎯
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{% trans "AI 추천" %}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {% trans "건강 설문을 통해 나에게 필요한 영양제를 추천받으세요" %}
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-20">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                {% trans "이용 방법" %}
+            </h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <!-- Step 1 -->
+            <div class="text-center">
+                <div
+                    class="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center text-2xl text-white font-bold mx-auto mb-4">
+                    1
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{% trans "제품 검색" %}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {% trans "복용 중인 영양제를 검색하거나 라벨을 스캔하세요" %}
+                </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="text-center">
+                <div
+                    class="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center text-2xl text-white font-bold mx-auto mb-4">
+                    2
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{% trans "성분 분석" %}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {% trans "AI가 성분을 분석하고 유사한 제품을 찾아드려요" %}
+                </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="text-center">
+                <div
+                    class="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center text-2xl text-white font-bold mx-auto mb-4">
+                    3
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{% trans "가격 비교" %}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {% trans "동일 성분의 가성비 제품을 비교하고 구매하세요" %}
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-br from-emerald-500 to-teal-600">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold text-white mb-4">
+            {% trans "지금 바로 시작하세요" %}
+        </h2>
+        <p class="text-emerald-100 mb-8 max-w-xl mx-auto">
+            {% trans "건강한 선택을 위한 첫 걸음, ALMAENG과 함께하세요" %}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'supplements:search' %}"
+                class="px-8 py-4 rounded-xl bg-white text-emerald-600 font-semibold text-lg hover:bg-gray-100 hover:scale-105 transition-all duration-200">
+                🔍 {% trans "영양제 검색" %}
             </a>
-            <a href="/getting-started/" class="flex items-center gap-4 p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-slate-100 transition-colors">
-                <div class="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center text-slate-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                </div>
-                <div>
-                    <div class="text-sm font-bold text-slate-700">Read Documentation</div>
-                    <div class="text-xs text-slate-500">Learn the DAEMON architecture</div>
-                </div>
+            <a href="{% url 'recommendations:quiz' %}"
+                class="px-8 py-4 rounded-xl bg-emerald-700 text-white font-semibold text-lg hover:bg-emerald-800 hover:scale-105 transition-all duration-200">
+                🩺 {% trans "건강 설문 시작" %}
             </a>
         </div>
     </div>
+</section>
 
-    <!-- System Status -->
-    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm bg-gradient-to-br from-indigo-500 to-purple-600 text-white relative overflow-hidden">
-        <div class="relative z-10">
-            <h3 class="font-bold mb-4">System Status</h3>
-            <div class="flex gap-4 text-xs opacity-80 mb-6">
-                <span class="flex items-center gap-1"><span class="w-2 h-2 bg-white rounded-full"></span> Healthy</span>
-                <span class="flex items-center gap-1"><span class="w-2 h-2 bg-white/30 rounded-full"></span> Pending</span>
+<!-- Stats Section -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+                <div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">1,000+</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">{% trans "등록된 영양제" %}</div>
             </div>
-            <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm opacity-90">Server</span>
-                    <span class="text-sm font-bold">Running</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-sm opacity-90">Database</span>
-                    <span class="text-sm font-bold">Connected</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-sm opacity-90">Cache</span>
-                    <span class="text-sm font-bold">Connected</span>
-                </div>
+            <div>
+                <div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">50+</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">{% trans "분석된 성분" %}</div>
             </div>
-            <a href="/health/" class="mt-4 block text-center py-2 bg-white/20 rounded-lg text-sm font-bold hover:bg-white/30 transition-colors">
-                View Details →
-            </a>
-        </div>
-        <!-- Decor -->
-        <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-    </div>
-</div>
-
-<!-- 3. Recent Activity -->
-<div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-    <div class="p-6 border-b border-slate-50 flex justify-between items-center">
-        <h3 class="font-bold text-slate-800">Recent Activity</h3>
-        <div class="flex gap-2">
-            <button class="text-xs bg-slate-50 px-2 py-1 rounded text-slate-500 border border-slate-200">Filter</button>
-            <button class="text-xs bg-indigo-50 px-2 py-1 rounded text-indigo-600 border border-indigo-100">Refresh</button>
+            <div>
+                <div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">5</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">{% trans "연동 플랫폼" %}</div>
+            </div>
+            <div>
+                <div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">24/7</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">{% trans "AI 가격 추적" %}</div>
+            </div>
         </div>
     </div>
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left">
-            <thead class="text-xs text-slate-400 bg-slate-50 uppercase">
-                <tr>
-                    <th class="px-6 py-3">Event</th>
-                    <th class="px-6 py-3">Domain</th>
-                    <th class="px-6 py-3">Time</th>
-                    <th class="px-6 py-3">Status</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-50">
-                <tr class="hover:bg-slate-50/50">
-                    <td class="px-6 py-4 font-medium text-slate-900">Server Started</td>
-                    <td class="px-6 py-4 flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">C</div>
-                        core
-                    </td>
-                    <td class="px-6 py-4 text-slate-500">Just now</td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-semibold">Success</span></td>
-                </tr>
-                <tr class="hover:bg-slate-50/50">
-                    <td class="px-6 py-4 font-medium text-slate-900">Domains Auto-Discovered</td>
-                    <td class="px-6 py-4 flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold">*</div>
-                        all
-                    </td>
-                    <td class="px-6 py-4 text-slate-500">Just now</td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-semibold">22 Found</span></td>
-                </tr>
-                <tr class="hover:bg-slate-50/50">
-                    <td class="px-6 py-4 font-medium text-slate-900">AI Provider Initialized</td>
-                    <td class="px-6 py-4 flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">AI</div>
-                        ai.providers
-                    </td>
-                    <td class="px-6 py-4 text-slate-500">Just now</td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded text-xs font-semibold">Ready</span></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+</section>
 {% endblock %}

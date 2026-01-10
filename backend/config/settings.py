@@ -291,3 +291,29 @@ STATICFILES_FINDERS = [
 ]
 
 COMPRESS_ENABLED = True
+
+# ============================================
+# 🌐 Internationalization (i18n)
+# ============================================
+
+LANGUAGE_CODE = "ko"
+TIME_ZONE = "Asia/Seoul"
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+
+LANGUAGES = [
+    ("ko", "한국어"),
+    ("en", "English"),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / "backend" / "locale",
+]
+
+# ============================================
+# 💳 Toss Payments
+# ============================================
+
+TOSS_CLIENT_KEY = env("TOSS_CLIENT_KEY", default="test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq")
+TOSS_SECRET_KEY = env("TOSS_SECRET_KEY", default="test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R")

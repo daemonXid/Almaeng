@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}라벨 스캔 | ALMAENG{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-8" x-data="{
+         status: 'idle',
+         progress: 0,
+         funFacts: [
+             '💡 비타민 D는 햇빛으로 합성됩니다',
+             '💡 오메가3는 뇌 건강에 필수적이에요',
+             '💡 마그네슘은 300개 이상의 효소에 관여합니다',
+             '💡 비타민 B12는 채식주의자에게 특히 중요해요',
+             '💡 아연은 면역 기능에 핵심적인 역할을 합니다'
+         ],
+         currentFact: ''
+     }" x-init="currentFact = funFacts[0]">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            📷 영양제 라벨 스캔
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400">
+            사진만 찍으면 AI가 성분을 자동으로 분석해요
+        </p>
+    </div>
+
+    <!-- Upload Section -->
+    <div x-show="status === 'idle'" x-transition>
+        <form hx-post="{% url 'supplements:analyze_image' %}" hx-encoding="multipart/form-data"
+            hx-target="#analysis-result" hx-indicator="#loading-section" @htmx:before-request="status = 'processing'"
+            @htmx:after-request="status = 'done'">
+
+            <label class="block cursor-pointer">
+                <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-12
+                            hover:border-purple-400 dark:hover:border-purple-500 transition-all duration-300
+                            bg-gray-50 dark:bg-gray-800/50 hover:bg-purple-50 dark:hover:bg-purple-900/20">
+
+                    <div class="text-center">
+                        <span class="text-6xl mb-4 block">📷</span>
+                        <p class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            영양제 라벨 사진을 업로드하세요
+                        </p>
+                        <p class="text-sm text-gray-500">
+                            클릭하거나 드래그 앤 드롭
+                        </p>
+                    </div>
+
+                    <input type="file" name="image" accept="image/*" capture="environment" class="hidden"
+                        @change="if ($el.files.length) $el.closest('form').requestSubmit()">
+                </div>
+            </label>
+        </form>
+    </div>
+
+    <!-- Processing Section -->
+    <div x-show="status === 'processing'" x-transition id="loading-section" class="htmx-indicator text-center py-12">
+
+        <!-- Skeleton Animation -->
+        <div class="space-y-4 mb-8">
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-3/4 mx-auto animate-pulse"></div>
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-1/2 mx-auto animate-pulse"></div>
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-2/3 mx-auto animate-pulse"></div>
+        </div>
+
+        <!-- Fun Facts -->
+        <p class="text-purple-600 dark:text-purple-400 mb-6" x-text="currentFact"
+            x-init="setInterval(() => currentFact = funFacts[Math.floor(Math.random() * funFacts.length)], 3000)">
+        </p>
+
+        <!-- Progress Bar (Perceived) -->
+        <div class="w-full max-w-xs mx-auto bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
+                :style="'width: ' + progress + '%'"
+                x-init="setInterval(() => progress = Math.min(progress + 15, 90), 400)">
+            </div>
+        </div>
+
+        <p class="text-sm text-gray-500 mt-4">AI가 성분을 분석 중입니다...</p>
+    </div>
+
+    <!-- Result Section -->
+    <div id="analysis-result" x-show="status === 'done'" x-transition>
+        <!-- HTMX가 응답을 여기에 삽입 -->
+    </div>
+
+    <!-- Reset Button -->
+    <div x-show="status === 'done'" class="text-center mt-6">
+        <button @click="status = 'idle'; progress = 0" class="px-6 py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300
+                       hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+            🔄 다른 사진 분석하기
+        </button>
+    </div>
+</div>
+{% endblock %}

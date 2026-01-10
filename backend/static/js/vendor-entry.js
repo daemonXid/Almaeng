@@ -40,4 +40,4 @@ document.addEventListener('DOMContentLoaded', () => {
     Alpine.start();
 });
 
-console.log('😈 DAEMON-ONE Vendor Bundle Loaded');
+console.log('🧬 ALMAENG Vendor Bundle Loaded');

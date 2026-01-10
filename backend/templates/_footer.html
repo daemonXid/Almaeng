@@ -1,66 +1,96 @@
-<footer style="margin-top: 8rem; border-top: 1px solid var(--border); padding: 5rem 0 3rem; background: rgba(0,0,0,0.2);">
-    <div class="container">
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 5rem;">
-            <!-- Brand Column -->
+{% load i18n %}
+<footer class="mt-20 border-t border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-black/20">
+    <div class="container mx-auto px-4 py-12">
+        <div class="grid md:grid-cols-4 gap-8 mb-12">
+            <!-- Brand -->
             <div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
-                    <div style="width: 28px; height: 28px; background: linear-gradient(135deg, var(--accent), #f43f5e); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem;">
-                        D
+                <div class="flex items-center gap-2 mb-4">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-lg">
+                        🧬
                     </div>
-                    <span style="font-weight: 800; font-size: 1.1rem; letter-spacing: -0.05em;">{{ site.name|default:'ALMAENG' }}</span>
+                    <span class="font-bold text-lg text-gray-900 dark:text-white">ALMAENG</span>
                 </div>
-                <p style="color: var(--muted); line-height: 1.6; font-size: 0.95rem; max-width: 320px;">
-                    The premium AI-First Django template for modern agentic engineering. 
-                    Built with performance, modularity, and "The Zen of xid" in mind.
+                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                    {% trans "AI로 영양제 성분을 분석하고, 동일 성분 구성의 가성비 제품을 찾아드립니다." %}
                 </p>
             </div>
 
-            <!-- Links Columns -->
+            <!-- 서비스 -->
             <div>
-                <h4 style="margin-bottom: 1.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; color: #fff;">Resources</h4>
-                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <li><a href="/getting-started/" style="color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Documentation</a></li>
-                    <li><a href="/domains/" style="color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Domain Factory</a></li>
-                    <li><a href="#" style="color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Release Notes</a></li>
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-4 text-sm uppercase tracking-wide">
+                    {% trans "서비스" %}
+                </h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="{% url 'supplements:search' %}"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">💊 {%
+                            trans "영양제 검색" %}</a></li>
+                    <li><a href="{% url 'supplements:compare' %}"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">⚖️ {%
+                            trans "성분 비교" %}</a></li>
+                    <li><a href="{% url 'supplements:upload' %}"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">📷 {%
+                            trans "라벨 스캔" %}</a></li>
+                    <li><a href="{% url 'recommendations:home' %}"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">🎯 {%
+                            trans "AI 추천" %}</a></li>
                 </ul>
             </div>
 
+            <!-- 고객 -->
             <div>
-                <h4 style="margin-bottom: 1.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; color: #fff;">Community</h4>
-                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <li><a href="https://github.com/daemonXid" style="color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">GitHub</a></li>
-                    <li><a href="#" style="color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Discord</a></li>
-                    <li><a href="#" style="color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Twitter</a></li>
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-4 text-sm uppercase tracking-wide">
+                    {% trans "고객" %}
+                </h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="{% url 'cart:cart' %}"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">🛒 {%
+                            trans "장바구니" %}</a></li>
+                    <li><a href="{% url 'wishlist:list' %}"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">❤️ {%
+                            trans "찜 목록" %}</a></li>
+                    <li><a href="/accounts/profile/"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">👤 {%
+                            trans "내 계정" %}</a></li>
                 </ul>
             </div>
 
+            <!-- 고객센터 -->
             <div>
-                <h4 style="margin-bottom: 1.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; color: #fff;">Legal</h4>
-                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <li><a href="#" style="color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Privacy Policy</a></li>
-                    <li><a href="#" style="color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Terms of Service</a></li>
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-4 text-sm uppercase tracking-wide">
+                    {% trans "고객센터" %}
+                </h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="{% url 'daemon:faq' %}"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">{%
+                            trans "자주 묻는 질문" %}</a></li>
+                    <li><a href="{% url 'daemon:terms' %}"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">{%
+                            trans "이용약관" %}</a></li>
+                    <li><a href="{% url 'daemon:privacy' %}"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">{%
+                            trans "개인정보처리방침" %}</a></li>
                 </ul>
             </div>
         </div>
 
-        <!-- Base Footer -->
-        <div style="padding-top: 2rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-            <p style="color: var(--muted); font-size: 0.85rem;">
-                © 2026 <strong>DAEMON Stack</strong>. Designed and engineered by <a href="https://github.com/daemonXid" style="color: var(--accent); text-decoration: none;">xid</a>.
+        <!-- Bottom -->
+        <div
+            class="pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-gray-500 dark:text-gray-400 text-sm">
+                © 2026 <strong>ALMAENG</strong>. {% trans "영양제 성분 비교 서비스" %}
             </p>
-            <div style="font-size: 0.85rem; color: var(--muted); display: flex; gap: 1.5rem;">
-                <span></span>
-                <span id="system-time" style="font-family: var(--font-mono); opacity: 0.6;"></span>
+            <div class="flex items-center gap-4 text-sm text-gray-500">
+                <span id="system-time" class="font-mono opacity-60"></span>
             </div>
         </div>
     </div>
 </footer>
 
 <script>
-    // Update footer time
     function updateFooterTime() {
         const now = new Date();
-        document.getElementById('system-time').innerText = now.toLocaleTimeString('en-US', { hour12: false });
+        document.getElementById('system-time').innerText = now.toLocaleTimeString('ko-KR', { hour12: false });
     }
     setInterval(updateFooterTime, 1000);
     updateFooterTime();

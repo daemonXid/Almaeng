@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "개인정보처리방침" %} | ALMAENG{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12 max-w-4xl">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+        🔒 {% trans "개인정보처리방침" %}
+    </h1>
+
+    <div class="prose prose-gray dark:prose-invert max-w-none space-y-8">
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "1. 수집하는 개인정보 항목" %}</h2>
+            <p class="text-gray-600 dark:text-gray-400">
+                {% trans "회사는 서비스 제공을 위해 다음의 개인정보를 수집합니다." %}
+            </p>
+            <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2 mt-2">
+                <li>{% trans "필수항목: 이메일 주소" %}</li>
+                <li>{% trans "선택항목: 이름, 연락처, 배송지 정보" %}</li>
+                <li>{% trans "자동수집: 서비스 이용기록, IP 주소, 쿠키" %}</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "2. 개인정보의 수집 및 이용목적" %}</h2>
+            <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2">
+                <li>{% trans "회원 가입 및 관리" %}</li>
+                <li>{% trans "서비스 제공 및 개선" %}</li>
+                <li>{% trans "맞춤형 영양제 추천" %}</li>
+                <li>{% trans "주문 처리 및 배송" %}</li>
+                <li>{% trans "고객 문의 응대" %}</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "3. 개인정보의 보유 및 이용기간" %}</h2>
+            <p class="text-gray-600 dark:text-gray-400">
+                {% trans "회원 탈퇴 시 즉시 파기합니다. 단, 관련 법령에 따라 일정 기간 보존이 필요한 경우 해당 기간 동안 보관합니다." %}
+            </p>
+            <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2 mt-2">
+                <li>{% trans "전자상거래법: 계약 및 청약철회 기록 5년" %}</li>
+                <li>{% trans "통신비밀보호법: 접속 기록 3개월" %}</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "4. 개인정보의 제3자 제공" %}</h2>
+            <p class="text-gray-600 dark:text-gray-400">
+                {% trans "회사는 원칙적으로 이용자의 동의 없이 개인정보를 제3자에게 제공하지 않습니다. 다만, 결제 처리를 위해 결제 대행사(토스페이먼츠)에 필요한 최소한의 정보가 제공될 수
+                있습니다." %}
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "5. 이용자의 권리" %}</h2>
+            <p class="text-gray-600 dark:text-gray-400">
+                {% trans "이용자는 언제든지 자신의 개인정보에 대해 열람, 수정, 삭제를 요청할 수 있습니다." %}
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "6. 개인정보 보호책임자" %}</h2>
+            <div class="p-4 rounded-xl bg-gray-100 dark:bg-gray-800">
+                <p class="text-gray-600 dark:text-gray-400">
+                    {% trans "담당: 개인정보보호팀" %}<br>
+                    {% trans "이메일: privacy@almaeng.com" %}
+                </p>
+            </div>
+        </section>
+
+        <p class="text-sm text-gray-500 dark:text-gray-500 pt-8 border-t border-gray-200 dark:border-gray-700">
+            {% trans "시행일: 2026년 1월 1일" %}
+        </p>
+    </div>
+</div>
+{% endblock %}

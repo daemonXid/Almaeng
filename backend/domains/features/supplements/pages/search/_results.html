@@ -1,0 +1,48 @@
+{% if supplements %}
+<div class="grid gap-4">
+    {% for supplement in supplements %}
+    <div class="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
+                hover:border-emerald-300 dark:hover:border-emerald-600 transition-colors">
+        <div class="flex items-center gap-4">
+            <!-- Image -->
+            <div class="w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-2xl">
+                {% if supplement.image_url %}
+                <img src="{{ supplement.image_url }}" alt="{{ supplement.name }}"
+                    class="w-full h-full object-cover rounded-lg">
+                {% else %}
+                💊
+                {% endif %}
+            </div>
+            <!-- Info -->
+            <div class="flex-1">
+                <h3 class="font-semibold text-gray-900 dark:text-white">{{ supplement.name }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ supplement.brand }}</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500">
+                    {{ supplement.serving_size }} · {{ supplement.servings_per_container }}회분
+                </p>
+            </div>
+            <!-- Actions -->
+            <div class="flex gap-2">
+                <button class="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400
+                              hover:bg-emerald-200 dark:hover:bg-emerald-800/50 transition-colors" title="비교에 추가">
+                    ⚖️
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if supplements|length >= 20 %}
+<p class="text-center text-sm text-gray-500 mt-4">
+    더 정확한 결과를 위해 검색어를 구체적으로 입력하세요
+</p>
+{% endif %}
+
+{% else %}
+<div class="text-center py-12 text-gray-500">
+    <span class="text-4xl mb-4 block">😕</span>
+    <p>"{{ query }}"에 대한 검색 결과가 없습니다</p>
+    <p class="text-sm mt-2">다른 검색어를 시도해보세요</p>
+</div>
+{% endif %}

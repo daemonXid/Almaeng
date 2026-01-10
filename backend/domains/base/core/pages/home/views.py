@@ -26,29 +26,13 @@ from django.views.decorators.http import require_GET, require_POST
 
 def home(request: HttpRequest) -> HttpResponse:
     """
-    Home page - Dashboard with real system data.
+    ALMAENG Home page - Landing page with hero and features.
     """
-    import os
-
-    project_apps = getattr(settings, "PROJECT_APPS", [])
-
-    # Get AI provider status
-    os.getenv("AI_PROVIDER", "gemini")
-    gemini_configured = bool(os.getenv("GEMINI_API_KEY"))
-
-    # Get port info
-    postgres_port = os.getenv("POSTGRES_PORT", "1501")
-    redis_port = os.getenv("REDIS_PORT", "1502")
-
     return render(
         request,
         "core/pages/home/home.html",
         {
-            "page_title": "Dashboard | DAEMON-ONE",
-            "domains_count": len(project_apps),
-            "ai_provider": "Gemini" if gemini_configured else "Not Configured",
-            "postgres_port": postgres_port,
-            "redis_port": redis_port,
+            "page_title": "ALMAENG | 영양제 성분 비교 서비스",
         },
     )
 

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "자주 묻는 질문" %} | ALMAENG{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12 max-w-4xl">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+        ❓ {% trans "자주 묻는 질문" %}
+    </h1>
+
+    <div class="space-y-4">
+        <!-- FAQ 1 -->
+        <details class="group p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <summary class="flex justify-between items-center cursor-pointer font-medium text-gray-900 dark:text-white">
+                {% trans "ALMAENG은 무료인가요?" %}
+                <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">
+                {% trans "네, ALMAENG의 기본 기능은 무료로 이용하실 수 있습니다. 영양제 검색, 성분 비교, AI 추천 등 핵심 기능을 무료로 제공합니다." %}
+            </p>
+        </details>
+
+        <!-- FAQ 2 -->
+        <details class="group p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <summary class="flex justify-between items-center cursor-pointer font-medium text-gray-900 dark:text-white">
+                {% trans "어떤 영양제를 비교할 수 있나요?" %}
+                <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">
+                {% trans "비타민, 미네랄, 오메가-3, 프로바이오틱스 등 대부분의 건강기능식품을 비교할 수 있습니다. 라벨 스캔 기능을 통해 직접 성분을 입력할 수도 있습니다." %}
+            </p>
+        </details>
+
+        <!-- FAQ 3 -->
+        <details class="group p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <summary class="flex justify-between items-center cursor-pointer font-medium text-gray-900 dark:text-white">
+                {% trans "가격 정보는 얼마나 자주 업데이트되나요?" %}
+                <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">
+                {% trans "가격 정보는 매일 자동으로 업데이트됩니다. iHerb, 쿠팡, 네이버 등 주요 플랫폼의 가격을 추적합니다." %}
+            </p>
+        </details>
+
+        <!-- FAQ 4 -->
+        <details class="group p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <summary class="flex justify-between items-center cursor-pointer font-medium text-gray-900 dark:text-white">
+                {% trans "AI 추천은 어떻게 작동하나요?" %}
+                <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">
+                {% trans "건강 설문을 통해 수면, 피로, 스트레스 등 개인의 건강 상태를 파악하고, AI가 적합한 영양제를 추천해드립니다. 의료 조언을 대체하지 않으며, 참고용으로만
+                활용해주세요." %}
+            </p>
+        </details>
+
+        <!-- FAQ 5 -->
+        <details class="group p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <summary class="flex justify-between items-center cursor-pointer font-medium text-gray-900 dark:text-white">
+                {% trans "캐치는 누구인가요?" %}
+                <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">
+                {% trans "캐치는 ALMAENG의 AI 상담 캐릭터입니다! 🐤 영양제에 대한 궁금증이 있으시면 언제든지 캐치에게 물어보세요." %}
+            </p>
+        </details>
+    </div>
+</div>
+{% endblock %}

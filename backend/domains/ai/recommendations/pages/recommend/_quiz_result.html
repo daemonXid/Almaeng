@@ -1,0 +1,43 @@
+{% load i18n %}
+
+{% if recommendations %}
+<div
+    class="p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-800/30">
+    <h2 class="text-lg font-semibold text-emerald-700 dark:text-emerald-300 mb-4">
+        ✨ {% trans "맞춤 추천 결과" %}
+    </h2>
+
+    <div class="space-y-4">
+        {% for rec in recommendations %}
+        <div class="p-4 rounded-xl bg-white dark:bg-gray-800">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="font-medium text-gray-900 dark:text-white">{{ rec.category }}</h3>
+                <span
+                    class="px-2 py-1 text-xs rounded-full
+                             {% if rec.priority == 'high' %}bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400
+                             {% else %}bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400{% endif %}">
+                    {{ rec.priority }}
+                </span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                {% for product in rec.products %}
+                <span
+                    class="px-3 py-1 text-sm rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
+                    💊 {{ product }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'supplements:search' %}" class="block mt-6 text-center px-6 py-3 rounded-xl bg-emerald-500 text-white font-medium
+              hover:bg-emerald-600 transition-colors">
+        🔍 {% trans "추천 영양제 검색하기" %}
+    </a>
+</div>
+{% else %}
+<div class="p-6 rounded-2xl bg-gray-100 dark:bg-gray-800 text-center text-gray-500">
+    <p>{% trans "해당하는 항목이 없습니다. 다른 옵션을 선택해주세요." %}</p>
+</div>
+{% endif %}

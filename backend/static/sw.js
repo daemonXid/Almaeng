@@ -1,4 +1,4 @@
-// 😈 DAEMON-ONE Service Worker
+// 😈 ALMAENG Service Worker
 // Basic caching strategy for PWA support
 
 const CACHE_NAME = 'daemon-one-cache';
@@ -76,4 +76,4 @@ self.addEventListener('fetch', (event) => {
     );
 });
 
-console.log('😈 DAEMON-ONE Service Worker loaded');
+console.log('😈 ALMAENG Service Worker loaded');

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "결제" %} | ALMAENG{% endblock %}
+
+{% block extra_head %}
+<!-- Toss Payments SDK -->
+<script src="https://js.tosspayments.com/v1/payment"></script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+        💳 {% trans "결제하기" %}
+    </h1>
+
+    <!-- Order Summary -->
+    <div class="mb-8 p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <h2 class="font-semibold text-gray-900 dark:text-white mb-4">{% trans "주문 상품" %}</h2>
+        <div class="space-y-3">
+            {% for item in cart.items.all %}
+            <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">
+                    {% trans "영양제" %} #{{ item.supplement_id }} × {{ item.quantity }}
+                </span>
+                <span class="font-medium text-gray-900 dark:text-white">
+                    ₩{{ item.subtotal|floatformat:0 }}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        <hr class="my-4 border-gray-200 dark:border-gray-700">
+        <div class="flex justify-between">
+            <span class="font-semibold text-gray-900 dark:text-white">{% trans "총 결제금액" %}</span>
+            <span id="total-amount" class="text-xl font-bold text-emerald-600">₩{{ cart.total_price|floatformat:0
+                }}</span>
+        </div>
+    </div>
+
+    <!-- Shipping Info -->
+    <div class="mb-8 p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <h2 class="font-semibold text-gray-900 dark:text-white mb-4">{% trans "배송 정보" %}</h2>
+        <div class="space-y-4">
+            <input type="text" id="shipping-name" placeholder="{% trans '받는 분' %}"
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+            <input type="tel" id="shipping-phone" placeholder="{% trans '연락처' %}"
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+            <input type="text" id="shipping-address" placeholder="{% trans '배송 주소' %}"
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+        </div>
+    </div>
+
+    <!-- Payment Button -->
+    <button id="payment-button"
+        class="w-full py-4 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg">
+        💳 {% trans "토스페이로 결제하기" %}
+    </button>
+</div>
+
+<script>
+    (function () {
+        const clientKey = "{{ toss_client_key|escapejs }}";
+        const tossPayments = TossPayments(clientKey);
+        const totalAmount = parseInt("{{ cart.total_price|default:0 }}") || 0;
+        const totalItems = parseInt("{{ cart.total_items|default:0 }}") || 0;
+
+        document.getElementById("payment-button").addEventListener("click", function () {
+            const orderId = "ORDER_" + Date.now();
+            const customerName = document.getElementById("shipping-name").value || "고객";
+
+            tossPayments.requestPayment("카드", {
+                amount: totalAmount,
+                orderId: orderId,
+                orderName: "ALMAENG 영양제 " + totalItems + "건",
+                customerName: customerName,
+                successUrl: window.location.origin + "/payments/confirm/",
+                failUrl: window.location.origin + "/payments/fail/"
+            });
+        });
+    })();
+</script>
+{% endblock %}

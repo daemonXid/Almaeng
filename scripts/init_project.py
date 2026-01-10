@@ -1,7 +1,7 @@
 import argparse
+import os
 import random
 import secrets
-import os
 import shutil
 import stat
 import subprocess
@@ -257,8 +257,12 @@ def main():
         "backend/config/settings.py",
         "backend/config/urls.py",
         "backend/tests.py",
-        # Meta & Templates
+        # Static Assets (Branding)
+        "backend/static/sw.js",
+        "backend/static/js/vendor-entry.js",
         "backend/static/manifest.json",
+        # Templates (Branding)
+        "backend/templates/base.html",
         "backend/templates/_header.html",
         "backend/templates/_footer.html",
         "backend/templates/_metadata.html",

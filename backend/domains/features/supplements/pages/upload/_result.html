@@ -1,0 +1,38 @@
+<!-- OCR Analysis Result Partial -->
+<div class="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+    <div class="flex items-center gap-3 mb-6">
+        <span class="text-3xl">✅</span>
+        <div>
+            <h3 class="font-semibold text-gray-900 dark:text-white">분석 완료!</h3>
+            <p class="text-sm text-gray-500">{{ filename }}</p>
+        </div>
+    </div>
+
+    <!-- Extracted Ingredients -->
+    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-4">
+        📋 추출된 성분 ({{ ingredients|length }}개)
+    </h4>
+
+    <div class="space-y-3">
+        {% for ingredient in ingredients %}
+        <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
+            <span class="font-medium text-gray-900 dark:text-white">{{ ingredient.name }}</span>
+            <span class="text-emerald-600 dark:text-emerald-400">
+                {{ ingredient.amount }} {{ ingredient.unit }}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Actions -->
+    <div class="flex gap-3 mt-6">
+        <button class="flex-1 px-4 py-3 rounded-xl bg-emerald-500 text-white font-medium
+                       hover:bg-emerald-600 transition-colors">
+            💾 이 제품 저장하기
+        </button>
+        <button class="flex-1 px-4 py-3 rounded-xl bg-sky-500 text-white font-medium
+                       hover:bg-sky-600 transition-colors">
+            🔍 유사 제품 찾기
+        </button>
+    </div>
+</div>

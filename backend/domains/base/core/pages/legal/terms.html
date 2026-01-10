@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "이용약관" %} | ALMAENG{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12 max-w-4xl">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+        📜 {% trans "이용약관" %}
+    </h1>
+
+    <div class="prose prose-gray dark:prose-invert max-w-none space-y-8">
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "제1조 (목적)" %}</h2>
+            <p class="text-gray-600 dark:text-gray-400">
+                {% trans "이 약관은 ALMAENG(이하 '회사')이 제공하는 영양제 성분 비교 서비스(이하 '서비스')의 이용 조건 및 절차, 회사와 이용자의 권리, 의무, 책임사항 등을
+                규정함을 목적으로 합니다." %}
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "제2조 (정의)" %}</h2>
+            <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2">
+                <li>{% trans "'서비스'란 회사가 제공하는 영양제 검색, 성분 비교, 가격 추적, AI 추천 등의 기능을 말합니다." %}</li>
+                <li>{% trans "'이용자'란 본 약관에 동의하고 서비스를 이용하는 자를 말합니다." %}</li>
+                <li>{% trans "'회원'이란 회사에 개인정보를 제공하고 회원등록을 한 자를 말합니다." %}</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "제3조 (서비스의 제공)" %}</h2>
+            <p class="text-gray-600 dark:text-gray-400">
+                {% trans "회사는 다음의 서비스를 제공합니다." %}
+            </p>
+            <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 space-y-2 mt-2">
+                <li>{% trans "영양제 성분 정보 검색 및 비교" %}</li>
+                <li>{% trans "라벨 이미지 OCR 분석" %}</li>
+                <li>{% trans "멀티 플랫폼 가격 비교 및 추적" %}</li>
+                <li>{% trans "AI 기반 영양제 추천" %}</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "제4조 (면책조항)" %}</h2>
+            <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                <p class="text-amber-800 dark:text-amber-200">
+                    {% trans "본 서비스에서 제공하는 정보는 참고용이며 의료 조언을 대체하지 않습니다. 영양제 섭취 전 반드시 전문 의료인과 상담하시기 바랍니다." %}
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{% trans "제5조 (약관의 변경)" %}</h2>
+            <p class="text-gray-600 dark:text-gray-400">
+                {% trans "회사는 필요한 경우 약관을 변경할 수 있으며, 변경된 약관은 서비스 내 공지사항을 통해 공지합니다." %}
+            </p>
+        </section>
+
+        <p class="text-sm text-gray-500 dark:text-gray-500 pt-8 border-t border-gray-200 dark:border-gray-700">
+            {% trans "시행일: 2026년 1월 1일" %}
+        </p>
+    </div>
+</div>
+{% endblock %}

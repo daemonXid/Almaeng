@@ -28,8 +28,20 @@ urlpatterns = [
     path("health/", include("domains.base.health.urls")),
     # 🤖 AI Chatbot - Project-aware AI assistant
     path("chatbot/", include("domains.ai.service.chatbot.urls")),
+    # 🎯 AI Recommendations - Personalized supplement suggestions
+    path("recommend/", include("domains.ai.recommendations.urls")),
     # 📊 Analytics domain
     path("analytics/", include("domains.base.analytics.urls")),
+    # 💊 Supplements - Products, ingredients, OCR
+    path("supplements/", include("domains.features.supplements.urls")),
+    # 💰 Prices - Price tracking, history, alerts
+    path("prices/", include("domains.features.prices.urls")),
+    # 🛒 Cart - Shopping cart
+    path("cart/", include("domains.features.cart.urls")),
+    # ❤️ Wishlist - Favorites
+    path("wishlist/", include("domains.features.wishlist.urls")),
+    # 💳 Payments - Toss checkout
+    path("payments/", include("domains.features.payments.urls")),
     # Admin
     path("admin/", admin.site.urls),
     # External API (Ninja)
