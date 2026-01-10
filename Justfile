@@ -211,7 +211,7 @@ static:
 
 # Show all auto-discovered domains
 domains:
-    @uv run python backend/manage.py shell -c "from django.conf import settings; print('\n'.join(settings.PROJECT_APPS))"
+    uv run python scripts/sync_project.py --list-domains
 
 # Create a new domain
 new-domain name:

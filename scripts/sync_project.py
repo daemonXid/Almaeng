@@ -112,9 +112,21 @@ def sync_readme_inventory(domains):
 
 
 def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Sync DAEMON project metadata")
+    parser.add_argument("--list-domains", action="store_true", help="List active domains and exit")
+    args = parser.parse_args()
+
+    domains = get_active_domains()
+
+    if args.list_domains:
+        for d in domains:
+            print(d)
+        return
+
     print("😈 DAEMON Project Synchronization...")
     slug = get_project_slug()
-    domains = get_active_domains()
 
     print(f"Slug: {slug}")
     print(f"Active Domains: {', '.join(domains)}")
