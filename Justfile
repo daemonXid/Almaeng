@@ -201,9 +201,9 @@ analyze:
 
 # --- 🛠️ Utilities ---
 
-# Terminal UI dashboard
-tui:
-    uv run python backend/manage.py tui
+# Show all registered URLs
+show-urls:
+    uv run python backend/manage.py show_urls
 
 # Collect static files
 static:

@@ -15,7 +15,9 @@ def setup_argparse():
         "--template-name", default="almaeng", help="The name of the template being used (default: almaeng)"
     )
     parser.add_argument("--skip-git", action="store_true", help="Skip Git initialization")
-    parser.add_argument("--reset-git", action="store_true", help="Delete existing .git and reinitialize (default: keep existing)")
+    parser.add_argument(
+        "--reset-git", action="store_true", help="Delete existing .git and reinitialize (default: keep existing)"
+    )
     return parser.parse_args()
 
 
@@ -160,7 +162,7 @@ def init_git(base_dir, skip_git=False, reset_git=False):
                 print("📦 Keeping existing .git directory (use --reset-git to reinitialize)")
                 subprocess.run(["git", "add", "."], cwd=base_dir, check=True, capture_output=True)
                 subprocess.run(
-                    ["git", "commit", "-m", f"chore: initialize project with new name"],
+                    ["git", "commit", "-m", "chore: initialize project with new name"],
                     cwd=base_dir,
                     check=False,  # May fail if no changes
                     capture_output=True,

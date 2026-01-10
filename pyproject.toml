@@ -137,7 +137,6 @@ dev = [
     "model-bakery",             # Test Data Factory
     "Pillow",                   # Image Processing (tests)
     "respx",                    # HTTP Mocking
-
     # --- Debugging & Profiling ---
     "kolo",                     # Visual Profiler
     "django-debug-toolbar",     # Debug Toolbar
@@ -146,14 +145,12 @@ dev = [
     "django-tui",               # Terminal UI
     "django-typer",             # Typed CLI Commands
     "ipython",                  # Enhanced Shell
-
     # --- Code Quality ---
     "ruff",                     # Linter + Formatter
     "pre-commit",               # Git Hooks
     "mypy",                     # Static Type Checker
     "django-stubs",             # Django Type Stubs
     "typeguard",                # Runtime Type Checking
-
     # --- Documentation ---
     "mkdocs-material",          # Documentation Site
 ]
