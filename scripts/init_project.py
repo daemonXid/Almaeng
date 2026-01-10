@@ -15,6 +15,7 @@ def setup_argparse():
         "--template-name", default="almaeng", help="The name of the template being used (default: almaeng)"
     )
     parser.add_argument("--skip-git", action="store_true", help="Skip Git initialization")
+    parser.add_argument("--reset-git", action="store_true", help="Delete existing .git and reinitialize (default: keep existing)")
     return parser.parse_args()
 
 
@@ -130,8 +131,8 @@ def update_readme(base_dir, project_name):
     print("✅ Updated README.md with project name")
 
 
-def init_git(base_dir, skip_git=False):
-    """Initialize fresh Git repository."""
+def init_git(base_dir, skip_git=False, reset_git=False):
+    """Initialize fresh Git repository or keep existing."""
     if skip_git:
         print("⏭️  Skipping Git initialization (--skip-git)")
         return
@@ -139,23 +140,45 @@ def init_git(base_dir, skip_git=False):
     git_dir = base_dir / ".git"
 
     try:
-        # Remove existing .git directory
         if git_dir.exists():
-            shutil.rmtree(git_dir, onexc=handle_remove_readonly)
-            print("🗑️  Removed existing .git directory")
-
-        # Initialize new repository
-        subprocess.run(["git", "init"], cwd=base_dir, check=True, capture_output=True)
-        subprocess.run(["git", "add", "."], cwd=base_dir, check=True, capture_output=True)
-        subprocess.run(
-            ["git", "commit", "-m", "Initial commit from ALMAENG template"],
-            cwd=base_dir,
-            check=True,
-            capture_output=True,
-        )
-        print("✅ Initialized fresh Git repository with initial commit")
+            if reset_git:
+                # Only remove .git if explicitly requested
+                shutil.rmtree(git_dir, onexc=handle_remove_readonly)
+                print("🗑️  Removed existing .git directory (--reset-git)")
+                # Initialize new repository
+                subprocess.run(["git", "init"], cwd=base_dir, check=True, capture_output=True)
+                subprocess.run(["git", "add", "."], cwd=base_dir, check=True, capture_output=True)
+                subprocess.run(
+                    ["git", "commit", "-m", "Initial commit from ALMAENG template"],
+                    cwd=base_dir,
+                    check=True,
+                    capture_output=True,
+                )
+                print("✅ Initialized fresh Git repository with initial commit")
+            else:
+                # Keep existing .git, just stage and commit changes
+                print("📦 Keeping existing .git directory (use --reset-git to reinitialize)")
+                subprocess.run(["git", "add", "."], cwd=base_dir, check=True, capture_output=True)
+                subprocess.run(
+                    ["git", "commit", "-m", f"chore: initialize project with new name"],
+                    cwd=base_dir,
+                    check=False,  # May fail if no changes
+                    capture_output=True,
+                )
+                print("✅ Staged and committed project changes")
+        else:
+            # No .git exists, create new
+            subprocess.run(["git", "init"], cwd=base_dir, check=True, capture_output=True)
+            subprocess.run(["git", "add", "."], cwd=base_dir, check=True, capture_output=True)
+            subprocess.run(
+                ["git", "commit", "-m", "Initial commit from ALMAENG template"],
+                cwd=base_dir,
+                check=True,
+                capture_output=True,
+            )
+            print("✅ Initialized fresh Git repository with initial commit")
     except subprocess.CalledProcessError as e:
-        print(f"⚠️  Git initialization failed: {e}")
+        print(f"⚠️  Git operation failed: {e}")
     except FileNotFoundError:
         print("⚠️  Git not found, skipping Git initialization")
 
@@ -316,7 +339,7 @@ def main():
 
     # Initialize Git
     print("🎯 Initializing Git repository...")
-    init_git(base_dir, args.skip_git)
+    init_git(base_dir, args.skip_git, args.reset_git)
 
     print("-" * 60)
     print("✨ Project initialization complete!")
