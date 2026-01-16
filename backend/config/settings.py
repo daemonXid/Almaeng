@@ -142,6 +142,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     "compressor",
     "storages",
 ]
@@ -269,6 +270,21 @@ ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 
 # For development, print emails to console
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# ============================================
+# 🌐 Social Login (Google OAuth)
+# ============================================
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": env("GOOGLE_CLIENT_ID", default=""),
+            "secret": env("GOOGLE_CLIENT_SECRET", default=""),
+            "key": "",
+        },
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+    }
+}
 
 # 👤 Identity
 AUTH_USER_MODEL = "daemon_auth.User"

@@ -217,7 +217,7 @@ target/
 
 # Node
 node_modules/
-bun.lock
+# Note: bun.lock SHOULD be committed for reproducible Docker builds
 
 # Static files (generated)
 static_root/
