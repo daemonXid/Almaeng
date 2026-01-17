@@ -1,12 +1,12 @@
 """
-🌐 daemon Views - HTMX Endpoints
+🌐 Core Home Views - HTMX Endpoints
 
 This module provides HTMX-friendly views that return HTML fragments.
 Following the HATEOAS principle: Server returns HTML, not JSON.
 
 Usage:
     # In urls.py
-    from domains.daemon.views import home, htmx_counter
+    from domains.base.core.pages.home.views import home, htmx_counter
 
     urlpatterns = [
         path("", home, name="home"),

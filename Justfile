@@ -105,7 +105,7 @@ deploy-logs:
 # --- 🌐 Deployment (GHCR + Coolify) ---
 
 # Check deployed server health
-status url="https://almaeng.daemonxid.com":
+status url="https://almaeng.daemonx.cc":
     @echo "🔍 Checking deployment status..."
     @curl -sf {{url}}/health/live/ && echo "✅ Server is healthy!" || echo "❌ Server unreachable or unhealthy"
 
@@ -119,6 +119,7 @@ deploy-info:
     @echo "   📦 Registry:    ghcr.io/daemonxid/almaeng"
     @echo "   🚀 Platform:    Coolify (Self-hosted PaaS)"
     @echo "   🖥️  Server:      Hetzner CPX32 (4 vCPU, 8GB RAM)"
+    @echo "   🌐 Domain:      almaeng.daemonx.cc"
     @echo "   🌐 CDN/DNS:     Cloudflare"
     @echo ""
     @echo "   📋 Pipeline Flow:"
@@ -139,7 +140,7 @@ deploy-info:
 # View remote logs (Coolify dashboard link)
 logs-remote:
     @echo "📋 Remote logs are available in Coolify Dashboard:"
-    @echo "   https://coolify.daemonxid.com"
+    @echo "   https://coolify.daemonx.cc"
     @echo ""
     @echo "   Navigate to: Applications > almaeng > Logs"
 

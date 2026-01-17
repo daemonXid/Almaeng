@@ -149,8 +149,8 @@ Coolify Dashboard에서 설정해야 할 필수 환경 변수:
 # Production Security
 DEBUG=false
 SECRET_KEY=<strong-random-key>
-ALLOWED_HOSTS=almaeng.daemonxid.com
-CSRF_TRUSTED_ORIGINS=https://almaeng.daemonxid.com
+ALLOWED_HOSTS=almaeng.daemonx.cc
+CSRF_TRUSTED_ORIGINS=https://almaeng.daemonx.cc
 
 # Database (Coolify Internal Network)
 POSTGRES_HOST=postgres
