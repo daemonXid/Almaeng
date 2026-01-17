@@ -102,6 +102,47 @@ deploy-down:
 deploy-logs:
     docker compose -f docker-compose.prod.yml logs -f
 
+# --- 🌐 Deployment (GHCR + Coolify) ---
+
+# Check deployed server health
+status url="https://almaeng.daemonxid.com":
+    @echo "🔍 Checking deployment status..."
+    @curl -sf {{url}}/health/live/ && echo "✅ Server is healthy!" || echo "❌ Server unreachable or unhealthy"
+
+# Show deployment pipeline info
+deploy-info:
+    @echo ""
+    @echo "😈 ═══════════════════════════════════════════════════════════"
+    @echo "   ALMAENG Deployment Pipeline (Infrastructure-First)"
+    @echo "═══════════════════════════════════════════════════════════"
+    @echo ""
+    @echo "   📦 Registry:    ghcr.io/daemonxid/almaeng"
+    @echo "   🚀 Platform:    Coolify (Self-hosted PaaS)"
+    @echo "   🖥️  Server:      Hetzner CPX32 (4 vCPU, 8GB RAM)"
+    @echo "   🌐 CDN/DNS:     Cloudflare"
+    @echo ""
+    @echo "   📋 Pipeline Flow:"
+    @echo "   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐"
+    @echo "   │  git push   │ -> │   GitHub    │ -> │    GHCR     │"
+    @echo "   │   (main)    │    │   Actions   │    │   (image)   │"
+    @echo "   └─────────────┘    └─────────────┘    └─────────────┘"
+    @echo "                                                │"
+    @echo "                                                v"
+    @echo "   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐"
+    @echo "   │  Cloudflare │ <- │   Hetzner   │ <- │   Coolify   │"
+    @echo "   │  (CDN/SSL)  │    │   (VPS)     │    │   (Deploy)  │"
+    @echo "   └─────────────┘    └─────────────┘    └─────────────┘"
+    @echo ""
+    @echo "═══════════════════════════════════════════════════════════"
+    @echo ""
+
+# View remote logs (Coolify dashboard link)
+logs-remote:
+    @echo "📋 Remote logs are available in Coolify Dashboard:"
+    @echo "   https://coolify.daemonxid.com"
+    @echo ""
+    @echo "   Navigate to: Applications > almaeng > Logs"
+
 # --- 🐳 Infrastructure ---
 
 # Start Docker infrastructure (Postgres, Redis)

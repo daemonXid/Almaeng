@@ -71,3 +71,6 @@ docker-compose.yml
 Justfile
 *.example
 requirements.txt
+
+# Personal System Prompt (AI context, never commit)
+DAEMON-prompt.md

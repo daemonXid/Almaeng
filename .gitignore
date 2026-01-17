@@ -240,4 +240,4 @@ secrets/
 credentials/
 
 # Personal System Prompt (optional, remove if want to share)
-# DAEMON-prompt.md
+DAEMON-prompt.md

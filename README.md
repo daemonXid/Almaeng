@@ -105,6 +105,66 @@ GEMINI_API_KEY=xxx
 
 ---
 
+## 🚀 Deployment (Infrastructure-First)
+
+> **"Walking Skeleton"** — 배포 인프라를 먼저 구축하고, 비즈니스 로직을 채워넣는 전략
+
+### Pipeline Architecture
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  git push   │ -> │   GitHub    │ -> │    GHCR     │
+│   (main)    │    │   Actions   │    │   (image)   │
+└─────────────┘    └─────────────┘    └─────────────┘
+                                              │
+                                              v
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  Cloudflare │ <- │   Hetzner   │ <- │   Coolify   │
+│  (CDN/SSL)  │    │   CPX32     │    │   (Deploy)  │
+└─────────────┘    └─────────────┘    └─────────────┘
+```
+
+### Infrastructure Stack
+
+| Component | Service |
+|:---|:---|
+| **Registry** | GitHub Container Registry (GHCR) |
+| **CI/CD** | GitHub Actions (Build) → Coolify (Deploy) |
+| **Server** | Hetzner CPX32 (4 vCPU, 8GB RAM) |
+| **CDN/DNS** | Cloudflare |
+
+### Deployment Commands
+
+```bash
+just status        # 배포된 서버 상태 확인
+just deploy-info   # 배포 파이프라인 정보 출력
+just logs-remote   # Coolify 로그 대시보드 안내
+```
+
+### Coolify Environment Variables
+
+Coolify Dashboard에서 설정해야 할 필수 환경 변수:
+
+```env
+# Production Security
+DEBUG=false
+SECRET_KEY=<strong-random-key>
+ALLOWED_HOSTS=almaeng.daemonxid.com
+CSRF_TRUSTED_ORIGINS=https://almaeng.daemonxid.com
+
+# Database (Coolify Internal Network)
+POSTGRES_HOST=postgres
+DATABASE_URL=postgresql://user:pass@postgres:5432/almaeng
+
+# Redis (Coolify Internal Network)
+REDIS_HOST=redis
+
+# External APIs
+GEMINI_API_KEY=<your-key>
+```
+
+---
+
 <!-- DOMAINS_START -->
 
 ### 📦 Active Domains (15)
