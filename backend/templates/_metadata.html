@@ -9,24 +9,28 @@
 <!-- Primary Meta Tags -->
 <title>{% block title %}{{ site.name|default:'ALMAENG' }}{% endblock %}</title>
 <meta name="title" content="{% block seo_title %}{{ site.name|default:'ALMAENG' }}{% endblock %}">
-<meta name="description" content="{% block meta_description %}{{ site.description|default:'AI-First Django Template with Domain-Driven Architecture' }}{% endblock %}">
+<meta name="description"
+    content="{% block meta_description %}{{ site.description|default:'AI-First Django Template with Domain-Driven Architecture' }}{% endblock %}">
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:url" content="{% if request %}{{ request.build_absolute_uri|default:'' }}{% endif %}">
 <meta property="og:title" content="{% block og_title %}{{ site.name|default:'ALMAENG' }}{% endblock %}">
-<meta property="og:description" content="{% block og_description %}{{ site.description|default:'AI-First Django Template' }}{% endblock %}">
+<meta property="og:description"
+    content="{% block og_description %}{{ site.description|default:'AI-First Django Template' }}{% endblock %}">
 <meta property="og:image" content="{{ site.og_image|default:'/static/img/og-image.png' }}">
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="{{ request.build_absolute_uri }}">
+<meta property="twitter:url" content="{% if request %}{{ request.build_absolute_uri|default:'' }}{% endif %}">
 <meta property="twitter:title" content="{% block twitter_title %}{{ site.name|default:'ALMAENG' }}{% endblock %}">
-<meta property="twitter:description" content="{% block twitter_description %}{{ site.description|default:'AI-First Django Template' }}{% endblock %}">
+<meta property="twitter:description"
+    content="{% block twitter_description %}{{ site.description|default:'AI-First Django Template' }}{% endblock %}">
 <meta property="twitter:image" content="{{ site.og_image|default:'/static/img/og-image.png' }}">
 
 <!-- Favicons -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>😈</text></svg>">
+<link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>😈</text></svg>">
 <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
 
 <!-- PWA -->
@@ -38,7 +42,9 @@
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
 
 <!-- Service Worker Registration -->
 <script>
