@@ -84,7 +84,7 @@ def complete(
 
     Args:
         prompt: Input prompt
-        model: Optional model name (default: gemini-2.0-flash)
+        model: Optional model name (default: gemini-2.0-flash-exp)
         temperature: Creativity (0.0-1.0)
 
     Returns:

@@ -163,7 +163,7 @@ def get_ai_recommendation_report(quiz_data: dict) -> RecommendationResult:
 (주의사항)
 """
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.0-flash-exp",
             contents=prompt,
         )
         report = response.text.strip()
@@ -178,8 +178,8 @@ def get_ai_recommendation_report(quiz_data: dict) -> RecommendationResult:
             categories=categories,
         )
 
-    except Exception as e:
         # AI 실패시 규칙 기반으로 폴백
+        print(f"❌ Gemini API Error: {e}")  # Debug log
         return _generate_rule_based_report(age, gender_text, symptoms)
 
 
@@ -279,12 +279,13 @@ def get_ai_ingredient_analysis(ingredients: list[str]) -> str:
 간결하게 3-4줄로 답변해주세요.
 """
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.0-flash-exp",
             contents=prompt,
         )
         return response.text.strip()
 
     except Exception as e:
+        print(f"❌ Gemini Ingredient Analysis Error: {e}")
         return f"분석 중 오류가 발생했습니다: {e!s}"
 
 

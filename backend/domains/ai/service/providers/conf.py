@@ -19,7 +19,7 @@ class GenAISettings:
     GEMINI_API_KEY: str = ""
 
     # Model defaults
-    DEFAULT_MODEL: str = "gemini-2.0-flash"
+    DEFAULT_MODEL: str = "gemini-2.0-flash-exp"
     DEFAULT_TEMPERATURE: float = 0.7
     DEFAULT_MAX_TOKENS: int = 2048
 

@@ -71,7 +71,7 @@ class VisionService:
             raise ValueError("GEMINI_API_KEY not configured")
 
         self.client = genai.Client(api_key=api_key)
-        self.model = "gemini-2.0-flash"
+        self.model = "gemini-2.0-flash-exp"
 
     def analyze_label(self, image_path: str | Path) -> LabelAnalysisResult:
         """이미지 파일에서 라벨 분석"""

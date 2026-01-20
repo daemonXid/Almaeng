@@ -35,6 +35,6 @@ def get_pydantic_ai_model() -> GeminiModel:
         raise ValueError("GEMINI_API_KEY is required")
 
     return GeminiModel(
-        model_name=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+        model_name=os.getenv("GEMINI_MODEL", "gemini-2.0-flash-exp"),
         api_key=api_key,
     )

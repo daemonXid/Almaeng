@@ -51,6 +51,27 @@
                     product.functionality|default:"상세 설명이 없는 제품입니다."|format_functionality }}</p>
             </div>
 
+            <!-- JSON-LD Structured Data -->
+            <script type="application/ld+json">
+            {
+              "@context": "https://schema.org/", 
+              "@type": "Product", 
+              "name": "{{ product.product_name }}",
+              "image": "",
+              "description": "{{ product.functionality|default:'상세 설명이 없는 제품입니다.'|escapejs }}",
+              "brand": {
+                "@type": "Brand",
+                "name": "{{ product.company_name }}"
+              },
+              "sku": "{{ product.id }}",
+              "identifier": {
+                "@type": "PropertyValue",
+                "propertyID": "license_number",
+                "value": "{{ product.license_number }}"
+              }
+            }
+            </script>
+
             <!-- Parsed Ingredients (Badges) -->
             {% if parsed_ingredients %}
             <div

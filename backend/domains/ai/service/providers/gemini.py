@@ -5,7 +5,7 @@ Uses Google's Gemini API with Free Tier support.
 Implements the AIProviderBase interface.
 
 Model Options:
-- gemini-2.0-flash (default, fast, free tier)
+- gemini-2.0-flash-exp (default, fast, free tier)
 - gemini-1.5-pro (higher quality)
 - gemini-1.5-flash (balanced)
 
@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T", bound=BaseModel)
 
 # Default model for Gemini
-DEFAULT_MODEL = "gemini-2.0-flash"
+DEFAULT_MODEL = "gemini-2.0-flash-exp"
 
 
 class GeminiProvider(AIProviderBase):
@@ -83,7 +83,7 @@ class GeminiProvider(AIProviderBase):
 
         Args:
             prompt: Input prompt
-            model: Model name (default: gemini-2.0-flash)
+            model: Model name (default: gemini-2.0-flash-exp)
             temperature: Creativity (0.0-1.0)
             max_tokens: Maximum response length
 

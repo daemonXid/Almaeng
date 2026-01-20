@@ -66,7 +66,7 @@ def sitemap_xml(request: HttpRequest) -> HttpResponse:
   </url>""")
 
     # Dynamic supplement pages (limit to 1000 for performance)
-    supplements = MFDSHealthFood.objects.values_list("id", flat=True)[:1000]
+    supplements = MFDSHealthFood.objects.values_list("id", flat=True)[:50000]
     for supp_id in supplements:
         urls.append(f"""  <url>
     <loc>{base_url}/supplements/{supp_id}/</loc>
