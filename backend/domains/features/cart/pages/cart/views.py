@@ -21,6 +21,9 @@ def _get_cart(request: HttpRequest):
     return get_or_create_cart(session_key=request.session.session_key)
 
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def cart_page(request: HttpRequest) -> HttpResponse:
     """장바구니 페이지"""
     cart = _get_cart(request)

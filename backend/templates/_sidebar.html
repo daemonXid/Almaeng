@@ -29,7 +29,7 @@
         </div>
 
         <a href="{% url 'supplements:search' %}"
-            class="flex items-center gap-4 px-3 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500 transition-all whitespace-nowrap"
+            class="flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap {% if 'supplements' in request.resolver_match.app_name %}bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500{% endif %}"
             title="{% trans '영양제 검색' %}">
             <span class="text-2xl shrink-0 text-center w-6">💊</span>
             <span class="font-medium transition-opacity duration-300"
@@ -39,7 +39,7 @@
         </a>
 
         <a href="{% url 'supplements:compare' %}"
-            class="flex items-center gap-4 px-3 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500 transition-all whitespace-nowrap"
+            class="flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap {% if 'compare' in request.resolver_match.url_name %}bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500{% endif %}"
             title="{% trans '성분 비교' %}">
             <span class="text-2xl shrink-0 text-center w-6">⚖️</span>
             <span class="font-medium transition-opacity duration-300"
@@ -49,7 +49,7 @@
         </a>
 
         <a href="{% url 'recommendations:home' %}"
-            class="flex items-center gap-4 px-3 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500 transition-all whitespace-nowrap"
+            class="flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap {% if 'recommendations' in request.resolver_match.app_name %}bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500{% endif %}"
             title="{% trans 'AI 추천' %}">
             <span class="text-2xl shrink-0 text-center w-6">🎯</span>
             <span class="font-medium transition-opacity duration-300"
@@ -65,7 +65,7 @@
         </div>
 
         <a href="{% url 'cart:cart' %}"
-            class="flex items-center gap-4 px-3 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500 transition-all whitespace-nowrap"
+            class="flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap {% if 'cart' in request.resolver_match.app_name %}bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500{% endif %}"
             title="{% trans '장바구니' %}">
             <div class="relative shrink-0 w-6 text-center">
                 <span class="text-2xl block">🛒</span>
@@ -80,7 +80,7 @@
         </a>
 
         <a href="{% url 'wishlist:list' %}"
-            class="flex items-center gap-4 px-3 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-rose-500 transition-all whitespace-nowrap"
+            class="flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap {% if 'wishlist' in request.resolver_match.app_name %}bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-rose-500{% endif %}"
             title="{% trans '찜 목록' %}">
             <span class="text-2xl shrink-0 text-center w-6">❤️</span>
             <span class="font-medium transition-opacity duration-300"
@@ -95,7 +95,7 @@
             AI Assistant
         </div>
         <a href="/chatbot/"
-            class="flex items-center gap-4 px-3 py-3 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:text-purple-500 transition-all whitespace-nowrap"
+            class="flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap {% if 'chatbot' in request.resolver_match.app_name %}bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400{% else %}text-gray-600 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:text-purple-500{% endif %}"
             title="{% trans 'AI 상담사 캐치' %}">
             <span class="text-2xl shrink-0 text-center w-6">🐤</span>
             <span class="font-medium transition-opacity duration-300"
