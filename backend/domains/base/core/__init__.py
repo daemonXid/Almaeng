@@ -13,7 +13,6 @@ Contains:
 Usage:
     from domains.daemon.interface import (
         TimestampedModel,
-        SoftDeleteModel,
         domain_event,
         ModuleSettings,
     )
