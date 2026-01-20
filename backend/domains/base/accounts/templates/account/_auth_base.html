@@ -3,6 +3,36 @@
 
 {% block styles %}
 <style>
+    /* Auth Theme Variables */
+    :root {
+        --auth-bg: rgba(255, 255, 255, 0.8);
+        --auth-text: #1f2937;
+        --auth-subtitle: #6b7280;
+        --input-bg: #f9fafb;
+        --input-border: #e5e7eb;
+        --input-text: #111827;
+        --input-placeholder: #9ca3af;
+        --social-bg: #ffffff;
+        --social-border: #e5e7eb;
+        --social-hover: #f3f4f6;
+        --social-text: #374151;
+    }
+
+    .dark {
+        --auth-bg: rgba(30, 41, 59, 0.6);
+        /* var(--surface) equivalent */
+        --auth-text: #f9fafb;
+        --auth-subtitle: #9ca3af;
+        --input-bg: rgba(0, 0, 0, 0.3);
+        --input-border: var(--border);
+        --input-text: #ffffff;
+        --input-placeholder: #64748b;
+        --social-bg: rgba(255, 255, 255, 0.03);
+        --social-border: var(--border);
+        --social-hover: rgba(255, 255, 255, 0.06);
+        --social-text: #ffffff;
+    }
+
     .auth-page {
         min-height: calc(100vh - 72px);
         display: flex;
@@ -11,7 +41,7 @@
         padding: 3rem 1.5rem;
         position: relative;
     }
-    
+
     /* Decorative Elements */
     .auth-page::before {
         content: '';
@@ -26,30 +56,42 @@
         z-index: -1;
         pointer-events: none;
     }
-    
+
     .auth-card {
         width: 100%;
         max-width: 440px;
-        background: var(--surface);
+        background: var(--auth-bg);
         backdrop-filter: blur(20px) saturate(180%);
         -webkit-backdrop-filter: blur(20px) saturate(180%);
         border: 1px solid var(--border);
         border-radius: 2rem;
         padding: 3rem;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        /* Lighter shadow by default */
         animation: cardSlideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-    
-    @keyframes cardSlideUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+
+    .dark .auth-card {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
-    
+
+    @keyframes cardSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     .auth-header {
         text-align: center;
         margin-bottom: 2.5rem;
     }
-    
+
     .auth-logo {
         width: 56px;
         height: 56px;
@@ -64,73 +106,78 @@
         transform: rotate(-5deg);
         box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
     }
-    
+
     .auth-title {
         font-size: 2rem;
         font-weight: 800;
         letter-spacing: -0.03em;
         margin-bottom: 0.5rem;
+        color: var(--auth-text);
     }
-    
+
     .auth-subtitle {
-        color: var(--muted);
+        color: var(--auth-subtitle);
         font-size: 0.95rem;
     }
-    
+
     /* Form Styles */
     .form-group {
         margin-bottom: 1.5rem;
     }
-    
+
     .form-label {
         display: block;
         font-size: 0.85rem;
         font-weight: 600;
-        color: #fff;
+        color: var(--auth-text);
         margin-bottom: 0.5rem;
     }
-    
+
     .form-input {
         width: 100%;
         padding: 0.875rem 1rem;
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid var(--border);
+        background: var(--input-bg);
+        border: 1px solid var(--input-border);
         border-radius: 0.75rem;
-        color: #fff;
+        color: var(--input-text);
         font-size: 0.95rem;
         transition: all 0.2s ease;
     }
-    
+
     .form-input:focus {
         outline: none;
         border-color: var(--accent);
         box-shadow: 0 0 0 3px var(--accent-glow);
+        background: var(--input-bg);
     }
-    
+
     .form-input::placeholder {
-        color: #64748b;
+        color: var(--input-placeholder);
     }
-    
+
     .form-link {
         font-size: 0.8rem;
         color: var(--accent);
         text-decoration: none;
         transition: color 0.2s;
     }
-    .form-link:hover { color: #818cf8; }
-    
+
+    .form-link:hover {
+        color: #818cf8;
+    }
+
     .form-help {
         font-size: 0.75rem;
-        color: var(--muted);
+        color: var(--auth-subtitle);
         margin-top: 0.5rem;
     }
-    
+
     .form-error {
         font-size: 0.8rem;
         color: #f43f5e;
         margin-top: 0.5rem;
     }
-    
+
     .btn-primary {
         width: 100%;
         padding: 1rem;
@@ -144,38 +191,46 @@
         transition: all 0.3s ease;
         margin-top: 0.5rem;
     }
-    
+
     .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     .alert-error {
         background: rgba(244, 63, 94, 0.1);
         border: 1px solid rgba(244, 63, 94, 0.3);
-        color: #fda4af;
+        color: #f43f5e;
+        /* Darker red for light mode visibility */
         padding: 1rem;
         border-radius: 0.75rem;
         font-size: 0.9rem;
         margin-bottom: 1.5rem;
         text-align: center;
     }
-    
+
+    .dark .alert-error {
+        color: #fda4af;
+    }
+
     .auth-footer {
         text-align: center;
         margin-top: 2rem;
         padding-top: 1.5rem;
         border-top: 1px solid var(--border);
         font-size: 0.9rem;
-        color: var(--muted);
+        color: var(--auth-subtitle);
     }
-    
+
     .auth-footer a {
         color: var(--accent);
         text-decoration: none;
         font-weight: 600;
     }
-    .auth-footer a:hover { color: #818cf8; }
+
+    .auth-footer a:hover {
+        color: #818cf8;
+    }
 
     /* Social Login */
     .social-divider {
@@ -183,9 +238,10 @@
         align-items: center;
         gap: 1rem;
         margin: 2rem 0;
-        color: var(--muted);
+        color: var(--auth-subtitle);
         font-size: 0.8rem;
     }
+
     .social-divider::before,
     .social-divider::after {
         content: '';
@@ -193,14 +249,14 @@
         height: 1px;
         background: var(--border);
     }
-    
+
     .social-btn {
         width: 100%;
         padding: 0.875rem;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border);
+        background: var(--social-bg);
+        border: 1px solid var(--social-border);
         border-radius: 0.75rem;
-        color: #fff;
+        color: var(--social-text);
         font-size: 0.9rem;
         font-weight: 600;
         cursor: pointer;
@@ -210,8 +266,9 @@
         justify-content: center;
         gap: 0.75rem;
     }
+
     .social-btn:hover {
-        background: rgba(255, 255, 255, 0.06);
+        background: var(--social-hover);
         border-color: var(--accent);
     }
 </style>
