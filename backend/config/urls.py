@@ -27,6 +27,8 @@ from domains.features.payments.api import router as payments_router
 api.add_router("/payments/", payments_router)
 
 urlpatterns = [
+    # 🔍 SEO - robots.txt, sitemap.xml (must be at root level)
+    path("", include("domains.features.seo.urls")),
     # 😈 Core domain - Home & HTMX endpoints
     path("", include("domains.base.core.urls")),
     # 🏥 Health checks - Kubernetes/Docker/LB probes

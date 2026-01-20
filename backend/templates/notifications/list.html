@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}알림 | ALMAENG{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">🔔 알림</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {% if unread_count %}읽지 않은 알림 {{ unread_count }}개{% else %}모든 알림을 확인했습니다{% endif %}
+            </p>
+        </div>
+        {% if unread_count %}
+        <button hx-post="{% url 'notifications:mark_all_read' %}"
+                hx-target="#notification-list"
+                hx-swap="innerHTML"
+                class="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400">
+            모두 읽음 처리
+        </button>
+        {% endif %}
+    </header>
+
+    <!-- Notification List -->
+    <div id="notification-list" class="space-y-3">
+        {% for notification in notifications %}
+        {% include "notifications/_item.html" %}
+        {% empty %}
+        <div class="text-center py-12">
+            <span class="text-5xl block mb-4">📭</span>
+            <p class="text-gray-500 dark:text-gray-400">알림이 없습니다</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

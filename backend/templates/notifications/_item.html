@@ -1,0 +1,55 @@
+<article class="p-4 rounded-xl border transition-colors
+    {% if notification.is_read %}
+    bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700
+    {% else %}
+    bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800
+    {% endif %}"
+    id="notification-{{ notification.id }}">
+
+    <div class="flex items-start gap-4">
+        <!-- Icon -->
+        <div class="flex-shrink-0 text-2xl">
+            {% if notification.notification_type == 'success' %}✅
+            {% elif notification.notification_type == 'warning' %}⚠️
+            {% elif notification.notification_type == 'error' %}❌
+            {% else %}ℹ️{% endif %}
+        </div>
+
+        <!-- Content -->
+        <div class="flex-1 min-w-0">
+            <h3 class="font-medium text-gray-900 dark:text-white">
+                {{ notification.title }}
+            </h3>
+            {% if notification.message %}
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                {{ notification.message|truncatewords:30 }}
+            </p>
+            {% endif %}
+            <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                {{ notification.created_at|timesince }} 전
+            </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex-shrink-0 flex items-center gap-2">
+            {% if notification.link %}
+            <a href="{{ notification.link }}"
+               class="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 text-sm">
+                보기 →
+            </a>
+            {% endif %}
+
+            {% if not notification.is_read %}
+            <button hx-post="{% url 'notifications:mark_read' notification.id %}"
+                    hx-target="#notification-{{ notification.id }}"
+                    hx-swap="outerHTML"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    title="읽음 처리">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</article>

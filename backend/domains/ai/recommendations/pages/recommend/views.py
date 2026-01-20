@@ -43,12 +43,14 @@ def quiz_page(request: HttpRequest) -> HttpResponse:
 
 
 def quiz_result(request: HttpRequest) -> HttpResponse:
-    """설문 결과 분석 및 표시"""
+    """설문 결과 분석 및 표시 - Gemini AI 연동"""
+    from ...services import get_ai_recommendation_report
+
     if request.method != "POST":
         return redirect("recommendations:quiz")
 
     current_step = int(request.POST.get("current_step", 1))
-    
+
     # Save current step data to session
     step_data = QUIZ_STEPS[current_step - 1]
     for question in step_data["questions"]:
@@ -56,61 +58,35 @@ def quiz_result(request: HttpRequest) -> HttpResponse:
         value = request.POST.get(qid)
         if value:
             request.session[f"quiz_{qid}"] = value
-            
+
     # If not last step, go to next
     if current_step < len(QUIZ_STEPS):
         return redirect(f"{reversed('recommendations:quiz')}?step={current_step + 1}")
 
-    # --- Analysis Logic ---
+    # --- Collect all quiz data ---
     data = {}
     for step in QUIZ_STEPS:
         for q in step["questions"]:
             qid = q["id"]
             data[qid] = request.session.get(f"quiz_{qid}")
 
-    # Generate Report
-    gender = data.get("gender", "unknown")
-    age = int(data.get("age", 0) or 0)
-    
-    analysis_text = []
-    
-    # Header
-    if age > 0:
-        analysis_text.append(f"📌 **{age}세 {get_gender_text(gender)}**님의 건강 분석 결과입니다.")
-        
-    symptoms = []
-    if data.get("q11") == "yes": symptoms.append("만성 피로")
-    if data.get("q12") == "yes": symptoms.append("눈 건강 저하")
-    if data.get("q13") == "yes": symptoms.append("피부 건조")
-    if data.get("q18") == "yes": symptoms.append("관절 통증")
+    # --- AI-powered Analysis ---
+    result = get_ai_recommendation_report(data)
 
-    if symptoms:
-        analysis_text.append(f"\n💡 **주요 불편 증상**: {', '.join(symptoms)}")
-
-    # Recommendation Logic
-    recommendations = []
-    
-    if data.get("q11") == "yes" or data.get("q27") == "yes":
-        recommendations.append("- **비타민 B & 마그네슘**: 에너지 생성과 피로 회복")
-
-    if data.get("q12") == "yes" or data.get("q22") == "yes":
-        recommendations.append("- **오메가3 & 루테인**: 눈 건강과 혈행 개선")
-
-    if data.get("q18") == "yes" or age >= 50:
-        recommendations.append("- **MSM & 칼슘/마그네슘**: 관절 연골 및 뼈 건강")
-
-    if not recommendations:
-        recommendations.append("- **종합비타민**: 기초 영양 밸런스")
-
-    final_report = "\n".join(analysis_text) + "\n\n📋 **추천 영양 성분**:\n" + "\n".join(list(set(recommendations)))
+    # Clear quiz session data
+    for step in QUIZ_STEPS:
+        for q in step["questions"]:
+            request.session.pop(f"quiz_{q['id']}", None)
 
     return render(
         request,
         "recommendations/pages/recommend/_quiz_result.html",
         {
             "page_title": "건강 설문 분석 결과 | ALMAENG",
-            "report": final_report,
-            "user_name": "회원",
+            "report": result.report,
+            "products": result.products,
+            "categories": result.categories,
+            "user_name": request.user.get_full_name() if request.user.is_authenticated else "회원",
         },
     )
 

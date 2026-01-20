@@ -1,6 +1,7 @@
 # ALMAENG 🧬
 
 > **AI-Driven Nutrient Ingredient Comparison & Price Tracker**
+> **43,000+ analyzed products**
 >
 > 영양제 성분을 AI로 분석하고, 동일 성분 구성의 가성비 제품을 찾아주는 서비스
 

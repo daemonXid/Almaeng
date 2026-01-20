@@ -28,11 +28,16 @@ def home(request: HttpRequest) -> HttpResponse:
     """
     ALMAENG Home page - Landing page with hero and features.
     """
+    # Dynamic Stats
+    from domains.features.supplements.models import MFDSHealthFood
+    total_count = MFDSHealthFood.objects.count()
+    
     return render(
         request,
         "core/pages/home/home.html",
         {
             "page_title": "ALMAENG | 영양제 성분 비교 서비스",
+            "total_products_count": total_count,
         },
     )
 

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load i18n humanize %}
+
+{% block title %}관리자 대시보드 | ALMAENG{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <header class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+            📊 관리자 대시보드
+        </h1>
+        <p class="text-gray-500 dark:text-gray-400 mt-2">
+            실시간 서비스 모니터링
+        </p>
+    </header>
+
+    <!-- Stats Grid -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Views -->
+        <article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">총 조회수</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                        {{ stats.total_views|intcomma }}
+                    </p>
+                </div>
+                <span class="text-3xl">👁️</span>
+            </div>
+        </article>
+
+        <!-- Unique Visitors -->
+        <article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">방문자 수</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                        {{ stats.unique_visitors|intcomma }}
+                    </p>
+                </div>
+                <span class="text-3xl">👤</span>
+            </div>
+        </article>
+
+        <!-- Response Time -->
+        <article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">평균 응답시간</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                        {{ stats.avg_response_time_ms|floatformat:0 }}ms
+                    </p>
+                </div>
+                <span class="text-3xl">⚡</span>
+            </div>
+        </article>
+
+        <!-- Error Rate -->
+        <article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">에러율</p>
+                    <p class="text-2xl font-bold {% if stats.error_rate > 1 %}text-red-500{% else %}text-emerald-500{% endif %} mt-1">
+                        {{ stats.error_rate|floatformat:2 }}%
+                    </p>
+                </div>
+                <span class="text-3xl">{% if stats.error_rate > 1 %}🔴{% else %}🟢{% endif %}</span>
+            </div>
+        </article>
+    </section>
+
+    <!-- Database Stats -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- DB Info -->
+        <article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                🗄️ 데이터베이스 상태
+            </h2>
+
+            <div hx-get="{% url 'analytics:database_stats' %}"
+                 hx-trigger="load, every {{ refresh_interval }}s"
+                 hx-swap="innerHTML">
+                {% include "analytics/_database_stats.html" %}
+            </div>
+        </article>
+
+        <!-- Largest Tables -->
+        <article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                📈 테이블 크기 (Top 5)
+            </h2>
+
+            <div class="space-y-3">
+                {% for table in db_stats.largest_tables %}
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div>
+                        <p class="font-medium text-gray-900 dark:text-white">{{ table.name }}</p>
+                        <p class="text-sm text-gray-500">{{ table.rows|intcomma }} rows</p>
+                    </div>
+                    <span class="text-sm font-mono text-emerald-600 dark:text-emerald-400">{{ table.size }}</span>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 dark:text-gray-400 text-center py-4">테이블 정보 없음</p>
+                {% endfor %}
+            </div>
+        </article>
+    </section>
+
+    <!-- Slow Queries -->
+    <section class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            🐌 느린 쿼리 (100ms+)
+        </h2>
+
+        <div hx-get="{% url 'analytics:slow_queries' %}"
+             hx-trigger="load, every {{ refresh_interval }}s"
+             hx-swap="innerHTML">
+            {% include "analytics/_slow_queries.html" %}
+        </div>
+    </section>
+
+    <!-- Last Updated -->
+    <footer class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+        마지막 업데이트: {{ stats.updated_at|date:"Y-m-d H:i:s" }}
+        <span class="mx-2">•</span>
+        자동 새로고침: {{ refresh_interval }}초
+    </footer>
+</div>
+{% endblock %}

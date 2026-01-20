@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n humanize %}
 
 {% block title %}ALMAENG - {% trans "영양제 성분 비교 서비스" %}{% endblock %}
 
@@ -192,7 +192,9 @@
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-                <div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">1,000+</div>
+                <div class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">
+                    {{ total_products_count|default:"43,000"|intcomma }}+
+                </div>
                 <div class="text-sm text-gray-600 dark:text-gray-400">{% trans "등록된 영양제" %}</div>
             </div>
             <div>

@@ -1,6 +1,29 @@
 {% load humanize %}
 
 <div class="divide-y divide-gray-100 dark:divide-gray-700">
+    {% if unit_analysis %}
+    <div
+        class="px-5 py-4 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/30 dark:to-blue-900/30 flex items-center gap-3">
+        <div
+            class="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 flex items-center justify-center text-xl shadow-sm border border-indigo-100 dark:border-indigo-700">
+            🤖
+        </div>
+        <div>
+            <p class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">AI 성분 분석</p>
+            <p class="text-sm text-gray-900 dark:text-white mt-0.5">
+                핵심 성분 <span class="font-bold text-indigo-700 dark:text-indigo-300">{{ unit_analysis.nutrient }}</span>
+                <span class="font-bold">{{ unit_analysis.amount|intcomma }}{{ unit_analysis.unit }}</span> 발견
+                {% if unit_analysis.daily_total_amount %}
+                <span
+                    class="ml-2 text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full">
+                    1일 섭취량: {{ unit_analysis.daily_total_amount|intcomma }}{{ unit_analysis.unit }}
+                </span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% endif %}
+
     {% if prices %}
     {% for item in prices %}
     <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer"

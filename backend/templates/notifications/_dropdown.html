@@ -1,0 +1,55 @@
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="font-semibold text-gray-900 dark:text-white">알림</h3>
+        {% if unread_count %}
+        <span class="text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-2 py-1 rounded-full">
+            {{ unread_count }}개 읽지 않음
+        </span>
+        {% endif %}
+    </div>
+
+    <!-- Notifications -->
+    <div class="space-y-2 max-h-80 overflow-y-auto">
+        {% for notification in notifications %}
+        <a href="{{ notification.link|default:'#' }}"
+           class="block p-3 rounded-lg transition-colors
+           {% if notification.is_read %}
+           hover:bg-gray-50 dark:hover:bg-gray-700/50
+           {% else %}
+           bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30
+           {% endif %}">
+            <div class="flex items-start gap-3">
+                <span class="text-lg">
+                    {% if notification.notification_type == 'success' %}✅
+                    {% elif notification.notification_type == 'warning' %}⚠️
+                    {% elif notification.notification_type == 'error' %}❌
+                    {% else %}ℹ️{% endif %}
+                </span>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        {{ notification.title }}
+                    </p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        {{ notification.created_at|timesince }} 전
+                    </p>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <p class="text-center py-6 text-gray-500 dark:text-gray-400 text-sm">
+            알림이 없습니다
+        </p>
+        {% endfor %}
+    </div>
+
+    <!-- Footer -->
+    {% if notifications %}
+    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <a href="{% url 'notifications:list' %}"
+           class="block text-center text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400">
+            전체 알림 보기 →
+        </a>
+    </div>
+    {% endif %}
+</div>
