@@ -16,14 +16,14 @@
         <!-- Stats Cards -->
         <div class="features-grid" style="margin-bottom: 2rem;">
             <div class="feature-card">
-                <div class="feature-icon">👁️</div>
-                <h3 class="feature-title">Page Views</h3>
-                <p style="font-size: 2rem; font-weight: 700; margin: 0;">{{ stats.total_views }}</p>
+                <div class="feature-icon">💊</div>
+                <h3 class="feature-title">Total Products</h3>
+                <p style="font-size: 2rem; font-weight: 700; margin: 0;">{{ stats.total_products }}</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">👤</div>
-                <h3 class="feature-title">Unique Visitors</h3>
-                <p style="font-size: 2rem; font-weight: 700; margin: 0;">{{ stats.unique_visitors }}</p>
+                <div class="feature-icon">👥</div>
+                <h3 class="feature-title">Total Users</h3>
+                <p style="font-size: 2rem; font-weight: 700; margin: 0;">{{ stats.total_users }}</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">⚡</div>
@@ -40,12 +40,8 @@
         <!-- Database Section -->
         <section class="glass-card" style="padding: 1.5rem; margin-bottom: 2rem;">
             <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">🗄️ Database Tables</h2>
-            
-            <div 
-                hx-get="/analytics/database/"
-                hx-trigger="every {{ refresh_interval }}s"
-                hx-swap="innerHTML"
-            >
+
+            <div hx-get="/analytics/database/" hx-trigger="every {{ refresh_interval }}s" hx-swap="innerHTML">
                 {% include "analytics/_database_stats.html" %}
             </div>
         </section>
@@ -53,12 +49,8 @@
         <!-- Slow Queries Section -->
         <section class="glass-card" style="padding: 1.5rem;">
             <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">🐢 Slow Queries</h2>
-            
-            <div 
-                hx-get="/analytics/slow-queries/"
-                hx-trigger="every {{ refresh_interval }}s"
-                hx-swap="innerHTML"
-            >
+
+            <div hx-get="/analytics/slow-queries/" hx-trigger="every {{ refresh_interval }}s" hx-swap="innerHTML">
                 {% include "analytics/_slow_queries.html" %}
             </div>
         </section>
