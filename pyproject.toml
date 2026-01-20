@@ -90,7 +90,7 @@ dependencies = [
     # ============================================
     # 7. AI (Google Gemini Only)
     # ============================================
-    "google-generativeai",      # Gemini API
+    "google-genai",             # Gemini API (new unified SDK)
     "pydantic>=2.0",            # Schema Validation (AI structured output)
     # ============================================
     # 8. Config & RBAC

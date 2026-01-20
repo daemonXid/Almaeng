@@ -10,8 +10,8 @@ from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
 
-import google.generativeai as genai
 from django.conf import settings
+from google import genai
 
 
 @dataclass
@@ -70,8 +70,8 @@ class VisionService:
         if not api_key:
             raise ValueError("GEMINI_API_KEY not configured")
 
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel("gemini-2.0-flash")
+        self.client = genai.Client(api_key=api_key)
+        self.model = "gemini-2.0-flash"
 
     def analyze_label(self, image_path: str | Path) -> LabelAnalysisResult:
         """이미지 파일에서 라벨 분석"""
@@ -88,10 +88,13 @@ class VisionService:
                 )
 
             # 이미지 업로드
-            image_file = genai.upload_file(str(image_path))
+            image_file = self.client.files.upload(file=str(image_path))
 
             # Vision API 호출
-            response = self.model.generate_content([self.PROMPT, image_file])
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=[self.PROMPT, image_file],
+            )
             raw_text = response.text.strip()
 
             # JSON 파싱

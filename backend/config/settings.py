@@ -65,6 +65,14 @@ REDIS_PORT = env("REDIS_PORT", default="6379")
 # Google Gemini Only
 GEMINI_API_KEY = env("GEMINI_API_KEY", default="")
 
+# --- External API Keys ---
+# Coupang Partners
+COUPANG_ACCESS_KEY = env("COUPANG_ACCESS_KEY", default="")
+COUPANG_SECRET_KEY = env("COUPANG_SECRET_KEY", default="")
+
+# MFDS (식약처 공공데이터)
+MFDS_API_KEY = env("MFDS_API_KEY", default="")
+
 
 # =============================================================================
 # 🔍 Auto-Discovery: Automatically find and register Django apps in domains/
@@ -143,6 +151,8 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.kakao",
+    "allauth.socialaccount.providers.naver",
     "compressor",
     "storages",
 ]
@@ -272,7 +282,7 @@ ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # ============================================
-# 🌐 Social Login (Google OAuth)
+# 🌐 Social Login (Google, Kakao, Naver)
 # ============================================
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -283,8 +293,25 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         "SCOPE": ["profile", "email"],
         "AUTH_PARAMS": {"access_type": "online"},
-    }
+    },
+    "kakao": {
+        "APP": {
+            "client_id": env("KAKAO_CLIENT_ID", default=""),
+            "secret": env("KAKAO_CLIENT_SECRET", default=""),
+            "key": "",
+        },
+    },
+    "naver": {
+        "APP": {
+            "client_id": env("NAVER_CLIENT_ID", default=""),
+            "secret": env("NAVER_CLIENT_SECRET", default=""),
+            "key": "",
+        },
+    },
 }
+
+# Auto-signup: 소셜 로그인 시 자동 가입
+SOCIALACCOUNT_AUTO_SIGNUP = True
 
 # 👤 Identity
 AUTH_USER_MODEL = "daemon_auth.User"
@@ -295,8 +322,10 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-        # "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage", # Production
+        # WhiteNoise for production, default for development
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        if not DEBUG
+        else "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 

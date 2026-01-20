@@ -1,89 +1,112 @@
 """
 🌐 Chatbot Views
 
-HTMX views for the chat interface (캐치 🐤).
+Full-page Claude-style chatbot with persistent history.
 """
 
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
+from django.db.models import Prefetch
 
 from domains.ai.service.chatbot.gemini_service import ask_supplement_question
+from domains.ai.service.chatbot.models import ChatSession, ChatMessage
+
+
+def chat_page(request: HttpRequest, session_id: int | None = None) -> HttpResponse:
+    """
+    Main Chat Interface (Claude Style)
+    """
+    context = {}
+    
+    # Load Sidebar History (Only for logged-in users)
+    if request.user.is_authenticated:
+        sessions = ChatSession.objects.filter(user=request.user, is_active=True)
+        context["sessions"] = sessions
+    
+        # Load Active Session
+        if session_id:
+            active_session = get_object_or_404(ChatSession, id=session_id, user=request.user)
+            context["active_session"] = active_session
+            context["messages"] = active_session.messages.all()
+        else:
+            # New Chat State
+            context["active_session"] = None
+            context["messages"] = []
+
+    return render(request, "chat_page.html", context)
 
 
 @require_http_methods(["POST"])
-def send_message(request: HttpRequest) -> HttpResponse:
+def send_message(request: HttpRequest, session_id: int | None = None) -> HttpResponse:
     """
-    Handle chat message submission.
-    Returns HTMX fragment with response.
+    Handle message submission (HTMX)
     """
-    question = request.POST.get("message", "").strip()
+    content = request.POST.get("message", "").strip()
+    if not content:
+        return HttpResponse("")
 
-    if not question:
-        return HttpResponse(
-            """<div class="flex gap-3 mb-4">
-                <img src="/static/images/catch_mascot.png" alt="캐치" class="w-8 h-8 rounded-full object-cover shrink-0">
-                <div class="flex-1 p-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm">
-                    <p>질문을 입력해주세요! 🐤</p>
-                </div>
-            </div>"""
+    # 1. Get or Create Session
+    session = None
+    if session_id and request.user.is_authenticated:
+        session = get_object_or_404(ChatSession, id=session_id, user=request.user)
+    elif request.user.is_authenticated:
+        # Create new session on first message
+        # Use first 30 chars as title
+        title = content[:30] + "..." if len(content) > 30 else content
+        session = ChatSession.objects.create(user=request.user, title=title)
+    
+    # 2. Save User Message (if session exists)
+    if session:
+        ChatMessage.objects.create(session=session, role="user", content=content)
+
+    # 3. Get AI Response
+    try:
+        response = ask_supplement_question(content)
+        answer = response.answer
+        sources = response.sources or []
+    except Exception as e:
+        answer = f"죄송합니다. 오류가 발생했습니다: {e}"
+        sources = []
+
+    # 4. Save AI Message
+    if session:
+        ChatMessage.objects.create(
+            session=session, 
+            role="assistant", 
+            content=answer,
+            sources=sources
         )
 
-    try:
-        # Get AI response
-        response = ask_supplement_question(question)
+    # 5. Render Response Fragment
+    # If it was a new session, we need to redirect to the new URL to update history list
+    # But HTMX handles this better with OOB or client-side redirect.
+    # For simplicity, if new session, return header to redirect.
+    if session and not session_id:
+        response_obj = HttpResponse()
+        response_obj["HX-Redirect"] = f"/chatbot/{session.id}/"
+        return response_obj
 
-        # Build sources HTML if available
-        sources_html = ""
-        if response.sources:
-            source_items = "".join(
-                [
-                    f'<span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/50 rounded text-xs">{s["name"]}</span>'
-                    for s in response.sources[:3]
-                ]
-            )
-            sources_html = f'<div class="flex gap-2 mt-2 flex-wrap">{source_items}</div>'
-
-        return HttpResponse(f"""
-            <div class="flex gap-3 mb-4">
-                <img src="/static/images/catch_mascot.png" alt="캐치" class="w-8 h-8 rounded-full object-cover shrink-0">
-                <div class="flex-1 p-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm">
-                    <p class="whitespace-pre-wrap">{response.answer}</p>
-                    {sources_html}
-                </div>
-            </div>
-        """)
-    except Exception as e:
-        return HttpResponse(f"""
-            <div class="flex gap-3 mb-4">
-                <img src="/static/images/catch_mascot.png" alt="캐치" class="w-8 h-8 rounded-full object-cover shrink-0">
-                <div class="flex-1 p-3 rounded-xl bg-red-100 dark:bg-red-900/50 text-sm text-red-800 dark:text-red-200">
-                    <p>앗, 잠시 문제가 생겼어요! 🐤</p>
-                    <p class="text-xs mt-1 opacity-70">{e!s}</p>
-                </div>
-            </div>
-        """)
+    # Render message bubbles (User + AI)
+    return render(request, "_message_fragment.html", {
+        "user_message": content,
+        "ai_message": answer,
+        "sources": sources
+    })
 
 
-@require_http_methods(["GET"])
-def get_messages(request: HttpRequest) -> HttpResponse:
-    """
-    Load chat history (placeholder for now).
-    """
-    return HttpResponse("")
+@login_required
+def new_chat(request: HttpRequest) -> HttpResponse:
+    """Redirect to clean chat page"""
+    return redirect("ai_chatbot:chat_home")
 
 
-def chat_page(request: HttpRequest) -> HttpResponse:
-    """Main chat page (if accessed directly)."""
-    from django.shortcuts import redirect
-
-    return redirect("/")
-
-
-def stream_message(request: HttpRequest) -> HttpResponse:
-    """Streaming placeholder."""
-    return HttpResponse("Streaming not implemented")
-
-
-def search(request: HttpRequest) -> HttpResponse:
-    """Search placeholder."""
-    return HttpResponse("")
+@require_http_methods(["DELETE"])
+@login_required
+def delete_session(request: HttpRequest, session_id: int) -> HttpResponse:
+    """Delete a chat session"""
+    session = get_object_or_404(ChatSession, id=session_id, user=request.user)
+    session.is_active = False # Soft delete
+    session.save()
+    return HttpResponse("") # Helper to remove element in UI

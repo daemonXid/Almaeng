@@ -21,6 +21,11 @@ api = NinjaExtraAPI(
     version="0.1.0",
 )
 
+# Register domain routers
+from domains.features.payments.api import router as payments_router
+
+api.add_router("/payments/", payments_router)
+
 urlpatterns = [
     # 😈 Core domain - Home & HTMX endpoints
     path("", include("domains.base.core.urls")),

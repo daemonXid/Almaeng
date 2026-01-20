@@ -38,7 +38,7 @@ class GeminiProvider(AIProviderBase):
     """
     Google Gemini AI Provider.
 
-    Uses the google-generativeai SDK for text generation,
+    Uses the google-genai SDK for text generation,
     structured output, and embeddings.
 
     Example:
@@ -59,12 +59,11 @@ class GeminiProvider(AIProviderBase):
         """Get or create Gemini client."""
         if self._client is None and self.api_key:
             try:
-                import google.generativeai as genai
+                from google import genai
 
-                genai.configure(api_key=self.api_key)
-                self._client = genai
+                self._client = genai.Client(api_key=self.api_key)
             except ImportError:
-                logger.warning("google-generativeai not installed. Run: uv add google-generativeai")
+                logger.warning("google-genai not installed. Run: uv add google-genai")
         return self._client
 
     def is_available(self) -> bool:
@@ -92,20 +91,22 @@ class GeminiProvider(AIProviderBase):
             AIResponse with generated text
         """
         model = model or DEFAULT_MODEL
-        gemini = self._get_client()
+        client = self._get_client()
 
-        if not gemini:
+        if not client:
             logger.error("Gemini client not available")
             return AIResponse(text="", model=model, provider=self.provider_name)
 
         try:
-            gen_model = gemini.GenerativeModel(model)
-            response = gen_model.generate_content(
-                prompt,
-                generation_config={
-                    "temperature": temperature,
-                    "max_output_tokens": max_tokens,
-                },
+            from google.genai import types
+
+            response = client.models.generate_content(
+                model=model,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=temperature,
+                    max_output_tokens=max_tokens,
+                ),
             )
             return AIResponse(
                 text=response.text,
@@ -204,16 +205,16 @@ Do not include any text before or after the JSON.
         Returns:
             Embedding vector (768 dimensions)
         """
-        gemini = self._get_client()
-        if not gemini:
+        client = self._get_client()
+        if not client:
             return []
 
         try:
-            result = gemini.embed_content(
-                model="models/embedding-001",
-                content=text,
+            result = client.models.embed_content(
+                model="gemini-embedding-001",
+                contents=text,
             )
-            return result["embedding"]
+            return result.embeddings[0].values
         except Exception as e:
             logger.error(f"Gemini embedding error: {e}")
             return []
@@ -238,24 +239,23 @@ Do not include any text before or after the JSON.
             Text chunks as they are generated
         """
         model = model or DEFAULT_MODEL
-        gemini = self._get_client()
+        client = self._get_client()
 
-        if not gemini:
+        if not client:
             logger.error("Gemini client not available")
             return
 
         try:
-            gen_model = gemini.GenerativeModel(model)
-            response = gen_model.generate_content(
-                prompt,
-                generation_config={
-                    "temperature": temperature,
-                    "max_output_tokens": max_tokens,
-                },
-                stream=True,
-            )
+            from google.genai import types
 
-            for chunk in response:
+            for chunk in client.models.generate_content_stream(
+                model=model,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=temperature,
+                    max_output_tokens=max_tokens,
+                ),
+            ):
                 if chunk.text:
                     yield chunk.text
         except Exception as e:

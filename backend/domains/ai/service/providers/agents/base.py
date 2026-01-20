@@ -1,10 +1,17 @@
+"""
+🤖 Pydantic AI Agent Base - Gemini Only
+
+Provides Gemini model for pydantic-ai agents.
+"""
+
 from __future__ import annotations
 
 import os
 from typing import Any, TypeVar
 
 from pydantic import BaseModel
-from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.models.gemini import GeminiModel
+
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -16,35 +23,18 @@ class AgentContext(BaseModel):
     project_context: dict[str, Any] = {}
 
 
-def get_pydantic_ai_model():
+def get_pydantic_ai_model() -> GeminiModel:
     """
-    Get the appropriate pydantic_ai model instance based on AI_PROVIDER.
+    Get the Gemini model for pydantic_ai.
 
-    Note: HuggingFace uses OpenAI-compatible API via Inference Endpoints.
+    Returns:
+        GeminiModel instance using GEMINI_API_KEY from environment.
     """
-    provider = os.getenv("AI_PROVIDER", "huggingface").lower()
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY is required")
 
-    if provider == "huggingface":
-        # HuggingFace Inference API via OpenAI-compatible endpoint
-        hf_token = os.getenv("HUGGINGFACE_API_KEY", "")
-        model_id = os.getenv("HUGGINGFACE_MODEL", "meta-llama/Llama-3.1-8B-Instruct")
-        return OpenAIModel(
-            model_name=model_id,
-            base_url=f"https://api-inference.huggingface.co/models/{model_id}/v1",
-            api_key=hf_token if hf_token else "hf_dummy",
-        )
-    elif provider == "deepseek":
-        return OpenAIModel(
-            model_name=os.getenv("DEEPSEEK_MODEL", "deepseek-chat"),
-            base_url="https://api.deepseek.com",
-            api_key=os.getenv("DEEPSEEK_API_KEY"),
-        )
-    elif provider == "openrouter":
-        return OpenAIModel(
-            model_name=os.getenv("OPENROUTER_MODEL", "anthropic/claude-3.5-sonnet"),
-            base_url="https://openrouter.ai/api/v1",
-            api_key=os.getenv("OPENROUTER_API_KEY"),
-        )
-
-    # Fallback to OpenAI compatible if key exists
-    return OpenAIModel("gpt-4o")
+    return GeminiModel(
+        model_name=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+        api_key=api_key,
+    )

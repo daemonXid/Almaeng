@@ -6,15 +6,18 @@ https://docs.tosspayments.com/
 """
 
 import base64
-from dataclasses import dataclass
 
 import httpx
 from django.conf import settings
+from pydantic import BaseModel, Field
 
 
-@dataclass
-class TossPaymentResult:
-    """토스 결제 결과"""
+class TossPaymentResult(BaseModel):
+    """토스 결제 결과 (Pydantic + JSON-LD)"""
+
+    # JSON-LD for inter-domain compatibility
+    context: str = Field(default="https://schema.org", alias="@context", exclude=True)
+    type: str = Field(default="PayAction", alias="@type", exclude=True)
 
     success: bool
     payment_key: str = ""
@@ -24,6 +27,9 @@ class TossPaymentResult:
     approved_at: str | None = None
     error_code: str = ""
     error_message: str = ""
+
+    class Config:
+        populate_by_name = True
 
 
 class TossPaymentsClient:
