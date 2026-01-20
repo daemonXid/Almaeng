@@ -14,6 +14,7 @@ from .base import CrawlResult
 from .coupang import CoupangCrawler
 from .danawa import DanawaCrawler
 from .iherb import IHerbCrawler
+from .naver import NaverCrawler
 
 
 class CrawlerOrchestrator:
@@ -24,6 +25,7 @@ class CrawlerOrchestrator:
             "iherb": IHerbCrawler(),
             "danawa": DanawaCrawler(),
             "coupang": CoupangCrawler(),
+            "naver": NaverCrawler(),
         }
 
     async def search_all(self, keyword: str) -> dict[str, list[CrawlResult]]:

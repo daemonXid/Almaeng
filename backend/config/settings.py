@@ -66,6 +66,10 @@ REDIS_PORT = env("REDIS_PORT", default="6379")
 GEMINI_API_KEY = env("GEMINI_API_KEY", default="")
 
 # --- External API Keys ---
+# Naver Developers (Login & Search)
+NAVER_CLIENT_ID = env("NAVER_CLIENT_ID", default="")
+NAVER_CLIENT_SECRET = env("NAVER_CLIENT_SECRET", default="")
+
 # Coupang Partners
 COUPANG_ACCESS_KEY = env("COUPANG_ACCESS_KEY", default="")
 COUPANG_SECRET_KEY = env("COUPANG_SECRET_KEY", default="")
