@@ -10,8 +10,15 @@
         class="h-16 flex items-center px-4 border-b border-gray-200 dark:border-gray-800 overflow-hidden whitespace-nowrap">
         <a href="/" class="flex items-center gap-3 text-gray-900 dark:text-white no-underline">
             <div
-                class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-xl font-bold shadow-lg group-hover:scale-110 transition-transform cursor-pointer">
-                🧬
+                class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform cursor-pointer">
+                <!-- Pill Logo SVG (Red/White) -->
+                <svg viewBox="0 0 24 24" class="w-6 h-6 transform -rotate-45 drop-shadow-sm" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <!-- Top Half (Red) -->
+                    <path d="M7 6C4.23858 6 2 8.23858 2 11V13H22V11C22 8.23858 19.7614 6 17 6H7Z" fill="#ff4d4d" />
+                    <!-- Bottom Half (White) -->
+                    <path d="M22 13V13C22 15.7614 19.7614 18 17 18H7C4.23858 18 2 15.7614 2 13V13H22Z" fill="#ffffff" />
+                </svg>
             </div>
             <span class="font-bold text-xl tracking-tight transition-opacity duration-300"
                 :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
