@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <span class="text-3xl">📋</span>
+                주문 내역
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">
+                총 {{ orders|length }}건의 주문이 있습니다
+            </p>
+        </div>
+
+        {% if orders %}
+        <div class="space-y-4">
+            {% for order in orders %}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <!-- Order Header -->
+                <div class="p-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">주문번호</p>
+                        <p class="font-mono text-sm text-gray-900 dark:text-white">{{ order.order_id }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">주문일시</p>
+                        <p class="text-sm text-gray-900 dark:text-white">{{ order.created_at|date:"Y.m.d H:i" }}</p>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="p-4">
+                    <div class="space-y-3">
+                        {% for item in order.items.all %}
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-900 dark:text-white truncate">
+                                    {{ item.product_name }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    {{ item.platform }} · {{ item.quantity }}개 · {{ item.unit_price|intcomma }}원
+                                </p>
+                            </div>
+                            <p class="font-semibold text-gray-900 dark:text-white ml-4">
+                                {{ item.subtotal|intcomma }}원
+                            </p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Order Footer -->
+                <div class="p-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-2">
+                        {% if order.status == 'pending' %}
+                        <span class="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                            결제 대기
+                        </span>
+                        {% elif order.status == 'paid' %}
+                        <span class="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                            결제 완료
+                        </span>
+                        {% elif order.status == 'shipping' %}
+                        <span class="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                            배송 중
+                        </span>
+                        {% elif order.status == 'delivered' %}
+                        <span class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                            배송 완료
+                        </span>
+                        {% elif order.status == 'cancelled' %}
+                        <span class="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                            주문 취소
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <p class="text-lg font-bold text-emerald-600">
+                            {{ order.total_amount|intcomma }}원
+                        </p>
+                        <a href="{% url 'payments:order_detail' order.order_id %}"
+                           class="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition-colors">
+                            상세보기
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <span class="text-6xl mb-4 block">📦</span>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">주문 내역이 없습니다</h2>
+            <p class="text-gray-500 dark:text-gray-400 mb-6">첫 주문을 해보세요!</p>
+            <a href="{% url 'supplements:search' %}"
+               class="inline-block px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-colors">
+                영양제 둘러보기
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+ALMAENG 주문 확인
+
+안녕하세요, {{ user_name }}님!
+
+주문이 완료되었습니다!
+
+---
+주문 정보
+---
+주문번호: {{ order_id }}
+결제 금액: {{ total_amount }}원
+
+---
+배송 정보
+---
+받는 분: {{ shipping_name }}
+주소: {{ shipping_address }}
+
+---
+
+주문 상세 보기: https://almaeng.daemonx.cc/payments/orders/{{ order_id }}/
+
+(c) 2026 ALMAENG
+https://almaeng.daemonx.cc

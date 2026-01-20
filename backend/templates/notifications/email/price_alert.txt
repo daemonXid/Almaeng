@@ -1,0 +1,17 @@
+ALMAENG 가격 알림
+
+안녕하세요, {{ user_name }}님!
+
+설정하신 가격에 도달했습니다!
+
+제품명: {{ product_name }}
+현재 최저가: {{ current_price }}원
+목표가: {{ target_price }}원
+
+지금 확인하기: https://almaeng.daemonx.cc{{ product_url }}
+
+---
+이 알림은 1회성이며, 동일 제품에 대해 새로운 알림을 받으시려면 다시 설정해주세요.
+
+(c) 2026 ALMAENG
+https://almaeng.daemonx.cc

@@ -80,8 +80,57 @@ def update_payment_status(
     if status == "done":
         order.status = "paid"
         order.save()
+        # 주문 확인 알림 발송
+        _send_order_confirmation(order)
 
     return payment
+
+
+def _send_order_confirmation(order: Order) -> None:
+    """주문 확인 알림 발송 (내부 함수)"""
+    from django.contrib.auth import get_user_model
+
+    from domains.base.notifications.interface import notify_user
+
+    User = get_user_model()
+
+    try:
+        user = User.objects.get(id=order.user_id)
+    except User.DoesNotExist:
+        return
+
+    # In-app 알림
+    notify_user(
+        user=user,
+        title="주문이 완료되었습니다!",
+        message=f"주문번호: {str(order.order_id)[:8]}... | 총 금액: {order.total_amount:,.0f}원",
+        notification_type="success",
+        link=f"/payments/orders/{order.order_id}/",
+    )
+
+    # 이메일 알림 (선택적)
+    try:
+        from domains.base.notifications.email.interface import send_email
+
+        # 주문 상품 목록 가져오기
+        items = list(order.items.values("product_name", "quantity", "unit_price"))
+
+        send_email(
+            to=user.email,
+            subject=f"[ALMAENG] 주문 확인 (#{str(order.order_id)[:8]})",
+            template="order_confirmation",
+            context={
+                "user_name": user.get_full_name() or user.username,
+                "order_id": str(order.order_id),
+                "total_amount": f"{order.total_amount:,.0f}",
+                "shipping_name": order.shipping_name,
+                "shipping_address": order.shipping_address,
+                "items": items,
+            },
+        )
+    except Exception:
+        # 이메일 실패해도 주문 처리는 성공
+        pass
 
 
 def mark_order_cancelled(order: Order, reason: str = "") -> Order:

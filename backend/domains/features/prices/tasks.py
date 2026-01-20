@@ -11,7 +11,7 @@ from django.utils import timezone
 
 from .integrations import get_orchestrator
 from .models import PriceHistory
-from .services import check_alerts
+from .services import check_alerts, get_lowest_price, send_price_alert_notification
 
 
 async def crawl_all_prices():
@@ -51,15 +51,18 @@ def check_all_price_alerts():
 
     for supplement in supplements:
         alerts = check_alerts(supplement.id)
+        current_price = get_lowest_price(supplement.id)
 
         for alert in alerts:
-            # 알림 트리거 처리
+            # 알림 발송
+            if current_price:
+                send_price_alert_notification(alert, current_price)
+
+            # 알림 트리거 처리 (1회성)
             alert.triggered_at = timezone.now()
+            alert.is_active = False  # 트리거 후 비활성화
             alert.save()
             triggered_alerts.append(alert)
-
-            # TODO: 실제 알림 발송 (이메일, 푸시 등)
-            # send_price_alert_notification(alert)
 
     return triggered_alerts
 

@@ -131,7 +131,7 @@ PROJECT_APPS = auto_discover_apps(DOMAINS_DIR)
 
 # Debug: Print discovered apps on startup
 if DEBUG:
-    print(f"😈 Auto-discovered domains: {PROJECT_APPS}")
+    print(f"[DAEMON] Auto-discovered domains: {PROJECT_APPS}")
 
 
 INSTALLED_APPS = [

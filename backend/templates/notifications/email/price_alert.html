@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가격 알림 - ALMAENG</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 40px 20px;">
+                <table role="presentation" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%); padding: 32px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: bold;">
+                                ALMAENG
+                            </h1>
+                            <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">
+                                가격 알림
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 32px;">
+                            <p style="margin: 0 0 16px; color: #374151; font-size: 16px;">
+                                안녕하세요, <strong>{{ user_name }}</strong>님!
+                            </p>
+
+                            <div style="background-color: #ecfdf5; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center;">
+                                <p style="margin: 0 0 8px; color: #065f46; font-size: 14px; font-weight: 600;">
+                                    설정하신 가격에 도달했습니다!
+                                </p>
+                                <h2 style="margin: 0 0 16px; color: #111827; font-size: 20px; font-weight: bold;">
+                                    {{ product_name }}
+                                </h2>
+                                <div style="display: inline-block; background-color: #ffffff; border-radius: 8px; padding: 16px 24px;">
+                                    <p style="margin: 0 0 4px; color: #6b7280; font-size: 12px;">현재 최저가</p>
+                                    <p style="margin: 0; color: #10b981; font-size: 28px; font-weight: bold;">
+                                        {{ current_price }}원
+                                    </p>
+                                    <p style="margin: 8px 0 0; color: #9ca3af; font-size: 12px;">
+                                        목표가: {{ target_price }}원
+                                    </p>
+                                </div>
+                            </div>
+
+                            <a href="https://almaeng.daemonx.cc{{ product_url }}"
+                               style="display: block; background-color: #10b981; color: #ffffff; text-decoration: none; text-align: center; padding: 16px 24px; border-radius: 12px; font-weight: 600; font-size: 16px;">
+                                지금 확인하기 &rarr;
+                            </a>
+
+                            <p style="margin: 24px 0 0; color: #9ca3af; font-size: 12px; text-align: center;">
+                                이 알림은 1회성이며, 동일 제품에 대해 새로운 알림을 받으시려면 다시 설정해주세요.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f9fafb; padding: 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+                            <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                                &copy; 2026 ALMAENG. All rights reserved.
+                            </p>
+                            <p style="margin: 8px 0 0; color: #9ca3af; font-size: 12px;">
+                                <a href="https://almaeng.daemonx.cc" style="color: #10b981; text-decoration: none;">almaeng.daemonx.cc</a>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

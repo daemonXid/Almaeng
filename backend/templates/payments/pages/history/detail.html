@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="min-h-screen py-8">
+    <div class="max-w-3xl mx-auto px-4">
+        <!-- Back Link -->
+        <a href="{% url 'payments:orders' %}" class="inline-flex items-center text-sm text-gray-500 hover:text-emerald-600 mb-6">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            주문 내역으로 돌아가기
+        </a>
+
+        <!-- Order Header -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+            <div class="p-6 bg-gradient-to-br from-emerald-500 to-teal-600">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-emerald-100 text-sm">주문번호</p>
+                        <p class="text-white font-mono text-lg">{{ order.order_id }}</p>
+                    </div>
+                    {% if order.status == 'paid' %}
+                    <span class="px-4 py-2 rounded-full bg-white/20 text-white text-sm font-medium">
+                        결제 완료
+                    </span>
+                    {% elif order.status == 'shipping' %}
+                    <span class="px-4 py-2 rounded-full bg-white/20 text-white text-sm font-medium">
+                        배송 중
+                    </span>
+                    {% elif order.status == 'delivered' %}
+                    <span class="px-4 py-2 rounded-full bg-white/20 text-white text-sm font-medium">
+                        배송 완료
+                    </span>
+                    {% elif order.status == 'cancelled' %}
+                    <span class="px-4 py-2 rounded-full bg-red-500/50 text-white text-sm font-medium">
+                        주문 취소
+                    </span>
+                    {% else %}
+                    <span class="px-4 py-2 rounded-full bg-white/20 text-white text-sm font-medium">
+                        결제 대기
+                    </span>
+                    {% endif %}
+                </div>
+                <p class="text-emerald-100 text-sm mt-4">{{ order.created_at|date:"Y년 m월 d일 H:i" }}</p>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="font-semibold text-gray-900 dark:text-white">주문 상품</h2>
+            </div>
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for item in order.items.all %}
+                <div class="p-4 flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-gray-900 dark:text-white">{{ item.product_name }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            {{ item.platform }} · {{ item.unit_price|intcomma }}원 x {{ item.quantity }}개
+                        </p>
+                    </div>
+                    <p class="font-semibold text-gray-900 dark:text-white ml-4">
+                        {{ item.subtotal|intcomma }}원
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex justify-between items-center">
+                    <span class="font-medium text-gray-900 dark:text-white">총 결제금액</span>
+                    <span class="text-xl font-bold text-emerald-600">{{ order.total_amount|intcomma }}원</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Info -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="font-semibold text-gray-900 dark:text-white">배송 정보</h2>
+            </div>
+            <div class="p-4 space-y-4">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">받는 분</p>
+                    <p class="text-gray-900 dark:text-white">{{ order.shipping_name|default:"-" }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">연락처</p>
+                    <p class="text-gray-900 dark:text-white">{{ order.shipping_phone|default:"-" }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">주소</p>
+                    <p class="text-gray-900 dark:text-white">{{ order.shipping_address|default:"-" }}</p>
+                </div>
+                {% if order.shipping_memo %}
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">배송 메모</p>
+                    <p class="text-gray-900 dark:text-white">{{ order.shipping_memo }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

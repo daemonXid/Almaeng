@@ -110,3 +110,79 @@ def normalize_unit(amount: Decimal, unit: str) -> tuple[Decimal, str]:
         return amount * 1000, "mg"
 
     return amount, unit
+
+
+# ============================================================
+# OCR 결과 저장
+# ============================================================
+
+from django.db import transaction
+from .models import Ingredient
+
+
+@transaction.atomic
+def create_supplement_from_ocr(
+    product_name: str,
+    brand: str,
+    serving_size: str,
+    servings_count: int,
+    ingredients: list[dict],
+) -> Supplement:
+    """
+    OCR 분석 결과를 Supplement + Ingredient로 저장.
+
+    Args:
+        product_name: 제품명
+        brand: 브랜드명
+        serving_size: 1회 섭취량 (예: "1정")
+        servings_count: 총 섭취 횟수
+        ingredients: 성분 목록 [{name, amount, unit, daily_value}, ...]
+
+    Returns:
+        생성된 Supplement 인스턴스
+    """
+    supplement = Supplement.objects.create(
+        name=product_name,
+        brand=brand or "Unknown",
+        serving_size=serving_size or "1회",
+        servings_per_container=servings_count or 1,
+    )
+
+    for ing_data in ingredients:
+        name = ing_data.get("name", "").strip()
+        if not name:
+            continue
+
+        # 함량 파싱
+        amount_str = ing_data.get("amount", "0")
+        try:
+            amount = Decimal(str(amount_str)) if amount_str else Decimal(0)
+        except (ValueError, TypeError):
+            amount = Decimal(0)
+
+        # 단위 정규화
+        unit = ing_data.get("unit", "mg").lower()
+        if unit not in ["mg", "mcg", "g", "iu", "cfu", "ml"]:
+            unit = "mg"
+
+        # 일일 권장량 % 파싱
+        daily_value_str = ing_data.get("daily_value", "")
+        daily_value = None
+        if daily_value_str:
+            try:
+                # "50%" -> 50
+                cleaned = str(daily_value_str).replace("%", "").strip()
+                if cleaned:
+                    daily_value = Decimal(cleaned)
+            except (ValueError, TypeError):
+                pass
+
+        Ingredient.objects.create(
+            supplement=supplement,
+            name=name,
+            amount=amount,
+            unit=unit,
+            daily_value_percent=daily_value,
+        )
+
+    return supplement

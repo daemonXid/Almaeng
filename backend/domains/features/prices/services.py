@@ -101,3 +101,73 @@ def calculate_price_per_serving(price: Decimal, servings_count: int) -> Decimal:
     if servings_count <= 0:
         return Decimal(0)
     return (price / servings_count).quantize(Decimal("0.01"))
+
+
+# ============================================================
+# Price Alert Notifications
+# ============================================================
+
+
+def send_price_alert_notification(alert: PriceAlert, current_price: Decimal) -> bool:
+    """
+    가격 알림 트리거 시 알림 발송.
+
+    Args:
+        alert: 트리거된 PriceAlert 인스턴스
+        current_price: 현재 최저가
+
+    Returns:
+        성공 여부
+    """
+    from django.contrib.auth import get_user_model
+
+    from domains.base.notifications.interface import notify_user
+
+    User = get_user_model()
+
+    try:
+        user = User.objects.get(id=alert.user_id)
+    except User.DoesNotExist:
+        return False
+
+    # 영양제 이름 조회 (Supplement 또는 MFDSHealthFood)
+    product_name = f"영양제 #{alert.supplement_id}"
+    try:
+        from domains.features.supplements.models import Supplement
+
+        supplement = Supplement.objects.filter(id=alert.supplement_id).first()
+        if supplement:
+            product_name = supplement.name
+    except Exception:
+        pass
+
+    # In-app 알림 생성
+    notify_user(
+        user=user,
+        title=f"가격 알림: {product_name}",
+        message=f"설정하신 목표가 {alert.target_price:,.0f}원 이하로 가격이 내려갔습니다! 현재가: {current_price:,.0f}원",
+        notification_type="success",
+        link=f"/supplements/{alert.supplement_id}/",
+    )
+
+    # 이메일 알림 (SMTP 설정이 있을 경우에만)
+    try:
+        from domains.base.notifications.email.interface import send_email
+
+        send_email(
+            to=user.email,
+            subject=f"[ALMAENG] 가격 알림: {product_name}",
+            template="price_alert",
+            context={
+                "user_name": user.get_full_name() or user.username,
+                "product_name": product_name,
+                "target_price": f"{alert.target_price:,.0f}",
+                "current_price": f"{current_price:,.0f}",
+                "product_url": f"/supplements/{alert.supplement_id}/",
+            },
+        )
+    except Exception:
+        # 이메일 발송 실패해도 in-app 알림은 성공으로 처리
+        pass
+
+    return True

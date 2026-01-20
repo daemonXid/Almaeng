@@ -7,7 +7,7 @@ from django.urls import path
 from .pages.compare.views import compare, compare_result
 from .pages.detail.views import product_detail, product_prices
 from .pages.search.views import search, search_results
-from .pages.upload.views import analyze_image, upload
+from .pages.upload.views import analyze_image, save_ocr_result, upload
 
 app_name = "supplements"
 
@@ -22,4 +22,5 @@ urlpatterns = [
     path("htmx/compare/", compare_result, name="compare_result"),
     path("htmx/<int:product_id>/prices/", product_prices, name="prices"),
     path("api/analyze/", analyze_image, name="analyze_image"),
+    path("api/save/", save_ocr_result, name="save_ocr"),
 ]
