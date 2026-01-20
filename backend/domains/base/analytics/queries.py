@@ -25,6 +25,25 @@ class DashboardStats:
     updated_at: datetime = field(default_factory=timezone.now)
 
 
+@dataclass
+class PageStats:
+    """Statistics for a single page."""
+
+    path: str
+    views: int
+    avg_time_ms: float
+
+
+@dataclass
+class DatabaseStats:
+    """Database statistics."""
+
+    total_size_mb: float
+    table_count: int
+    largest_tables: list[dict]
+    connection_count: int
+
+
 def get_dashboard_stats() -> DashboardStats:
     """
     Get overall dashboard statistics from real DB models.
