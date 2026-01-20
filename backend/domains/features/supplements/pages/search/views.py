@@ -8,16 +8,18 @@ from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from ...models import Supplement
+from ...models import MFDSHealthFood
 
 
 def search(request: HttpRequest) -> HttpResponse:
     """영양제 검색 페이지"""
+    q = request.GET.get("q", "")
     return render(
         request,
         "supplements/pages/search/search.html",
         {
             "page_title": "영양제 검색 | ALMAENG",
+            "initial_query": q,
         },
     )
 
@@ -29,7 +31,10 @@ def search_results(request: HttpRequest) -> HttpResponse:
     if not query:
         return HttpResponse('<p class="text-gray-500 text-center py-8">검색어를 입력하세요</p>')
 
-    supplements = Supplement.objects.filter(Q(name__icontains=query) | Q(brand__icontains=query))[:20]
+    supplements = MFDSHealthFood.objects.filter(
+        Q(product_name__icontains=query) | 
+        Q(company_name__icontains=query)
+    ).order_by("-synced_at")[:20]
 
     return render(
         request,

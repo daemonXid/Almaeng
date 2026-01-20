@@ -11,7 +11,8 @@
             <p class="text-slate-500 mt-1">Ask questions about this codebase. I'll help you understand the code.</p>
         </div>
         <div class="flex items-center gap-3">
-            <span class="px-4 py-2 bg-purple-50 border border-purple-100 rounded-lg text-sm font-semibold text-purple-600 flex items-center gap-2">
+            <span
+                class="px-4 py-2 bg-purple-50 border border-purple-100 rounded-lg text-sm font-semibold text-purple-600 flex items-center gap-2">
                 🤖 {{ ai_provider|default:'HuggingFace' }}
             </span>
         </div>
@@ -21,15 +22,19 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <!-- Main Chat Area -->
         <div class="lg:col-span-3">
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col" style="height: 600px;">
+            <div
+                class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-[600px] lg:h-[calc(100vh-250px)] min-h-[500px]">
                 <!-- Messages Area -->
-                <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-slate-50">
+                <div id="chat-messages"
+                    class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-slate-50 overscroll-contain">
                     <!-- Welcome message -->
                     <div class="flex gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600 shrink-0">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600 shrink-0">
                             🤖
                         </div>
-                        <div class="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-100 shadow-sm max-w-[80%]">
+                        <div
+                            class="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-100 shadow-sm max-w-[80%]">
                             <p class="text-slate-700 mb-2">안녕하세요! 👋</p>
                             <p class="text-slate-600 text-sm">DAEMON-ONE 프로젝트에 대해 질문해주세요.</p>
                             <ul class="mt-3 text-sm text-slate-500 space-y-1">
@@ -39,7 +44,7 @@
                             </ul>
                         </div>
                     </div>
-                    
+
                     <!-- Dynamic messages will be inserted here -->
                     <div id="messages-container"></div>
                 </div>
@@ -99,19 +104,12 @@
                     }
                 }">
                     <div class="flex gap-3">
-                        <input 
-                            type="text" 
-                            x-model="question"
-                            @keydown.enter="send()"
+                        <input type="text" x-model="question" @keydown.enter="send()"
                             class="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:bg-white transition-all"
-                            placeholder="프로젝트에 대해 물어보세요..."
-                            :disabled="isStreaming"
-                        >
-                        <button 
-                            @click="send()"
+                            placeholder="프로젝트에 대해 물어보세요..." :disabled="isStreaming">
+                        <button @click="send()"
                             class="px-6 py-3 bg-indigo-500 text-white font-bold rounded-xl hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            :disabled="isStreaming || !question"
-                        >
+                            :disabled="isStreaming || !question">
                             <span x-show="!isStreaming">전송 →</span>
                             <span x-show="isStreaming">생성 중...</span>
                         </button>
@@ -126,40 +124,28 @@
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                 <h3 class="font-bold text-slate-800 mb-4">Quick Questions</h3>
                 <div class="space-y-2">
-                    <button 
+                    <button
                         class="w-full text-left p-3 bg-slate-50 rounded-xl hover:bg-indigo-50 hover:border-indigo-200 border border-transparent transition-colors text-sm text-slate-600"
-                        hx-post="/chatbot/send/"
-                        hx-vals='{"question": "도메인 구조를 설명해주세요"}'
-                        hx-target="#messages-container"
-                        hx-swap="beforeend"
-                    >
+                        hx-post="/chatbot/send/" hx-vals='{"question": "도메인 구조를 설명해주세요"}'
+                        hx-target="#messages-container" hx-swap="beforeend">
                         📦 도메인 구조
                     </button>
-                    <button 
+                    <button
                         class="w-full text-left p-3 bg-slate-50 rounded-xl hover:bg-indigo-50 hover:border-indigo-200 border border-transparent transition-colors text-sm text-slate-600"
-                        hx-post="/chatbot/send/"
-                        hx-vals='{"question": "HTMX 사용법을 알려주세요"}'
-                        hx-target="#messages-container"
-                        hx-swap="beforeend"
-                    >
+                        hx-post="/chatbot/send/" hx-vals='{"question": "HTMX 사용법을 알려주세요"}'
+                        hx-target="#messages-container" hx-swap="beforeend">
                         ⚡ HTMX 사용법
                     </button>
-                    <button 
+                    <button
                         class="w-full text-left p-3 bg-slate-50 rounded-xl hover:bg-indigo-50 hover:border-indigo-200 border border-transparent transition-colors text-sm text-slate-600"
-                        hx-post="/chatbot/send/"
-                        hx-vals='{"question": "인증 시스템은 어떻게 작동하나요?"}'
-                        hx-target="#messages-container"
-                        hx-swap="beforeend"
-                    >
+                        hx-post="/chatbot/send/" hx-vals='{"question": "인증 시스템은 어떻게 작동하나요?"}'
+                        hx-target="#messages-container" hx-swap="beforeend">
                         🔐 인증 시스템
                     </button>
-                    <button 
+                    <button
                         class="w-full text-left p-3 bg-slate-50 rounded-xl hover:bg-indigo-50 hover:border-indigo-200 border border-transparent transition-colors text-sm text-slate-600"
-                        hx-post="/chatbot/send/"
-                        hx-vals='{"question": "AI Provider 설정 방법을 알려주세요"}'
-                        hx-target="#messages-container"
-                        hx-swap="beforeend"
-                    >
+                        hx-post="/chatbot/send/" hx-vals='{"question": "AI Provider 설정 방법을 알려주세요"}'
+                        hx-target="#messages-container" hx-swap="beforeend">
                         🤖 AI Provider
                     </button>
                 </div>
@@ -188,13 +174,13 @@
 </div>
 
 <script>
-function scrollToBottom() {
-    const container = document.getElementById('chat-messages');
-    container.scrollTop = container.scrollHeight;
-}
+    function scrollToBottom() {
+        const container = document.getElementById('chat-messages');
+        container.scrollTop = container.scrollHeight;
+    }
 
-function chatbot() {
-    return {};
-}
+    function chatbot() {
+        return {};
+    }
 </script>
 {% endblock %}

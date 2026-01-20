@@ -1,48 +1,61 @@
 {% if supplements %}
-<div class="grid gap-4">
-    {% for supplement in supplements %}
-    <div class="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-                hover:border-emerald-300 dark:hover:border-emerald-600 transition-colors">
-        <div class="flex items-center gap-4">
-            <!-- Image -->
-            <div class="w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-2xl">
-                {% if supplement.image_url %}
-                <img src="{{ supplement.image_url }}" alt="{{ supplement.name }}"
-                    class="w-full h-full object-cover rounded-lg">
-                {% else %}
+<div class="space-y-4">
+    {% for product in supplements %}
+    <div class="relative group block">
+        <!-- Stretched Link (Background) -->
+        <!-- Stretched Link (Background) -->
+        <a href="{% url 'supplements:detail' product.id %}"
+            class="absolute inset-0 z-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"></a>
+
+        <div
+            class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 group-hover:border-emerald-500 dark:group-hover:border-emerald-500 hover:shadow-md transition-all flex items-start gap-4 h-full">
+
+            <!-- Icon/Image (Pointer Events None) -->
+            <div
+                class="w-16 h-16 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-3xl flex-shrink-0 relative z-20 pointer-events-none">
                 💊
-                {% endif %}
             </div>
-            <!-- Info -->
-            <div class="flex-1">
-                <h3 class="font-semibold text-gray-900 dark:text-white">{{ supplement.name }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ supplement.brand }}</p>
-                <p class="text-xs text-gray-400 dark:text-gray-500">
-                    {{ supplement.serving_size }} · {{ supplement.servings_per_container }}회분
+
+            <!-- Info (Pointer Events None) -->
+            <div class="flex-1 min-w-0 relative z-20 pointer-events-none">
+                <p class="text-sm font-medium text-emerald-600 dark:text-emerald-400 mb-0.5">
+                    {{ product.company_name }}
                 </p>
+                <h3
+                    class="text-lg font-bold text-gray-900 dark:text-white truncate group-hover:text-emerald-600 transition-colors">
+                    {{ product.product_name }}
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">
+                    {{ product.functionality|default:"기타 가공품"|truncatechars:50 }}
+                </p>
+                <div class="mt-2 text-xs text-gray-400">
+                    {{ product.license_number }}
+                </div>
             </div>
-            <!-- Actions -->
-            <div class="flex gap-2">
-                <button class="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400
-                              hover:bg-emerald-200 dark:hover:bg-emerald-800/50 transition-colors" title="비교에 추가">
-                    ⚖️
+
+            <!-- Actions (Pointer Events Auto + Higher Z) -->
+            <div class="self-center z-30 flex flex-col gap-2 relative pointer-events-auto">
+                <!-- Wishlist Toggle -->
+                <button hx-post="/wishlist/toggle/{{ product.id }}/" hx-swap="outerHTML"
+                    class="w-8 h-8 rounded-full border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center justify-center text-gray-300 hover:text-rose-500 hover:border-rose-200 transition-all cursor-pointer"
+                    type="button">
+                    ❤️
+                </button>
+
+                <!-- Compare Toggle -->
+                <button type="button" @click="toggle({{ product.id }}, '{{ product.product_name|escapejs }}')"
+                    class="w-8 h-8 rounded-full border flex items-center justify-center transition-all cursor-pointer"
+                    :class="isSelected({{ product.id }}) ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-gray-100 dark:bg-gray-700 border-transparent text-gray-400 hover:bg-emerald-100 hover:text-emerald-500'">
+                    <span x-show="!isSelected({{ product.id }})">⚖️</span>
+                    <span x-show="isSelected({{ product.id }})">✅</span>
                 </button>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
-
-{% if supplements|length >= 20 %}
-<p class="text-center text-sm text-gray-500 mt-4">
-    더 정확한 결과를 위해 검색어를 구체적으로 입력하세요
-</p>
-{% endif %}
-
 {% else %}
-<div class="text-center py-12 text-gray-500">
-    <span class="text-4xl mb-4 block">😕</span>
-    <p>"{{ query }}"에 대한 검색 결과가 없습니다</p>
-    <p class="text-sm mt-2">다른 검색어를 시도해보세요</p>
+<div class="text-center py-12">
+    <p class="text-gray-500 dark:text-gray-400">검색 결과가 없습니다.</p>
 </div>
 {% endif %}

@@ -29,11 +29,16 @@ def wishlist_page(request: HttpRequest) -> HttpResponse:
 def toggle_wishlist_item(request: HttpRequest, supplement_id: int) -> HttpResponse:
     """HTMX: 찜 토글"""
     if not request.user.is_authenticated:
-        return HttpResponse("""
-            <button class="text-gray-400" disabled>
-                ❤️
+        # Return the same button (disabled state visually or just normal) but trigger toast
+        response = HttpResponse(f"""
+            <button hx-post="/wishlist/toggle/{supplement_id}/"
+                    hx-swap="outerHTML"
+                    class="text-gray-400 hover:text-rose-500 hover:scale-110 transition-all">
+                🤍
             </button>
         """)
+        response["HX-Trigger"] = "show-login-toast"
+        return response
 
     _added, is_in = toggle_wishlist(request.user.id, supplement_id)
 

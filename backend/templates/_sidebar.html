@@ -1,7 +1,7 @@
 {% load i18n %}
 <!-- Left Sidebar -->
 <aside
-    class="fixed top-0 left-0 h-full glass border-r border-gray-200 dark:border-gray-800 z-50 flex flex-col transition-all duration-300 group"
+    class="fixed top-0 left-0 h-full glass border-r border-gray-200 dark:border-gray-800 z-50 flex flex-col transition-all duration-300 group overscroll-contain"
     :class="sidebarOpen ? 'w-64' : 'w-20 -translate-x-full lg:translate-x-0'" @click="sidebarOpen = true"
     @click.outside="sidebarOpen = false">
 
@@ -38,16 +38,6 @@
             </span>
         </a>
 
-        <a href="{% url 'supplements:compare' %}"
-            class="flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap {% if 'compare' in request.resolver_match.url_name %}bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500{% endif %}"
-            title="{% trans '성분 비교' %}">
-            <span class="text-2xl shrink-0 text-center w-6">⚖️</span>
-            <span class="font-medium transition-opacity duration-300"
-                :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
-                {% trans "성분 비교" %}
-            </span>
-        </a>
-
         <a href="{% url 'recommendations:home' %}"
             class="flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap {% if 'recommendations' in request.resolver_match.app_name %}bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500{% endif %}"
             title="{% trans 'AI 추천' %}">
@@ -63,21 +53,6 @@
             :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
             {% trans "나의 활동" %}
         </div>
-
-        <a href="{% url 'cart:cart' %}"
-            class="flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap {% if 'cart' in request.resolver_match.app_name %}bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-emerald-500{% endif %}"
-            title="{% trans '장바구니' %}">
-            <div class="relative shrink-0 w-6 text-center">
-                <span class="text-2xl block">🛒</span>
-                <span id="sidebar-cart-count" hx-get="{% url 'cart:count' %}" hx-trigger="load" hx-swap="innerHTML"
-                    class="absolute -top-1 -right-2 px-1 py-0.5 text-[10px] leading-none rounded-full bg-emerald-500 text-white min-w-[16px] text-center border-2 border-white dark:border-gray-900">
-                </span>
-            </div>
-            <span class="font-medium transition-opacity duration-300"
-                :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
-                {% trans "장바구니" %}
-            </span>
-        </a>
 
         <a href="{% url 'wishlist:list' %}"
             class="flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap {% if 'wishlist' in request.resolver_match.app_name %}bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-rose-500{% endif %}"

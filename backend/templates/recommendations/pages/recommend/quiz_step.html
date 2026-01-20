@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-12">
+    <!-- Progress Bar -->
+    <div class="mb-8">
+        <div class="flex justify-between text-sm font-medium text-gray-500 mb-2">
+            <span>Step {{ current_step }} of {{ total_steps }}</span>
+            <span>{{ progress_percent }}% Complete</span>
+        </div>
+        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5" x-data>
+            <div class="bg-emerald-500 h-2.5 rounded-full transition-all duration-300"
+                :style="'width: ' + '{{ progress_percent|default:0 }}' + '%'"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ step_data.title }}</h1>
+        <p class="text-gray-600 dark:text-gray-400">{{ step_data.description }}</p>
+    </div>
+
+    <!-- Form -->
+    <form action="{% url 'recommendations:quiz_result' %}" method="post" class="space-y-8">
+        {% csrf_token %}
+        <input type="hidden" name="current_step" value="{{ current_step }}">
+
+        <div class="space-y-6">
+            {% for question in step_data.questions %}
+            <div
+                class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 transition-all hover:shadow-md">
+                <p class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ forloop.counter }}. {{
+                    question.text }}</p>
+
+                <div class="flex gap-4">
+                    <label class="flex-1 cursor-pointer group">
+                        <input type="radio" name="{{ question.id }}" value="yes" class="peer sr-only" required>
+                        <div
+                            class="p-3 text-center rounded-xl border-2 border-gray-200 dark:border-gray-600 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/20 peer-checked:text-emerald-700 dark:peer-checked:text-emerald-400 hover:border-emerald-300 transition-all">
+                            <span class="text-3xl mb-1 block">✅</span>
+                            <span class="font-medium">네</span>
+                        </div>
+                    </label>
+
+                    <label class="flex-1 cursor-pointer group">
+                        <input type="radio" name="{{ question.id }}" value="no" class="peer sr-only" required>
+                        <div
+                            class="p-3 text-center rounded-xl border-2 border-gray-200 dark:border-gray-600 peer-checked:border-gray-500 peer-checked:bg-gray-50 dark:peer-checked:bg-gray-700 peer-checked:text-gray-700 dark:peer-checked:text-gray-300 hover:border-gray-400 transition-all">
+                            <span class="text-3xl mb-1 block">❌</span>
+                            <span class="font-medium">아니요</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="flex justify-between pt-8">
+            {% if current_step > 1 %}
+            <a href="?step={{ current_step|add:'-1' }}"
+                class="btn-secondary px-8 py-3 rounded-xl flex items-center gap-2">
+                <span>←</span>
+                <span>이전</span>
+            </a>
+            {% else %}
+            <div></div> <!-- Spacer -->
+            {% endif %}
+
+            <button type="submit"
+                class="btn-primary px-12 py-3 rounded-xl shadow-lg hover:scale-105 transition-transform flex items-center gap-2">
+                <span>{% if next_step %}다음 단계{% else %}결과 보기{% endif %}</span>
+                <span>{% if next_step %}→{% else %}🎉{% endif %}</span>
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

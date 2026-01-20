@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load supplement_tags %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex text-sm text-gray-500 mb-6">
+        <a href="{% url 'supplements:search' %}" class="hover:text-emerald-600">검색</a>
+        <span class="mx-2">/</span>
+        <span class="text-gray-900 font-medium truncate">{{ product.product_name }}</span>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Left Column: Product Info -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Header -->
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <span class="text-emerald-600 font-bold tracking-wide text-sm">{{ product.company_name }}</span>
+                    <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mt-1 mb-2">{{ product.product_name
+                        }}</h1>
+                    <div class="flex items-center gap-2 text-sm text-gray-500">
+                        <span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">{{ product.license_number }}</span>
+                    </div>
+                </div>
+
+                <!-- Wishlist Toggle -->
+                {% if user.is_authenticated %}
+                <button hx-post="{% url 'wishlist:toggle' product.id %}" hx-swap="outerHTML"
+                    class="p-3 rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors group">
+                    {% if in_wishlist %}
+                    <span class="text-2xl group-hover:scale-110 transition-transform block">❤️</span>
+                    {% else %}
+                    <span
+                        class="text-2xl group-hover:scale-110 transition-transform block grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100">❤️</span>
+                    {% endif %}
+                </button>
+                {% endif %}
+            </div>
+
+            <!-- Functionality Card (New) -->
+            <div
+                class="bg-indigo-50 dark:bg-indigo-900/20 p-6 rounded-2xl border border-indigo-100 dark:border-indigo-800">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-xl">💡</span>
+                    <h3 class="font-bold text-indigo-900 dark:text-indigo-300">제품 특징</h3>
+                </div>
+                <p class="text-gray-700 dark:text-indigo-100 leading-relaxed whitespace-pre-line">{{
+                    product.functionality|default:"상세 설명이 없는 제품입니다."|format_functionality }}</p>
+            </div>
+
+            <!-- Parsed Ingredients (Badges) -->
+            {% if parsed_ingredients %}
+            <div
+                class="bg-emerald-50 dark:bg-emerald-900/20 p-6 rounded-2xl border border-emerald-100 dark:border-emerald-800">
+                <h3 class="text-sm font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider mb-4">핵심 성분
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for ing in parsed_ingredients %}
+                    <span
+                        class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-white dark:bg-gray-800 text-emerald-700 dark:text-emerald-400 shadow-sm border border-emerald-200 dark:border-emerald-700">
+                        {{ ing }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Raw Specs -->
+            <div
+                class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                    <h3 class="font-bold text-gray-900 dark:text-white">상세 정보 (식약처 DB)</h3>
+                </div>
+                <div class="p-6 space-y-6 text-sm">
+                    <div>
+                        <h4 class="font-medium text-gray-500 mb-1">섭취 방법</h4>
+                        <p class="text-gray-900 dark:text-gray-300">{{ product.intake_method|default:"정보 없음" }}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-500 mb-1">유통기한</h4>
+                        <p class="text-gray-900 dark:text-gray-300">{{ product.expiry_period|default:"정보 없음" }}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-500 mb-1">섭취 주의사항</h4>
+                        <p class="text-gray-900 dark:text-gray-300 whitespace-pre-line">{{ product.cautions|default:"정보
+                            없음" }}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-500 mb-1">원재료명 (전체)</h4>
+                        <p class="text-gray-500 dark:text-gray-400 text-xs leading-relaxed break-keep">{{
+                            product.raw_materials }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Price & Actions -->
+        <div class="lg:col-span-1">
+            <div class="sticky top-24 space-y-6">
+                <!-- Price Card -->
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div class="p-6 bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+                        <h3 class="text-lg font-bold">최저가 비교</h3>
+                        <p class="text-emerald-100 text-sm">네이버 쇼핑 실시간 검색</p>
+                    </div>
+
+                    <!-- HTMX Trigger -->
+                    <div hx-get="{% url 'supplements:prices' product.id %}" hx-trigger="load" hx-swap="innerHTML"
+                        class="min-h-[200px] flex items-center justify-center">
+                        <div class="flex flex-col items-center text-gray-400 animate-pulse">
+                            <span class="text-2xl mb-2">🔎</span>
+                            <span class="text-sm">가격 정보를 찾고 있습니다...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Similar Products Logic (Placeholder for now) -->
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 opacity-60">
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2">비슷한 제품 찾기</h3>
+                    <p class="text-xs text-gray-500">같은 성분의 다른 제품을 찾고 계신가요?<br>(준비 중입니다)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

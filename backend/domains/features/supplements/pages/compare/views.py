@@ -12,11 +12,21 @@ from ...services import compare_supplements
 
 def compare(request: HttpRequest) -> HttpResponse:
     """성분 비교 페이지"""
+    wishlist_products = []
+    if request.user.is_authenticated:
+        from ...models import MFDSHealthFood
+        from ...features.wishlist.interface import get_user_wishlist
+        
+        wishlist_items = get_user_wishlist(request.user.id)
+        ids = [item.supplement_id for item in wishlist_items]
+        wishlist_products = MFDSHealthFood.objects.filter(id__in=ids)
+
     return render(
         request,
         "supplements/pages/compare/compare.html",
         {
             "page_title": "성분 비교 | ALMAENG",
+            "wishlist_products": wishlist_products,
         },
     )
 

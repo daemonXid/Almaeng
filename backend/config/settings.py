@@ -144,6 +144,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",  # For Allauth
+    "django.contrib.humanize",
     # --- Domains (Auto-Discovered) ---
     # Must be BEFORE third-party apps for template overrides (e.g. allauth)
     *PROJECT_APPS,

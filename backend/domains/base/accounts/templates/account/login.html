@@ -9,9 +9,27 @@
     <p class="auth-subtitle">Sign in to access your account</p>
 </div>
 
+{% if messages %}
+<div class="space-y-2 mb-4">
+    {% for message in messages %}
+    <div
+        class="p-3 rounded-lg text-sm {% if message.tags == 'error' %}bg-red-50 text-red-600{% else %}bg-blue-50 text-blue-600{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 {% if form.errors %}
 <div class="alert-error">
-    Invalid email or password. Please try again.
+    {% for field in form %}
+    {% for error in field.errors %}
+    <div>{{ error }}</div>
+    {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+    <div>{{ error }}</div>
+    {% endfor %}
 </div>
 {% endif %}
 

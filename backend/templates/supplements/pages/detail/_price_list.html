@@ -1,0 +1,28 @@
+{% load humanize %}
+
+<div class="divide-y divide-gray-100 dark:divide-gray-700">
+    {% if prices %}
+    {% for item in prices %}
+    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer"
+        class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+        <div class="flex justify-between items-start mb-2">
+            <span
+                class="font-medium text-gray-900 dark:text-white text-sm line-clamp-2 group-hover:text-emerald-600 transition-colors">
+                {{ item.product_name|striptags }}
+            </span>
+        </div>
+        <div class="flex justify-between items-end">
+            <span class="text-xs text-gray-500">네이버 쇼핑</span>
+            <span class="text-lg font-bold text-emerald-600">{{ item.price|intcomma }}원</span>
+        </div>
+    </a>
+    {% endfor %}
+    <div class="p-3 bg-gray-50 dark:bg-gray-800 text-center text-xs text-gray-400">
+        네이버 쇼핑 검색 결과 기준
+    </div>
+    {% else %}
+    <div class="p-6 text-center">
+        <p class="text-gray-500 text-sm">검색된 가격 정보가 없습니다.</p>
+    </div>
+    {% endif %}
+</div>
