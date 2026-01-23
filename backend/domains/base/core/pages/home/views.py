@@ -26,18 +26,45 @@ from django.views.decorators.http import require_GET, require_POST
 
 def home(request: HttpRequest) -> HttpResponse:
     """
-    ALMAENG Home page - Landing page with hero and features.
+    ALMAENG Dashboard - Main landing page with dynamic stats.
     """
-    # Dynamic Stats
-    from domains.features.supplements.models import MFDSHealthFood
-    total_count = MFDSHealthFood.objects.count()
+    from django.contrib.auth import get_user_model
+    from domains.features.supplements.interface import get_mfds_count
+    from domains.features.prices.models import PriceHistory, PriceAlert
+    
+    User = get_user_model()
+    
+    # Dynamic Stats from DB
+    total_products = get_mfds_count()
+    total_users = User.objects.count()
+    total_price_records = PriceHistory.objects.count()
+    active_alerts = PriceAlert.objects.filter(is_active=True).count()
+    
+    # Placeholder: Recent searches (would come from user session/DB)
+    recent_searches = ["오메가3", "비타민D", "유산균", "멀티비타민", "마그네슘", "루테인"]
+    
+    # Platform status (could be dynamic based on API health checks)
+    platforms = [
+        {"name": "iHerb", "status": "active"},
+        {"name": "쿠팡", "status": "active"},
+        {"name": "네이버 쇼핑", "status": "active"},
+        {"name": "Amazon", "status": "coming_soon"},
+        {"name": "다나와", "status": "coming_soon"},
+    ]
     
     return render(
         request,
         "core/pages/home/home.html",
         {
-            "page_title": "ALMAENG | 영양제 성분 비교 서비스",
-            "total_products_count": total_count,
+            "page_title": "ALMAENG | 영양제 성분 비교 대시보드",
+            # Dynamic Stats
+            "total_products": total_products,
+            "total_users": total_users,
+            "total_price_records": total_price_records,
+            "active_alerts": active_alerts,
+            # Placeholder Data
+            "recent_searches": recent_searches,
+            "platforms": platforms,
         },
     )
 

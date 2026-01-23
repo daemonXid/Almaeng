@@ -8,7 +8,7 @@ Services are responsible for:
 - Side effects (emails, notifications, etc.)
 
 Usage:
-    from domains.daemon.services import create_user
+    from domains.base.core.services import create_user
 
     user = create_user(email="user@example.com", password="secret")
 

@@ -13,7 +13,7 @@ from django.db.models import Q
 from django.conf import settings
 from google import genai
 
-from domains.features.supplements.models import Ingredient, Supplement, MFDSHealthFood
+from domains.features.supplements.interface import Ingredient, Supplement, MFDSHealthFood
 
 from .prompts import ANSWER_PROMPT, OFF_TOPIC_RESPONSE, SYSTEM_PROMPT, TOPIC_CHECK_PROMPT
 

@@ -1,29 +1,40 @@
+{% load humanize %}
+
 {% if queries %}
-<table style="width: 100%; font-size: 0.85rem;">
-    <thead>
-        <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
-            <th style="padding: 0.75rem; text-align: left; color: var(--text-muted);">Query</th>
-            <th style="padding: 0.75rem; text-align: right; color: var(--text-muted);">Calls</th>
-            <th style="padding: 0.75rem; text-align: right; color: var(--text-muted);">Avg (ms)</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for q in queries %}
-        <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
-            <td style="padding: 0.75rem; max-width: 400px; overflow: hidden; text-overflow: ellipsis;">
-                <code style="font-size: 0.8rem;">{{ q.query }}</code>
-            </td>
-            <td style="padding: 0.75rem; text-align: right;">{{ q.calls }}</td>
-            <td style="padding: 0.75rem; text-align: right; color: {% if q.avg_time_ms > 500 %}#f87171{% elif q.avg_time_ms > 100 %}#fbbf24{% else %}#4ade80{% endif %};">
-                {{ q.avg_time_ms }}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="text-left text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+                <th class="pb-3 font-medium">쿼리</th>
+                <th class="pb-3 font-medium text-right">호출 수</th>
+                <th class="pb-3 font-medium text-right">평균 (ms)</th>
+                <th class="pb-3 font-medium text-right">총합 (ms)</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+            {% for q in queries %}
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <td class="py-3 pr-4">
+                    <code class="text-xs text-gray-600 dark:text-gray-300 font-mono break-all">
+                        {{ q.query|truncatechars:80 }}
+                    </code>
+                </td>
+                <td class="py-3 text-right text-gray-900 dark:text-white">{{ q.calls|intcomma }}</td>
+                <td class="py-3 text-right">
+                    <span class="{% if q.avg_time_ms > 500 %}text-red-500{% elif q.avg_time_ms > 200 %}text-yellow-500{% else %}text-gray-600 dark:text-gray-400{% endif %}">
+                        {{ q.avg_time_ms }}
+                    </span>
+                </td>
+                <td class="py-3 text-right text-gray-500">{{ q.total_time_ms|intcomma }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
-<p style="color: var(--text-muted);">
-    No slow queries detected. 
-    <span style="font-size: 0.8rem;">(requires pg_stat_statements extension)</span>
-</p>
+<div class="text-center py-8 text-gray-500 dark:text-gray-400">
+    <span class="text-4xl block mb-2">✨</span>
+    <p>느린 쿼리가 없습니다!</p>
+    <p class="text-sm mt-1">(또는 pg_stat_statements 확장이 활성화되지 않음)</p>
+</div>
 {% endif %}

@@ -9,11 +9,13 @@ import base64
 
 import httpx
 from django.conf import settings
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TossPaymentResult(BaseModel):
     """토스 결제 결과 (Pydantic + JSON-LD)"""
+
+    model_config = ConfigDict(populate_by_name=True)
 
     # JSON-LD for inter-domain compatibility
     context: str = Field(default="https://schema.org", alias="@context", exclude=True)
@@ -27,9 +29,6 @@ class TossPaymentResult(BaseModel):
     approved_at: str | None = None
     error_code: str = ""
     error_message: str = ""
-
-    class Config:
-        populate_by_name = True
 
 
 class TossPaymentsClient:

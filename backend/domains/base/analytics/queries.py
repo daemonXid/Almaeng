@@ -49,12 +49,12 @@ def get_dashboard_stats() -> DashboardStats:
     Get overall dashboard statistics from real DB models.
     """
     from django.contrib.auth import get_user_model
-    from domains.features.supplements.models import MFDSHealthFood
+    from domains.features.supplements.interface import get_mfds_count
 
     User = get_user_model()
-    
+
     return DashboardStats(
-        total_products=MFDSHealthFood.objects.count(),
+        total_products=get_mfds_count(),
         total_users=User.objects.count(),
         avg_response_time_ms=120.5,  # Placeholder, hard to calculate without log table
         error_rate=0.01,
@@ -79,7 +79,7 @@ def get_database_stats() -> DatabaseStats:
         with connection.cursor() as cursor:
             # Database size
             cursor.execute("SELECT pg_size_pretty(pg_database_size(current_database()))")
-            cursor.fetchone()[0]
+            _ = cursor.fetchone()[0]  # Intentionally unused (for future use)
 
             # Table count
             cursor.execute(

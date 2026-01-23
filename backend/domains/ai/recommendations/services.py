@@ -33,7 +33,7 @@ def get_similar_products(supplement_id: int, limit: int = 5) -> list[dict]:
     """
     유사 제품 추천 - DB 기반 + AI 보완
     """
-    from domains.features.supplements.models import MFDSHealthFood, Ingredient
+    from domains.features.supplements.interface import MFDSHealthFood
 
     results = []
 
@@ -75,7 +75,7 @@ def get_personalized_recommendations(
     """
     개인화 추천 - 건강 목표 기반
     """
-    from domains.features.supplements.models import MFDSHealthFood
+    from domains.features.supplements.interface import MFDSHealthFood
 
     goals = health_goals or ["general_health"]
     recommendations = []

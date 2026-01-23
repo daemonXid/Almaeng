@@ -1,22 +1,16 @@
-{% if db_stats.largest_tables %}
-<table style="width: 100%; font-size: 0.9rem;">
-    <thead>
-        <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
-            <th style="padding: 0.75rem; text-align: left; color: var(--text-muted);">Table</th>
-            <th style="padding: 0.75rem; text-align: right; color: var(--text-muted);">Size</th>
-            <th style="padding: 0.75rem; text-align: right; color: var(--text-muted);">Rows</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for table in db_stats.largest_tables %}
-        <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
-            <td style="padding: 0.75rem;"><code>{{ table.name }}</code></td>
-            <td style="padding: 0.75rem; text-align: right;">{{ table.size }}</td>
-            <td style="padding: 0.75rem; text-align: right;">{{ table.rows }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p style="color: var(--text-muted);">No tables found or database not connected.</p>
-{% endif %}
+<div class="space-y-4">
+    <div class="flex items-center justify-between">
+        <span class="text-gray-600 dark:text-gray-400">테이블 수</span>
+        <span class="font-semibold text-gray-900 dark:text-white">{{ db_stats.table_count }}</span>
+    </div>
+    <div class="flex items-center justify-between">
+        <span class="text-gray-600 dark:text-gray-400">활성 연결</span>
+        <span class="font-semibold text-gray-900 dark:text-white">{{ db_stats.connection_count }}</span>
+    </div>
+    <div class="flex items-center justify-between">
+        <span class="text-gray-600 dark:text-gray-400">DB 크기</span>
+        <span class="font-semibold text-emerald-600 dark:text-emerald-400">
+            {% if db_stats.total_size_mb %}{{ db_stats.total_size_mb|floatformat:1 }} MB{% else %}N/A{% endif %}
+        </span>
+    </div>
+</div>

@@ -11,6 +11,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 
 from ...logic.parser import extract_ingredients, extract_nutrient_content, calculate_unit_cost, TARGET_NUTRIENTS
+from ...logic.sets import calculate_value_metrics
 from ...models import MFDSHealthFood
 from ....prices.integrations.naver import NaverCrawler
 from ....prices.integrations.base import CrawlResult
@@ -26,7 +27,7 @@ def product_detail(request: HttpRequest, product_id: int) -> HttpResponse:
     # Wishlist status
     in_wishlist = False
     if request.user.is_authenticated:
-        from ...features.wishlist.interface import is_in_wishlist
+        from domains.features.wishlist.interface import is_in_wishlist
         in_wishlist = is_in_wishlist(request.user.id, product_id)
 
     return render(
@@ -65,10 +66,18 @@ async def product_prices(request: HttpRequest, product_id: int) -> HttpResponse:
             
         print(f"[DEBUG] Final Naver search results count: {len(result)}")
         
-        print(f"[DEBUG] Final Naver search results count: {len(result)}")
-        
-        # --- 🧠 AI Unit Cost Analysis ---
-        # Decoupled from search results: Always run analysis if product exists
+        # --- 🧬 Value Metrics Calculation ---
+        value_metrics = None
+        if result and result[0].price:
+            value_metrics = calculate_value_metrics(
+                product=product,
+                price=result[0].price,
+                servings=30,  # Default assumption
+            )
+            if value_metrics:
+                print(f"[DEBUG] Value Metrics: {value_metrics}")
+
+        # --- 🧠 AI Unit Cost Analysis (Legacy, kept for compatibility) ---
         unit_analysis = None
         
         # 1. Identify Target Nutrient
@@ -104,19 +113,16 @@ async def product_prices(request: HttpRequest, product_id: int) -> HttpResponse:
                 # Daily Amount
                 daily_intake_amount = content_info["amount"] * serving_info["daily_count"]
                 unit_analysis["daily_total_amount"] = daily_intake_amount
-                
-                # Cost per Unit (Only if price exists)
-                if result and result[0].price:
-                    # Very rough MVP estimation: Assume 30 days supply if unknown
-                    # cost_per_day = price / 30
-                    pass
-                
-                print(f"[DEBUG] AI Unit Analysis: {unit_analysis}")
 
         return render(
             request,
             "supplements/pages/detail/_price_list.html",
-            {"prices": result, "product": product, "unit_analysis": unit_analysis},
+            {
+                "prices": result, 
+                "product": product, 
+                "unit_analysis": unit_analysis,
+                "value_metrics": value_metrics,
+            },
         )
     except Exception as e:
         import traceback

@@ -9,7 +9,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
 
-from domains.features.supplements.models import MFDSHealthFood
+from domains.features.supplements.interface import MFDSHealthFood
 
 
 def robots_txt(request: HttpRequest) -> HttpResponse:

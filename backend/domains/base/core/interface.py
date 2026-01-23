@@ -8,8 +8,6 @@ Usage (from other modules):
     from domains.base.core.interface import (
         # Models
         TimestampedModel,
-        SoftDeleteModel,
-        ULIDModel,
         # Schemas
         BaseSchema,
         SuccessResponse,
