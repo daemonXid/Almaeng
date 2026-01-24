@@ -35,16 +35,18 @@ def checkout_page(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_POST
+# @require_POST -> Widget callback uses GET
 def payment_confirm(request: HttpRequest) -> HttpResponse:
-    """결제 승인 (Toss → 서버 확인)"""
+    """결제 승인 (Toss Widget Success Url Callback)"""
     import asyncio
-
     from ...integrations.toss import toss_client
 
-    payment_key = request.POST.get("paymentKey", "")
-    order_id = request.POST.get("orderId", "")
-    amount = int(request.POST.get("amount", 0))
+    # Support both GET (Widget) and POST (API)
+    data = request.GET if request.method == "GET" else request.POST
+    
+    payment_key = data.get("paymentKey", "")
+    order_id = data.get("orderId", "")
+    amount = int(data.get("amount", 0))
 
     order = get_order_by_id(order_id)
     if not order:

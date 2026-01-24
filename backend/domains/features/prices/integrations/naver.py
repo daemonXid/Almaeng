@@ -63,18 +63,32 @@ class NaverCrawler(BaseCrawler):
 
         results = []
         try:
-            async with httpx.AsyncClient(timeout=10.0) as client:
+            async with httpx.AsyncClient(timeout=10.0, verify=False) as client: # verify=False로 SSL 임시 우회
+                print(f"[DEBUG] Request URL: {self.BASE_URL}")
+                print(f"[DEBUG] Headers: {headers}")
+                print(f"[DEBUG] Params: {params}")
+                
                 response = await client.get(self.BASE_URL, headers=headers, params=params)
+                print(f"[DEBUG] Status Code: {response.status_code}")
                 
                 if response.status_code == 200:
                     data = response.json()
+                    # print(f"[DEBUG] Data: {str(data)[:200]}...") # 데이터 앞부분만 출력
+                    
                     items = data.get("items", [])
+                    print(f"[DEBUG] Items found: {len(items)}")
                     
                     for item in items:
                         try:
                             # HTML 태그 제거 (title에 <b> 포함됨)
                             title = item["title"].replace("<b>", "").replace("</b>", "")
-                            price = self.parse_price(item["lprice"])
+                            
+                            # lprice가 빈 문자열이거나 0일 수 있음
+                            lprice_str = item["lprice"]
+                            if not lprice_str:
+                                continue
+                                
+                            price = int(lprice_str)
                             
                             results.append(CrawlResult(
                                 product_name=title,
@@ -82,15 +96,18 @@ class NaverCrawler(BaseCrawler):
                                 url=item["link"],
                                 image_url=item["image"],
                                 platform=self.PLATFORM_NAME,
-                                is_in_stock=True # API로는 재고 확인 불가, 기본 True
+                                is_in_stock=True
                             ))
-                        except Exception:
+                        except Exception as e:
+                            print(f"[DEBUG] Item parsing error: {e}")
                             continue
                 else:
                     print(f"Server Error: {response.status_code} {response.text}")
                     
         except Exception as e:
             print(f"Connection Error: {str(e)}")
+            import traceback
+            traceback.print_exc()
             
         return results
 

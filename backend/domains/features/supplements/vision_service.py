@@ -2,68 +2,55 @@
 📷 Vision AI Service
 
 Gemini Vision API를 사용한 영양제 라벨 OCR 및 성분 추출.
+Strictly Typed with Pydantic & JSON-LD.
 """
 
 import os
 import re
-from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
 
 from django.conf import settings
 from google import genai
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 
-@dataclass
-class ExtractedIngredient:
-    """추출된 성분 정보"""
+class ExtractedIngredient(BaseModel):
+    """추출된 성분 정보 (Schema.org/NutritionInformation 호환)"""
+    model_config = ConfigDict(populate_by_name=True)
 
-    name: str
-    amount: Decimal | None = None
-    unit: str = ""
-    daily_value_percent: int | None = None
+    # JSON-LD
+    type: str = Field(default="NutritionInformation", alias="@type")
+    
+    name: str = Field(description="성분명 (예: Vitamin C)")
+    amount: Decimal | None = Field(None, description="함량 (숫자만)")
+    unit: str = Field("", description="단위 (mg, mcg, g, IU 등)")
+    daily_value_percent: int | None = Field(None, description="일일 권장량 퍼센트")
 
 
-@dataclass
-class LabelAnalysisResult:
-    """라벨 분석 결과"""
+class LabelAnalysisResult(BaseModel):
+    """라벨 분석 결과 (JSON-LD)"""
+    model_config = ConfigDict(populate_by_name=True)
 
-    product_name: str
-    brand: str
-    serving_size: str
-    servings_count: int
-    ingredients: list[ExtractedIngredient]
-    raw_text: str = ""
-    error: str | None = None
+    # JSON-LD Context
+    context: str = Field(default="https://schema.org", alias="@context")
+    type: str = Field(default="Product", alias="@type")
+
+    product_name: str = Field("", description="제품명")
+    brand: str = Field("", description="브랜드사")
+    serving_size: str = Field("", description="1회 섭취량")
+    servings_count: int = Field(0, description="총 제공 횟수")
+    
+    # Nutrition
+    ingredients: list[ExtractedIngredient] = Field(default_factory=list, description="영양 성분 목록")
+    
+    # Meta
+    raw_text: str = Field("", exclude=True)
+    error: str | None = Field(None, exclude=True)
 
 
 class VisionService:
     """Gemini Vision 기반 라벨 분석 서비스"""
-
-    PROMPT = """이 영양제 라벨 이미지를 분석해주세요.
-
-다음 정보를 JSON 형식으로 추출해주세요:
-{
-    "product_name": "제품명",
-    "brand": "브랜드명",
-    "serving_size": "1회 섭취량 (예: 1정, 2캡슐)",
-    "servings_count": 숫자 (총 몇 회분),
-    "ingredients": [
-        {
-            "name": "성분명 (영어 또는 한글)",
-            "amount": 숫자,
-            "unit": "단위 (mg, mcg, IU 등)",
-            "daily_value_percent": 숫자 또는 null
-        }
-    ]
-}
-
-중요:
-- 성분명은 정확하게 추출 (예: Vitamin D3, 비타민 D3)
-- 함량은 숫자만 (예: 1000)
-- 단위는 정확하게 (mg, mcg, IU, %)
-- 일일 권장량(%)이 있으면 포함
-- JSON만 반환, 다른 텍스트 없이"""
 
     def __init__(self):
         api_key = os.getenv("GEMINI_API_KEY") or getattr(settings, "GEMINI_API_KEY", None)
@@ -71,137 +58,113 @@ class VisionService:
             raise ValueError("GEMINI_API_KEY not configured")
 
         self.client = genai.Client(api_key=api_key)
-        self.model = "gemini-2.0-flash-exp"
+        self.model = "gemini-2.0-flash"
+
+    def _get_prompt(self) -> str:
+        return """Analyze this supplement label image and extract nutrition information.
+
+Return a valid JSON-LD object matching this schema:
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "product_name": "Product Name",
+  "brand": "Brand Name",
+  "serving_size": "Serving Size (e.g. 2 Capsules)",
+  "servings_count": 30,
+  "ingredients": [
+    {
+      "@type": "NutritionInformation",
+      "name": "Vitamin C",
+      "amount": 1000,
+      "unit": "mg",
+      "daily_value_percent": 100
+    }
+  ]
+}
+
+Rules:
+1. Extract "product_name" and "brand" accurately.
+2. "amount" must be a number. separate "unit" (mg, mcg, IU).
+3. If value is missing, use null or 0.
+4. Return ONLY JSON."""
 
     def analyze_label(self, image_path: str | Path) -> LabelAnalysisResult:
         """이미지 파일에서 라벨 분석"""
         try:
             image_path = Path(image_path)
             if not image_path.exists():
-                return LabelAnalysisResult(
-                    product_name="",
-                    brand="",
-                    serving_size="",
-                    servings_count=0,
-                    ingredients=[],
-                    error="Image file not found",
-                )
+                return LabelAnalysisResult(error="Image file not found")
 
-            # 이미지 업로드
             image_file = self.client.files.upload(file=str(image_path))
+            
+            from google.genai import types
 
-            # Vision API 호출
             response = self.client.models.generate_content(
                 model=self.model,
-                contents=[self.PROMPT, image_file],
+                contents=[self._get_prompt(), image_file],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
             )
-            raw_text = response.text.strip()
-
-            # JSON 파싱
-            return self._parse_response(raw_text)
+            return self._parse_response(response.text)
 
         except Exception as e:
-            return LabelAnalysisResult(
-                product_name="",
-                brand="",
-                serving_size="",
-                servings_count=0,
-                ingredients=[],
-                error=str(e),
-            )
+            return LabelAnalysisResult(error=str(e))
 
     def analyze_label_bytes(self, image_bytes: bytes, mime_type: str = "image/jpeg") -> LabelAnalysisResult:
         """이미지 바이트에서 라벨 분석"""
-        import tempfile
-
         try:
-            # 임시 파일로 저장
-            with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as f:
-                f.write(image_bytes)
-                temp_path = f.name
+            from google.genai import types
 
-            result = self.analyze_label(temp_path)
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=[
+                    self._get_prompt(),
+                    types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
+                ],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
+            )
+            
+            if not response.text:
+                 return LabelAnalysisResult(error="No text in response")
 
-            # 임시 파일 삭제
-            Path(temp_path).unlink(missing_ok=True)
-
-            return result
+            return self._parse_response(response.text)
 
         except Exception as e:
-            return LabelAnalysisResult(
-                product_name="",
-                brand="",
-                serving_size="",
-                servings_count=0,
-                ingredients=[],
-                error=str(e),
-            )
+            import traceback
+            traceback.print_exc()
+            return LabelAnalysisResult(error=f"Analysis failed: {str(e)}")
 
     def _parse_response(self, raw_text: str) -> LabelAnalysisResult:
-        """Gemini 응답 파싱"""
-        import json
-
+        """JSON Response -> Pydantic Model"""
         try:
-            # JSON 블록 추출
-            json_match = re.search(r"\{[\s\S]*\}", raw_text)
-            if not json_match:
-                return LabelAnalysisResult(
-                    product_name="",
-                    brand="",
-                    serving_size="",
-                    servings_count=0,
-                    ingredients=[],
-                    raw_text=raw_text,
-                    error="No JSON found in response",
-                )
+            # Clean markup if any (though response_mime_type=json usually avoids this)
+            cleaned_text = re.sub(r"```json|```", "", raw_text).strip()
+            
+            # Validate with Pydantic
+            result = LabelAnalysisResult.model_validate_json(cleaned_text)
+            result.raw_text = raw_text
+            return result
 
-            data = json.loads(json_match.group())
-
-            ingredients = []
-            for ing in data.get("ingredients", []):
-                amount = ing.get("amount")
-                if amount is not None:
-                    try:
-                        amount = Decimal(str(amount))
-                    except Exception:
-                        amount = None
-
-                ingredients.append(
-                    ExtractedIngredient(
-                        name=ing.get("name", ""),
-                        amount=amount,
-                        unit=ing.get("unit", ""),
-                        daily_value_percent=ing.get("daily_value_percent"),
-                    )
-                )
-
+        except ValidationError as e:
             return LabelAnalysisResult(
-                product_name=data.get("product_name", ""),
-                brand=data.get("brand", ""),
-                serving_size=data.get("serving_size", ""),
-                servings_count=int(data.get("servings_count", 0)),
-                ingredients=ingredients,
                 raw_text=raw_text,
+                error=f"Validation Error: {e}"
             )
-
-        except json.JSONDecodeError as e:
+        except Exception as e:
             return LabelAnalysisResult(
-                product_name="",
-                brand="",
-                serving_size="",
-                servings_count=0,
-                ingredients=[],
                 raw_text=raw_text,
-                error=f"JSON parse error: {e}",
+                error=f"Parse Error: {e}"
             )
 
 
-# 싱글톤 인스턴스
+# 싱글톤
 _vision_service: VisionService | None = None
 
 
 def get_vision_service() -> VisionService:
-    """Vision 서비스 인스턴스 반환"""
     global _vision_service
     if _vision_service is None:
         _vision_service = VisionService()
@@ -209,6 +172,5 @@ def get_vision_service() -> VisionService:
 
 
 def analyze_supplement_label(image_path: str | Path) -> LabelAnalysisResult:
-    """영양제 라벨 분석 (외부 인터페이스)"""
     service = get_vision_service()
     return service.analyze_label(image_path)

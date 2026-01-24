@@ -1,8 +1,8 @@
 {% load i18n %}
 <!-- Left Sidebar - Pastel Green Theme -->
 <aside
-    class="fixed top-0 left-0 h-full z-50 flex flex-col transition-all duration-300 group overscroll-contain bg-[#E8F5E9] border-r border-[#C8E6C9]"
-    :class="sidebarOpen ? 'w-64' : 'w-20 -translate-x-full lg:translate-x-0'" @click="sidebarOpen = true"
+    class="fixed top-0 left-0 h-full z-50 hidden lg:flex flex-col transition-all duration-300 group overscroll-contain bg-[#E8F5E9] border-r border-[#C8E6C9]"
+    :class="sidebarOpen ? 'w-64' : 'w-20 lg:translate-x-0'" @click="sidebarOpen = true"
     @click.outside="sidebarOpen = false">
 
     <!-- Logo Area -->
@@ -155,17 +155,3 @@
         </button>
     </div>
 </aside>
-
-<!-- Mobile Content Overlay -->
-<div x-show="mobileMenuOpen" @click="mobileMenuOpen = false"
-    x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0"
-    x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300"
-    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-    class="fixed inset-0 bg-[#1B5E20]/30 backdrop-blur-sm z-40 lg:hidden" x-cloak>
-</div>
-
-<!-- Mobile Menu Button (Floating) -->
-<button @click="mobileMenuOpen = true" x-show="!mobileMenuOpen"
-    class="fixed top-4 left-4 z-40 p-3 rounded-xl shadow-lg lg:hidden bg-[#E8F5E9] text-[#2E7D32] border border-[#C8E6C9]">
-    <span class="text-xl">☰</span>
-</button>

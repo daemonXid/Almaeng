@@ -1,136 +1,185 @@
 {% extends "_dashboard_base.html" %}
+{% load i18n %}
 
-{% block title %}Profile | DAEMON-ONE{% endblock %}
+{% block title %}마이페이지 | ALMAENG{% endblock %}
 
 {% block dashboard_content %}
-<!-- Header -->
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-    <div>
-        <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Profile Settings</h1>
-        <p class="text-slate-500 mt-1">Manage your account and preferences</p>
-    </div>
-</div>
+<div class="max-w-xl mx-auto pb-24 lg:pb-0">
+    <!-- Mobile Header -->
+    <header class="mb-6 lg:mb-8 text-center lg:text-left">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">마이페이지</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">내 정보 및 계정 설정</p>
+    </header>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Main Profile Card -->
-    <div class="lg:col-span-2 space-y-6">
-        <!-- Profile Info -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-            <div class="flex items-center gap-6 mb-6">
+    <!-- Profile Info Card -->
+    <section
+        class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-6 text-center lg:text-left">
+        <div class="flex flex-col lg:flex-row items-center gap-6">
+            <!-- Profile Image -->
+            <div class="relative group">
                 {% if user.profile_image %}
-                <img src="{{ user.profile_image.url }}" alt="Profile" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-100">
+                <img src="{{ user.profile_image.url }}" alt="Profile"
+                    class="w-24 h-24 rounded-full object-cover border-4 border-gray-50 dark:border-gray-700 shadow-md">
                 {% else %}
-                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-3xl font-bold text-white">
+                <div
+                    class="w-24 h-24 rounded-full bg-gradient-to-br from-[#A7D7C5] to-[#5C9482] flex items-center justify-center text-4xl font-bold text-white border-4 border-white shadow-md">
                     {{ user.email|slice:":1"|upper }}
                 </div>
                 {% endif %}
-                
-                <div>
-                    <h2 class="text-xl font-bold text-slate-800">{{ user.email }}</h2>
-                    <p class="text-sm text-slate-500">Member since {{ user.date_joined|date:"M Y" }}</p>
+                <!-- Image Upload Button (Overlay) -->
+                <label for="profile-upload"
+                    class="absolute bottom-0 right-0 w-8 h-8 bg-white dark:bg-gray-700 rounded-full shadow-lg flex items-center justify-center cursor-pointer border border-gray-200 dark:border-gray-600 hover:scale-110 transition-transform">
+                    📷
+                </label>
+            </div>
+
+            <div class="flex-1 min-w-0">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white break-all mb-1">{{ user.email }}</h2>
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+                    <span
+                        class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-xs font-medium">
+                        가입일: {{ user.date_joined|date:"Y.m.d" }}
+                    </span>
                     {% if user.is_superuser %}
-                    <span class="inline-block mt-2 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-semibold">Admin</span>
+                    <span class="px-3 py-1 bg-[#E8F5E9] text-[#2E7D32] rounded-full text-xs font-bold">관리자</span>
                     {% endif %}
                 </div>
             </div>
-
-            <!-- Profile Image Upload -->
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Profile Image</label>
-                    <input type="file" name="profile_image" accept="image/*" class="block w-full text-sm text-slate-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-full file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-indigo-50 file:text-indigo-700
-                        hover:file:bg-indigo-100
-                        cursor-pointer border border-slate-200 rounded-xl p-2
-                    ">
-                </div>
-                <button type="submit" name="action" value="update_image" class="px-6 py-2 bg-indigo-500 text-white font-semibold rounded-xl hover:bg-indigo-600 transition-colors">
-                    Update Image
-                </button>
-            </form>
         </div>
 
-        <!-- Account Actions -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-            <h3 class="font-bold text-slate-800 mb-4">Account Settings</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <a href="/accounts/password/change/" hx-boost="false" class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group">
-                    <div class="w-10 h-10 rounded-lg bg-slate-200 group-hover:bg-indigo-100 flex items-center justify-center text-slate-600 group-hover:text-indigo-600 transition-colors">
-                        🔐
-                    </div>
-                    <div>
-                        <div class="font-semibold text-slate-800">Change Password</div>
-                        <div class="text-xs text-slate-500">Update your password</div>
-                    </div>
-                </a>
-                <a href="/accounts/email/" hx-boost="false" class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl hover:bg-indigo-50 transition-colors group">
-                    <div class="w-10 h-10 rounded-lg bg-slate-200 group-hover:bg-indigo-100 flex items-center justify-center text-slate-600 group-hover:text-indigo-600 transition-colors">
-                        📧
-                    </div>
-                    <div>
-                        <div class="font-semibold text-slate-800">Email Settings</div>
-                        <div class="text-xs text-slate-500">Manage your email</div>
-                    </div>
-                </a>
-            </div>
+        <!-- Hidden Form for Image Upload -->
+        <form method="POST" enctype="multipart/form-data" id="profile-form" class="hidden">
+            {% csrf_token %}
+            <input type="file" id="profile-upload" name="profile_image" accept="image/*"
+                onchange="if(confirm('프로필 이미지를 변경하시겠습니까?')) document.getElementById('profile-form').submit();">
+            <input type="hidden" name="action" value="update_image">
+        </form>
+    </section>
+
+    <!-- Quick Stats for Mobile -->
+    <section class="grid grid-cols-3 gap-3 mb-6">
+        <div
+            class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 text-center shadow-sm">
+            <span class="text-2xl mb-1 block">❤️</span>
+            <span class="text-xs font-medium text-gray-500">찜 목록</span>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">-</p>
+        </div>
+        <div
+            class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 text-center shadow-sm">
+            <span class="text-2xl mb-1 block">📊</span>
+            <span class="text-xs font-medium text-gray-500">비교함</span>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">-</p>
+        </div>
+        <div
+            class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 text-center shadow-sm">
+            <span class="text-2xl mb-1 block">🩺</span>
+            <span class="text-xs font-medium text-gray-500">설문</span>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">-</p>
+        </div>
+    </section>
+
+    <!-- Menu Links -->
+    <section class="space-y-4">
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider ml-1">계정 설정</h3>
+
+        <div
+            class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm divide-y divide-gray-100 dark:divide-gray-700">
+            <!-- Password Change -->
+            <a href="/accounts/password/change/"
+                class="flex items-center gap-4 p-5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xl shrink-0">
+                    🔐
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-gray-900 dark:text-white text-base">비밀번호 변경</p>
+                    <p class="text-xs text-gray-500 mt-0.5">안전한 비밀번호로 계정을 보호하세요</p>
+                </div>
+                <span class="text-gray-400">›</span>
+            </a>
+
+            <!-- Email Settings -->
+            <a href="/accounts/email/"
+                class="flex items-center gap-4 p-5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xl shrink-0">
+                    📧
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-gray-900 dark:text-white text-base">이메일 설정</p>
+                    <p class="text-xs text-gray-500 mt-0.5">이메일 주소 관리 및 수신 설정</p>
+                </div>
+                <span class="text-gray-400">›</span>
+            </a>
+        </div>
+
+        <!-- Customer Support -->
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider ml-1 pt-4">고객센터</h3>
+
+        <div
+            class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm divide-y divide-gray-100 dark:divide-gray-700">
+            <!-- FAQ -->
+            <a href="{% url 'daemon:faq' %}"
+                class="flex items-center gap-4 p-5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xl shrink-0">
+                    ❓
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-gray-900 dark:text-white text-base">자주 묻는 질문</p>
+                </div>
+                <span class="text-gray-400">›</span>
+            </a>
+
+            <!-- Terms -->
+            <a href="{% url 'daemon:terms' %}"
+                class="flex items-center gap-4 p-5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xl shrink-0">
+                    📜
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-gray-900 dark:text-white text-base">이용약관</p>
+                </div>
+                <span class="text-gray-400">›</span>
+            </a>
+
+            <!-- Privacy -->
+            <a href="{% url 'daemon:privacy' %}"
+                class="flex items-center gap-4 p-5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xl shrink-0">
+                    🔒
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-gray-900 dark:text-white text-base">개인정보처리방침</p>
+                </div>
+                <span class="text-gray-400">›</span>
+            </a>
         </div>
 
         <!-- Danger Zone -->
-        <div class="bg-white p-6 rounded-2xl border border-red-100 shadow-sm">
-            <h3 class="font-bold text-red-600 mb-4 flex items-center gap-2">
-                ⚠️ Danger Zone
-            </h3>
-            <p class="text-sm text-slate-500 mb-4">These actions are irreversible. Please be careful.</p>
-            <a href="/accounts/logout/" hx-boost="false" class="inline-block px-6 py-2 border border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-colors">
-                Log Out
+        <h3 class="text-sm font-bold text-red-500 uppercase tracking-wider ml-1 pt-4">기타</h3>
+
+        <div
+            class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
+            <a href="/accounts/logout/"
+                class="flex items-center gap-4 p-5 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors group">
+                <div
+                    class="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-500 flex items-center justify-center text-xl shrink-0 group-hover:bg-red-100">
+                    👋
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-gray-900 dark:text-white text-base group-hover:text-red-600">로그아웃</p>
+                </div>
             </a>
         </div>
-    </div>
+    </section>
 
-    <!-- Sidebar -->
-    <div class="space-y-6">
-        <!-- Account Summary -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-            <h3 class="font-bold text-slate-800 mb-4">Account Summary</h3>
-            <div class="space-y-4 text-sm">
-                <div class="flex justify-between">
-                    <span class="text-slate-500">Email</span>
-                    <span class="font-mono text-slate-800">{{ user.email|slice:":20" }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-500">Status</span>
-                    <span class="font-semibold text-emerald-600">Active</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-500">Role</span>
-                    <span class="font-semibold text-slate-800">{% if user.is_superuser %}Admin{% else %}Member{% endif %}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-500">Joined</span>
-                    <span class="text-slate-800">{{ user.date_joined|date:"M d, Y" }}</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Links -->
-        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-2xl shadow-sm text-white">
-            <h3 class="font-bold mb-4">Quick Links</h3>
-            <div class="space-y-2">
-                <a href="/" class="block py-2 px-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm">
-                    🏠 Dashboard
-                </a>
-                <a href="/chat/" class="block py-2 px-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm">
-                    🤖 AI Chat
-                </a>
-                <a href="/health/" class="block py-2 px-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors text-sm">
-                    📊 System Status
-                </a>
-            </div>
-        </div>
+    <!-- App Version -->
+    <div class="text-center mt-10 text-xs text-gray-400 pb-8">
+        <p>ALMAENG v1.0.0</p>
+        <p class="mt-1">© 2026 DaemonX. All rights reserved.</p>
     </div>
 </div>
 {% endblock %}

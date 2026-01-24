@@ -12,12 +12,12 @@
 | Feature | Description |
 |:---|:---|
 | 💊 **성분 비교** | 두 영양제의 성분을 비교하여 일치율 표시 |
-| 📷 **Vision AI OCR** | 라벨 사진 → 성분 자동 추출 |
+| 📷 **Vision AI OCR** | Gemini 2.0 Flash 기반 라벨 성분 자동 추출 (Pydantic + JSON-LD) |
 | 💰 **가격 추적** | 쿠팡, 네이버 쇼핑, 아이허브 실시간 가격 비교 |
 | 🎯 **AI 추천** | 건강 설문 기반 맞춤 영양제 추천 |
 | 🛒 **장바구니** | HTMX 실시간 업데이트 |
 | ❤️ **찜 목록** | 관심 상품 저장 및 가격 변동 알림(예정) |
-| 💳 **Toss 결제** | 토스페이먼츠 연동 |
+| 💳 **Toss 결제** | Toss Payment Widget 연동 (Mobile Optimized) |
 
 ---
 
@@ -25,10 +25,10 @@
 
 | Layer | Technologies |
 |:---|:---|
-| **Backend** | Python 3.12+, Django Ninja, Pydantic |
-| **Frontend** | HTMX + Alpine.js + Tailwind CSS |
-| **AI** | Google Gemini API |
-| **Payments** | Toss Payments |
+| **Backend** | Python 3.12+, Django Ninja, Pydantic (Strict + JSON-LD) |
+| **Frontend** | HTMX + Alpine.js + Tailwind CSS (Mobile First) |
+| **AI** | Google Gemini 2.0 Flash (Stable) |
+| **Payments** | Toss Payments Widget SDK |
 | **i18n** | 🇰🇷 한국어, 🇺🇸 English |
 
 ---

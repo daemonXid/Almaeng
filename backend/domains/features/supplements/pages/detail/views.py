@@ -12,32 +12,46 @@ from django.shortcuts import get_object_or_404, render
 
 from ...logic.parser import extract_ingredients, extract_nutrient_content, calculate_unit_cost, TARGET_NUTRIENTS
 from ...logic.sets import calculate_value_metrics
-from ...models import MFDSHealthFood
-from ....prices.integrations.naver import NaverCrawler
-from ....prices.integrations.base import CrawlResult
-
+from django.db.models import Q
+from ...models import Supplement
+from ....prices.models import PriceHistory
 
 def product_detail(request: HttpRequest, product_id: int) -> HttpResponse:
     """제품 상세 페이지 (SSR)"""
-    product = get_object_or_404(MFDSHealthFood, id=product_id)
+    # 1. Supplement 모델 사용 (없으면 404)
+    # 기존 MFDS ID와의 호환성은 고려하지 않음 (완전 전환)
+    try:
+        product = Supplement.objects.get(id=product_id)
+    except Supplement.DoesNotExist:
+        # 혹시 MFDS ID로 들어왔을 경우를 대비해 예외 처리 등 가능하나 일단 404
+        return render(request, "404.html", status=404)
     
-    # Simple Ingredient Parsing for Display
-    parsed_ingredients = extract_ingredients(product.raw_materials)
-    
-    # Wishlist status
+    # 2. Wishlist status
     in_wishlist = False
     if request.user.is_authenticated:
         from domains.features.wishlist.interface import is_in_wishlist
         in_wishlist = is_in_wishlist(request.user.id, product_id)
+
+    # 3. Similar Products (Logic: Same Brand or Random for now)
+    # 추후 AI 분석 결과(benefits) 기반으로 고도화
+    # 3. Similar Products (Logic: Same Brand -> Random)
+    similar_products = Supplement.objects.filter(brand=product.brand).exclude(id=product_id)[:4]
+    
+    if not similar_products:
+        similar_products = Supplement.objects.exclude(id=product_id).order_by("?")[:4]
+
+    # 4. Price History (최저가 확인)
+    lowest_price = PriceHistory.objects.filter(supplement_id=product.id).order_by("price").first()
 
     return render(
         request,
         "supplements/pages/detail/detail_page.html",
         {
             "product": product,
-            "parsed_ingredients": parsed_ingredients,
-            "page_title": f"{product.product_name} | ALMAENG",
+            "page_title": f"{product.name} | ALMAENG",
             "in_wishlist": in_wishlist,
+            "similar_products": similar_products,
+            "lowest_price": lowest_price,
         },
     )
 

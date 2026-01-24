@@ -16,6 +16,11 @@ class Supplement(models.Model):
     serving_size = models.CharField(max_length=50, verbose_name="1회 섭취량")  # "1정", "2캡슐"
     servings_per_container = models.PositiveIntegerField(default=1, verbose_name="총 섭취횟수")
 
+    # AI Analysis Fields
+    description = models.TextField(blank=True, verbose_name="AI 제품 설명")
+    benefits = models.JSONField(default=list, blank=True, verbose_name="주요 효능")  # List[str]
+    target_audience = models.CharField(max_length=200, blank=True, verbose_name="추천 대상")
+
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -22,6 +22,7 @@ class CrawlResult:
     original_price: Decimal | None = None
     discount_percent: int | None = None
     url: str = ""
+    image_url: str = ""  # 추가된 필드
     is_in_stock: bool = True
     platform: str = ""
     error: str | None = None

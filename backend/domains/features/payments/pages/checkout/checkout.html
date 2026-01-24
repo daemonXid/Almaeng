@@ -1,83 +1,134 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n humanize %}
 
-{% block title %}{% trans "결제" %} | ALMAENG{% endblock %}
+{% block title %}결제하기 | ALMAENG{% endblock %}
 
 {% block extra_head %}
-<!-- Toss Payments SDK -->
-<script src="https://js.tosspayments.com/v1/payment"></script>
+<!-- Toss Payment Widget SDK -->
+<script src="https://js.tosspayments.com/v1/payment-widget"></script>
 {% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto px-4 py-8">
+<div class="max-w-xl mx-auto pb-32">
     <!-- Header -->
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">
-        💳 {% trans "결제하기" %}
-    </h1>
+    <header
+        class="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center gap-3">
+        <a href="javascript:history.back()"
+            class="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <svg class="w-6 h-6 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </a>
+        <h1 class="text-lg font-bold text-gray-900 dark:text-white">주문/결제</h1>
+    </header>
 
-    <!-- Order Summary -->
-    <div class="mb-8 p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-        <h2 class="font-semibold text-gray-900 dark:text-white mb-4">{% trans "주문 상품" %}</h2>
-        <div class="space-y-3">
-            {% for item in cart.items.all %}
-            <div class="flex justify-between">
-                <span class="text-gray-600 dark:text-gray-400">
-                    {% trans "영양제" %} #{{ item.supplement_id }} × {{ item.quantity }}
-                </span>
-                <span class="font-medium text-gray-900 dark:text-white">
-                    ₩{{ item.subtotal|floatformat:0 }}
-                </span>
+    <div class="p-4 space-y-6">
+        <!-- 1. Order Summary -->
+        <section
+            class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <h2 class="text-sm font-bold text-gray-500 mb-4">주문 상품 <span class="text-emerald-600">{{ cart.total_items
+                    }}</span>건</h2>
+            <div class="space-y-4">
+                {% for item in cart.items.all %}
+                <div class="flex gap-4">
+                    <div
+                        class="w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-700 flex items-center justify-center shrink-0">
+                        <span class="text-2xl">💊</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-gray-900 dark:text-white line-clamp-2 text-sm">{{
+                            item.product_name|default:"영양제" }}</h3>
+                        <div class="flex justify-between items-center mt-1">
+                            <span class="text-xs text-gray-500">{{ item.quantity }}개</span>
+                            <span class="font-bold text-gray-900 dark:text-white">₩{{ item.subtotal|intcomma }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
-        <hr class="my-4 border-gray-200 dark:border-gray-700">
-        <div class="flex justify-between">
-            <span class="font-semibold text-gray-900 dark:text-white">{% trans "총 결제금액" %}</span>
-            <span id="total-amount" class="text-xl font-bold text-emerald-600">₩{{ cart.total_price|floatformat:0
-                }}</span>
-        </div>
+            <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                <span class="font-bold text-gray-900 dark:text-white">총 결제금액</span>
+                <span class="text-xl font-bold text-emerald-600">₩{{ cart.total_price|intcomma }}</span>
+            </div>
+        </section>
+
+        <!-- 2. Shipping Info -->
+        <section
+            class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <h2 class="text-sm font-bold text-gray-500 mb-4">배송 정보</h2>
+            <div class="space-y-3">
+                <input type="text" id="shipping-name" placeholder="받는 분" value="{{ user.username }}"
+                    class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none focus:ring-2 focus:ring-emerald-500/50 text-sm">
+                <input type="tel" id="shipping-phone" placeholder="연락처 (- 없이 입력)"
+                    class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none focus:ring-2 focus:ring-emerald-500/50 text-sm">
+                <input type="text" id="shipping-address" placeholder="배송 주소"
+                    class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-900 border-none focus:ring-2 focus:ring-emerald-500/50 text-sm">
+            </div>
+        </section>
+
+        <!-- 3. Payment Widget -->
+        <section
+            class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <h2 class="text-sm font-bold text-gray-500 mb-2">결제 수단</h2>
+            <!-- Payment Widget Render Area -->
+            <div id="payment-method"></div>
+            <!-- Agreement Render Area -->
+            <div id="agreement"></div>
+        </section>
     </div>
 
-    <!-- Shipping Info -->
-    <div class="mb-8 p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-        <h2 class="font-semibold text-gray-900 dark:text-white mb-4">{% trans "배송 정보" %}</h2>
-        <div class="space-y-4">
-            <input type="text" id="shipping-name" placeholder="{% trans '받는 분' %}"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-            <input type="tel" id="shipping-phone" placeholder="{% trans '연락처' %}"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-            <input type="text" id="shipping-address" placeholder="{% trans '배송 주소' %}"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-        </div>
+    <!-- Bottom Action Bar -->
+    <div
+        class="fixed bottom-0 left-0 right-0 p-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 lg:hidden z-50">
+        <button id="payment-button"
+            class="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all active:scale-95 flex items-center justify-center gap-2">
+            <span>₩{{ cart.total_price|intcomma }} 결제하기</span>
+        </button>
     </div>
 
-    <!-- Payment Button -->
-    <button id="payment-button"
-        class="w-full py-4 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg">
-        💳 {% trans "토스페이로 결제하기" %}
-    </button>
+    <!-- Desktop Button (Hidden on mobile) -->
+    <div class="hidden lg:block mt-8 text-center">
+        <button id="payment-button-desktop"
+            class="w-full max-w-md py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all active:scale-95">
+            ₩{{ cart.total_price|intcomma }} 결제하기
+        </button>
+    </div>
 </div>
 
 <script>
     (function () {
         const clientKey = "{{ toss_client_key|escapejs }}";
-        const tossPayments = TossPayments(clientKey);
-        const totalAmount = parseInt("{{ cart.total_price|default:0 }}") || 0;
-        const totalItems = parseInt("{{ cart.total_items|default:0 }}") || 0;
+        // Customer Key needs to be unique for user (or random for guest)
+        const customerKey = "{{ user.id|default:'ANONYMOUS' }}_" + Date.now();
 
-        document.getElementById("payment-button").addEventListener("click", function () {
-            const orderId = "ORDER_" + Date.now();
+        const paymentWidget = PaymentWidget(clientKey, customerKey);
+
+        const price = parseInt("{{ cart.total_price|default:0 }}");
+
+        // Render Payment Methods
+        paymentWidget.renderPaymentMethods("#payment-method", { value: price });
+
+        // Render Agreement
+        paymentWidget.renderAgreement("#agreement");
+
+        const handlePayment = function () {
+            const orderId = "ORD-" + Date.now() + "-" + Math.random().toString(36).substring(2, 9);
             const customerName = document.getElementById("shipping-name").value || "고객";
+            const customerEmail = "{{ user.email|default:'' }}";
 
-            tossPayments.requestPayment("카드", {
-                amount: totalAmount,
+            paymentWidget.requestPayment({
                 orderId: orderId,
-                orderName: "ALMAENG 영양제 " + totalItems + "건",
+                orderName: "ALMAENG 영양제 {{ cart.total_items }}건",
                 customerName: customerName,
-                successUrl: window.location.origin + "/payments/confirm/",
+                customerEmail: customerEmail,
+                successUrl: window.location.origin + "/payments/success-callback/", // New Callback logic needed
                 failUrl: window.location.origin + "/payments/fail/"
             });
-        });
+        };
+
+        document.getElementById("payment-button").addEventListener("click", handlePayment);
+        const desktopBtn = document.getElementById("payment-button-desktop");
+        if (desktopBtn) desktopBtn.addEventListener("click", handlePayment);
     })();
 </script>
 {% endblock %}

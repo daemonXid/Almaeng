@@ -13,6 +13,7 @@ urlpatterns = [
     # Checkout
     path("checkout/", checkout_page, name="checkout"),
     path("confirm/", payment_confirm, name="confirm"),
+    path("success-callback/", payment_confirm, name="success_callback"), # Widget Callback
     path("success/", payment_success, name="success"),
     path("fail/", payment_fail, name="fail"),
     # Order History

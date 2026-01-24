@@ -64,6 +64,7 @@ def home(request: HttpRequest) -> HttpResponse:
             "active_alerts": active_alerts,
             # Placeholder Data
             "recent_searches": recent_searches,
+            "popular_keywords": ["오메가3", "비타민C", "마그네슘", "유산균", "밀크씨슬", "루테인", "콜라겐", "비오틴", "아르기닌", "테아닌", "칼슘", "비타민D", "아연", "프로폴리스", "홍삼", "쏘팔메토", "글루타치온", "코큐텐", "엽산", "철분"],
             "platforms": platforms,
         },
     )
