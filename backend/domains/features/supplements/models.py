@@ -5,6 +5,7 @@
 """
 
 from django.db import models
+from pgvector.django import VectorField
 
 
 class Supplement(models.Model):
@@ -20,6 +21,15 @@ class Supplement(models.Model):
     description = models.TextField(blank=True, verbose_name="AI 제품 설명")
     benefits = models.JSONField(default=list, blank=True, verbose_name="주요 효능")  # List[str]
     target_audience = models.CharField(max_length=200, blank=True, verbose_name="추천 대상")
+    
+    # Vector Search (pgvector)
+    embedding = VectorField(
+        dimensions=768,  # Gemini embedding-001 dimension
+        null=True,
+        blank=True,
+        verbose_name="임베딩 벡터",
+        help_text="제품 설명 및 성분 정보의 벡터 표현 (Gemini embedding-001)"
+    )
 
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
@@ -29,6 +39,10 @@ class Supplement(models.Model):
         verbose_name = "영양제"
         verbose_name_plural = "영양제 목록"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["name", "brand"]),
+            models.Index(fields=["embedding"], name="supplement_embedding_idx", opclasses=["vector_cosine_ops"]),
+        ]
 
     def __str__(self) -> str:
         return f"{self.brand} - {self.name}"
@@ -109,6 +123,15 @@ class MFDSHealthFood(models.Model):
     raw_materials = models.TextField(blank=True, verbose_name="원재료")  # RAWMTRL_NM
     product_form = models.CharField(max_length=100, blank=True, verbose_name="제품형태")  # PRDT_SHAP_CD_NM
 
+    # Vector Search (pgvector)
+    embedding = VectorField(
+        dimensions=768,  # Gemini embedding-001 dimension
+        null=True,
+        blank=True,
+        verbose_name="임베딩 벡터",
+        help_text="제품명, 기능성, 원재료 정보의 벡터 표현 (Gemini embedding-001)"
+    )
+    
     # 메타 정보
     synced_at = models.DateTimeField(auto_now=True, verbose_name="동기화 시각")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="생성일")

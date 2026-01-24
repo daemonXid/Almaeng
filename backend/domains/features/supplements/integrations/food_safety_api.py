@@ -7,11 +7,12 @@ https://foodsafetykorea.go.kr/api/openApiInfo.do
 
 import httpx
 from django.conf import settings
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class HealthFoodProduct(BaseModel):
     """건강기능식품 정보 (실제 API 응답 필드)"""
+    model_config = ConfigDict(frozen=True)  # Immutable Data Flow 강제
 
     # 기본 정보
     lcns_no: str = Field("", alias="LCNS_NO")  # 인허가번호
@@ -46,6 +47,7 @@ class HealthFoodProduct(BaseModel):
 
 class MFDSSearchResult(BaseModel):
     """식약처 API 검색 결과"""
+    model_config = ConfigDict(frozen=True)  # Immutable Data Flow 강제
 
     success: bool
     products: list[HealthFoodProduct] = []

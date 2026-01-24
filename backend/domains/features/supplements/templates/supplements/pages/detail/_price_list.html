@@ -10,21 +10,25 @@
                     💊
                 </div>
                 <div>
-                    <p class="text-sm font-bold text-emerald-700 dark:text-emerald-300">{{ value_metrics.rank_label }}
+                    <p class="text-sm font-bold text-emerald-700 dark:text-emerald-300">{{ value_metrics.rank_label|default:"💰 가성비 분석" }}
                     </p>
                     <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                        {{ value_metrics.primary_ingredient }} 기준 가성비
+                        {% if value_metrics.primary_ingredient %}{{ value_metrics.primary_ingredient }} 기준 가성비{% else %}가성비 분석{% endif %}
                     </p>
                 </div>
             </div>
+            {% if value_metrics.unit_cost %}
             <div class="text-right">
                 <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                    {{ value_metrics.unit_cost }}원<span class="text-xs font-normal">/{{ value_metrics.unit }}</span>
+                    {{ value_metrics.unit_cost|floatformat:2 }}원<span class="text-xs font-normal">/{{ value_metrics.unit|default:"mg" }}</span>
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
-                    1회 {{ value_metrics.amount_per_serving }}{{ value_metrics.unit }}
+                {% if value_metrics.amount_per_serving %}
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    1회 {{ value_metrics.amount_per_serving|intcomma }}{{ value_metrics.unit|default:"mg" }}
                 </p>
+                {% endif %}
             </div>
+            {% endif %}
         </div>
     </div>
     {% endif %}
@@ -54,9 +58,17 @@
 
     {% if prices %}
     {% for item in prices %}
-    <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+    <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group relative">
+        <!-- 가성비 순위 배지 -->
+        {% if forloop.counter <= 3 %}
+        <div class="absolute top-2 right-2 z-10">
+            <span class="px-2 py-1 rounded-full text-xs font-bold {% if forloop.counter == 1 %}bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300{% elif forloop.counter == 2 %}bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300{% else %}bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300{% endif %}">
+                {% if forloop.counter == 1 %}🏆 Top 1{% elif forloop.counter == 2 %}🥈 Top 2{% else %}🥉 Top 3{% endif %}
+            </span>
+        </div>
+        {% endif %}
         <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="block">
-            <div class="flex justify-between items-start mb-2">
+            <div class="flex justify-between items-start mb-2 pr-16">
                 <span
                     class="font-medium text-gray-900 dark:text-white text-sm line-clamp-2 group-hover:text-emerald-600 transition-colors">
                     {{ item.product_name|striptags }}

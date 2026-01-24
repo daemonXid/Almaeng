@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}성분 기반 검색 | ALMAENG{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-[#FAFAF9] dark:bg-gray-900 pb-24 font-sans">
+    <div class="max-w-xl mx-auto px-5 pt-8">
+        <!-- Header -->
+        <header class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white leading-tight">
+                🔬 성분으로<br>
+                <span class="text-emerald-600">가성비 비교</span>
+            </h1>
+            <p class="text-sm text-gray-500 mt-2">동일 성분 함량 대비 가격을 비교해보세요</p>
+        </header>
+
+        <!-- Search Form -->
+        <section class="mb-6 bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
+            <form method="get" action="{% url 'supplements:ingredient_search' %}" class="space-y-4">
+                <!-- Ingredient Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        성분명
+                    </label>
+                    <input type="text" name="ingredient" value="{{ ingredient_name }}"
+                        placeholder="예: 비타민C, 오메가3, 마그네슘"
+                        class="w-full h-12 px-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 transition-all"
+                        required>
+                </div>
+
+                <!-- Amount Range -->
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            최소 함량
+                        </label>
+                        <input type="number" name="min_amount" value="{{ min_amount }}"
+                            placeholder="0"
+                            class="w-full h-12 px-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-400">
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            최대 함량
+                        </label>
+                        <input type="number" name="max_amount" value="{{ max_amount }}"
+                            placeholder="10000"
+                            class="w-full h-12 px-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-400">
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            단위
+                        </label>
+                        <select name="unit" class="w-full h-12 px-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-400">
+                            <option value="mg" {% if unit == "mg" %}selected{% endif %}>mg</option>
+                            <option value="mcg" {% if unit == "mcg" %}selected{% endif %}>mcg</option>
+                            <option value="IU" {% if unit == "IU" %}selected{% endif %}>IU</option>
+                            <option value="g" {% if unit == "g" %}selected{% endif %}>g</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sort -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        정렬 기준
+                    </label>
+                    <select name="sort" class="w-full h-12 px-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-400">
+                        <option value="value" {% if sort_by == "value" %}selected{% endif %}>가성비순 (낮을수록 좋음)</option>
+                        <option value="price" {% if sort_by == "price" %}selected{% endif %}>가격순</option>
+                        <option value="amount" {% if sort_by == "amount" %}selected{% endif %}>함량순</option>
+                    </select>
+                </div>
+
+                <button type="submit"
+                    class="w-full h-14 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-emerald-500/20">
+                    🔍 검색하기
+                </button>
+            </form>
+        </section>
+
+        <!-- Popular Ingredients -->
+        <section class="mb-6">
+            <p class="text-xs font-bold text-gray-500 mb-3 ml-1">🔥 인기 성분</p>
+            <div class="flex flex-wrap gap-2">
+                {% for ing in popular_ingredients %}
+                <a href="{% url 'supplements:ingredient_search' %}?ingredient={{ ing }}"
+                    class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors shadow-sm">
+                    {{ ing }}
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Results -->
+        {% if results %}
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-gray-800 dark:text-white">
+                    검색 결과 ({{ results|length }}개)
+                </h2>
+                {% if ingredient_name %}
+                <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                    {{ ingredient_name }}
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="space-y-3">
+                {% for item in results %}
+                <a href="{% url 'supplements:detail' item.supplement_id %}"
+                    class="block p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-700 transition-all shadow-sm">
+                    <div class="flex items-start gap-4">
+                        <!-- Product Image -->
+                        <div class="w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-700 flex items-center justify-center shrink-0">
+                            {% if item.image_url %}
+                            <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-full h-full object-contain rounded-xl">
+                            {% else %}
+                            <span class="text-2xl">💊</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold text-emerald-600">{{ item.brand }}</span>
+                                {% if forloop.counter <= 3 %}
+                                <span class="text-xs font-bold px-2 py-0.5 rounded-full {% if forloop.counter == 1 %}bg-yellow-100 text-yellow-700{% elif forloop.counter == 2 %}bg-gray-100 text-gray-700{% else %}bg-orange-100 text-orange-700{% endif %}">
+                                    {% if forloop.counter == 1 %}🏆 Top 1{% elif forloop.counter == 2 %}🥈 Top 2{% else %}🥉 Top 3{% endif %}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <h3 class="font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                                {{ item.name }}
+                            </h3>
+                            <div class="flex items-center gap-4 text-xs text-gray-600 dark:text-gray-400">
+                                {% if item.amount_per_serving %}
+                                <span>함량: {{ item.amount_per_serving|intcomma }}{{ item.unit|default:"mg" }}</span>
+                                {% endif %}
+                                {% if item.price %}
+                                <span>가격: {{ item.price|intcomma }}원</span>
+                                {% endif %}
+                                {% if item.price_per_unit %}
+                                <span class="font-bold text-emerald-600">
+                                    {{ item.price_per_unit|floatformat:2 }}원/{{ item.unit|default:"mg" }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% elif ingredient_name %}
+        <section class="text-center py-12">
+            <p class="text-gray-500">검색 결과가 없습니다.</p>
+            <p class="text-sm text-gray-400 mt-2">다른 성분명으로 검색해보세요.</p>
+        </section>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

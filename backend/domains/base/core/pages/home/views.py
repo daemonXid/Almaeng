@@ -30,15 +30,15 @@ def home(request: HttpRequest) -> HttpResponse:
     """
     from django.contrib.auth import get_user_model
     from domains.features.supplements.interface import get_mfds_count
-    from domains.features.prices.models import PriceHistory, PriceAlert
+    from domains.features.prices.interface import get_active_alerts_count, get_total_price_records_count
     
     User = get_user_model()
     
-    # Dynamic Stats from DB
+    # Dynamic Stats from DB - interface.py를 통해
     total_products = get_mfds_count()
     total_users = User.objects.count()
-    total_price_records = PriceHistory.objects.count()
-    active_alerts = PriceAlert.objects.filter(is_active=True).count()
+    total_price_records = get_total_price_records_count()
+    active_alerts = get_active_alerts_count()
     
     # Placeholder: Recent searches (would come from user session/DB)
     recent_searches = ["오메가3", "비타민D", "유산균", "멀티비타민", "마그네슘", "루테인"]

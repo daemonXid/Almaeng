@@ -28,14 +28,14 @@
                 hx-include="[name='product_b']">
                 <option value="">제품을 선택하세요</option>
                 {% for p in wishlist_products %}
-                <option value="{{ p.id }}">{{ p.product_name }}</option>
+                <option value="{{ p.id }}">{{ p.name }}</option>
                 {% empty %}
                 <option disabled>찜한 제품이 없습니다</option>
                 {% endfor %}
             </select>
             {% if not wishlist_products %}
             <div class="mt-2 text-sm text-sky-600">
-                <a href="{% url 'supplements:search' %}" class="underline">영양제 검색</a>에서 제품을 찜해보세요!
+                <a href="/" class="underline">홈에서 검색</a>하여 제품을 찜해보세요!
             </div>
             {% endif %}
         </div>
@@ -52,7 +52,7 @@
                 hx-include="[name='product_a']">
                 <option value="">제품을 선택하세요</option>
                 {% for p in wishlist_products %}
-                <option value="{{ p.id }}">{{ p.product_name }}</option>
+                <option value="{{ p.id }}">{{ p.name }}</option>
                 {% empty %}
                 <option disabled>찜한 제품이 없습니다</option>
                 {% endfor %}

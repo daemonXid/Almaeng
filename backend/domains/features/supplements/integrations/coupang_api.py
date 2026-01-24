@@ -12,11 +12,12 @@ from datetime import datetime, timezone
 
 import httpx
 from django.conf import settings
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CoupangProduct(BaseModel):
     """쿠팡 상품 정보"""
+    model_config = ConfigDict(frozen=True)  # Immutable Data Flow 강제
 
     product_id: str = Field(..., alias="productId")
     product_name: str = Field(..., alias="productName")
@@ -33,6 +34,7 @@ class CoupangProduct(BaseModel):
 
 class CoupangSearchResult(BaseModel):
     """쿠팡 검색 결과"""
+    model_config = ConfigDict(frozen=True)  # Immutable Data Flow 강제
 
     success: bool
     products: list[CoupangProduct] = []

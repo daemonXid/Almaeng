@@ -1,7 +1,7 @@
 """
 📦 Product Detail Views
 
-MFDS Data Display + Real-time Naver Price Lookup (HTMX)
+Supplement Model Display + Real-time Naver Price Lookup (HTMX) + Similar Products Comparison
 """
 
 from decimal import Decimal
@@ -12,18 +12,16 @@ from django.shortcuts import get_object_or_404, render
 
 from ...logic.parser import extract_ingredients, extract_nutrient_content, calculate_unit_cost, TARGET_NUTRIENTS
 from ...logic.sets import calculate_value_metrics
+from ...services import find_similar_supplements
 from django.db.models import Q
-from ...models import Supplement
-from ....prices.models import PriceHistory
+from ...models import Supplement, Ingredient
 
 def product_detail(request: HttpRequest, product_id: int) -> HttpResponse:
     """제품 상세 페이지 (SSR)"""
     # 1. Supplement 모델 사용 (없으면 404)
-    # 기존 MFDS ID와의 호환성은 고려하지 않음 (완전 전환)
     try:
-        product = Supplement.objects.get(id=product_id)
+        product = Supplement.objects.prefetch_related("ingredients").get(id=product_id)
     except Supplement.DoesNotExist:
-        # 혹시 MFDS ID로 들어왔을 경우를 대비해 예외 처리 등 가능하나 일단 404
         return render(request, "404.html", status=404)
     
     # 2. Wishlist status
@@ -32,16 +30,29 @@ def product_detail(request: HttpRequest, product_id: int) -> HttpResponse:
         from domains.features.wishlist.interface import is_in_wishlist
         in_wishlist = is_in_wishlist(request.user.id, product_id)
 
-    # 3. Similar Products (Logic: Same Brand or Random for now)
-    # 추후 AI 분석 결과(benefits) 기반으로 고도화
-    # 3. Similar Products (Logic: Same Brand -> Random)
-    similar_products = Supplement.objects.filter(brand=product.brand).exclude(id=product_id)[:4]
+    # 3. 동일 성분 함량 비교 분석 제품 추천 (성분 기반)
+    from ...conf import settings as supplements_settings
     
-    if not similar_products:
-        similar_products = Supplement.objects.exclude(id=product_id).order_by("?")[:4]
+    SIMILAR_PRODUCTS_LIMIT = supplements_settings.DEFAULT_SEARCH_LIMIT // 5  # 4개
+    
+    similar_by_ingredients = find_similar_supplements(product_id, min_match_percent=50.0)[:SIMILAR_PRODUCTS_LIMIT]
 
-    # 4. Price History (최저가 확인)
-    lowest_price = PriceHistory.objects.filter(supplement_id=product.id).order_by("price").first()
+    # 4. Fallback: Same Brand or Random
+    if not similar_by_ingredients:
+        similar_products = Supplement.objects.filter(brand=product.brand).exclude(id=product_id)[:SIMILAR_PRODUCTS_LIMIT]
+        if not similar_products:
+            similar_products = Supplement.objects.exclude(id=product_id).order_by("?")[:SIMILAR_PRODUCTS_LIMIT]
+    else:
+        # Convert to Supplement objects
+        similar_ids = [s["supplement_id"] for s in similar_by_ingredients]
+        similar_products = Supplement.objects.filter(id__in=similar_ids)
+        # Preserve order
+        similar_products_dict = {p.id: p for p in similar_products}
+        similar_products = [similar_products_dict[sid] for sid in similar_ids if sid in similar_products_dict]
+
+    # 5. Price History (최저가 확인) - interface.py를 통해
+    from domains.features.prices.interface import get_lowest_price_record
+    lowest_price = get_lowest_price_record(product.id)
 
     return render(
         request,
@@ -51,97 +62,125 @@ def product_detail(request: HttpRequest, product_id: int) -> HttpResponse:
             "page_title": f"{product.name} | ALMAENG",
             "in_wishlist": in_wishlist,
             "similar_products": similar_products,
+            "similar_by_ingredients": similar_by_ingredients,
             "lowest_price": lowest_price,
         },
     )
 
 
 async def product_prices(request: HttpRequest, product_id: int) -> HttpResponse:
-    """HTMX: 실시간 가격 조회 (Naver API)"""
+    """HTMX: 실시간 가격 조회 (Naver API) - Top 4만 표시 (캐싱 적용)"""
+    from django.core.cache import cache
+    
     try:
-        product = await MFDSHealthFood.objects.aget(id=product_id)
         
-        # Crawler Orchestrator would be better, but direct use for MVP is fine
-        crawler = NaverCrawler()
+        # 캐시 키 생성
+        cache_key = f"product_prices_{product_id}"
         
-        # Search query strategy
-        # 1. First try: "{Company} {Product}"
-        # Filter out common legal suffixes from company name for better match
-        company_clean = product.company_name.replace("(주)", "").replace("주식회사", "").strip()
-        search_query_1 = f"{company_clean} {product.product_name}"
+        # 캐시에서 가격 정보 확인 (1시간 TTL)
+        cached_result = cache.get(cache_key)
+        if cached_result:
+            from ....prices.integrations.base import CrawlResult
+            
+            # 캐시된 데이터를 CrawlResult 객체로 변환
+            cached_prices = cached_result.get("prices", [])
+            top_prices = [
+                CrawlResult(
+                    product_name=p.get("product_name", ""),
+                    price=Decimal(str(p.get("price", 0))),
+                    url=p.get("url", ""),
+                    image_url=p.get("image_url", ""),
+                    platform=p.get("platform", "naver"),
+                    is_in_stock=True,
+                )
+                for p in cached_prices[:prices_settings.DEFAULT_PRICE_SEARCH_LIMIT]
+            ]
+            value_metrics = cached_result.get("value_metrics")
+            cached_product_id = cached_result.get("product_id")
+            
+            if cached_product_id and top_prices:
+                product = await Supplement.objects.select_related().aget(id=cached_product_id)
+                return render(
+                    request,
+                    "supplements/pages/detail/_price_list.html",
+                    {
+                        "prices": top_prices,
+                        "product": product,
+                        "value_metrics": value_metrics,
+                    },
+                )
         
-        print(f"[DEBUG] Naver search query (Primary): {search_query_1}")
-        result = await crawler.search(search_query_1)
+        # 캐시 미스 - API 호출
+        product = await Supplement.objects.select_related().aget(id=product_id)
         
-        # 2. Fallback: "{Product}" only if primary fails
+        # 네이버 쇼핑 가격 검색 (interface.py를 통한 접근)
+        from domains.features.prices.interface import search_naver_prices
+        
+        # Search query strategy: "{Brand} {Product Name}"
+        search_query = f"{product.brand} {product.name}"
+        
+        from domains.features.prices.conf import settings as prices_settings
+        
+        result = await search_naver_prices(search_query, limit=prices_settings.DEFAULT_PRICE_SEARCH_LIMIT)
+        
+        # Fallback: Product name only
         if not result:
-            print(f"[DEBUG] Primary search failed. Trying fallback: {product.product_name}")
-            result = await crawler.search(product.product_name)
-            
-        print(f"[DEBUG] Final Naver search results count: {len(result)}")
+            result = await search_naver_prices(product.name, limit=prices_settings.DEFAULT_PRICE_SEARCH_LIMIT)
         
-        # --- 🧬 Value Metrics Calculation ---
+        top_prices = result
+        
+        # Value Metrics 계산 (첫 번째 가격 기준) - 개선된 가성비 계산
         value_metrics = None
-        if result and result[0].price:
-            value_metrics = calculate_value_metrics(
-                product=product,
-                price=result[0].price,
-                servings=30,  # Default assumption
+        if top_prices and top_prices[0].price:
+            from ...services import calculate_price_per_unit
+            
+            price_info = calculate_price_per_unit(
+                product,
+                Decimal(str(top_prices[0].price))
             )
-            if value_metrics:
-                print(f"[DEBUG] Value Metrics: {value_metrics}")
-
-        # --- 🧠 AI Unit Cost Analysis (Legacy, kept for compatibility) ---
-        unit_analysis = None
-        
-        # 1. Identify Target Nutrient
-        target_nutrient = None
-        parsed_list = extract_ingredients(product.raw_materials)
-        if parsed_list:
-            target_nutrient = parsed_list[0]
-        else:
-            # Fallback scan
-            for nutrient in TARGET_NUTRIENTS:
-                if nutrient in product.raw_materials:
-                    target_nutrient = nutrient
-                    break
-                    
-        # 2. Extract & Calculate
-        if target_nutrient:
-            content_info = extract_nutrient_content(product.raw_materials, target_nutrient)
             
-            # Parse Serving Info (New!)
-            from ...logic.parser import parse_serving_info
-            serving_info = parse_serving_info(product.intake_method, product.product_form)
-            
-            if content_info:
-                unit_analysis = {
-                    "nutrient": target_nutrient,
-                    "amount": content_info["amount"],
-                    "unit": content_info["unit"],
-                    "match_text": content_info["match"],
-                    "daily_count": serving_info["daily_count"],
-                    "count_unit": serving_info["unit"],
+            if price_info:
+                value_metrics = {
+                    "primary_ingredient": price_info["ingredient_name"],
+                    "amount_per_serving": price_info["amount_per_serving"],
+                    "unit": price_info["unit"],
+                    "total_amount": price_info["total_amount"],
+                    "unit_cost": price_info["price_per_unit"],
+                    "price_per_serving": price_info["price_per_serving"],
+                    "rank_label": "💰 가성비 분석",
                 }
-                
-                # Daily Amount
-                daily_intake_amount = content_info["amount"] * serving_info["daily_count"]
-                unit_analysis["daily_total_amount"] = daily_intake_amount
+        
+        # 캐시에 저장 (1시간 = 3600초)
+        # CrawlResult를 딕셔너리로 변환하여 저장 (Decimal을 float로 변환)
+        cache.set(cache_key, {
+            "prices": [
+                {
+                    "product_name": r.product_name,
+                    "price": float(r.price),  # Decimal을 float로 변환
+                    "url": r.url,
+                    "image_url": r.image_url,
+                    "platform": r.platform,
+                }
+                for r in result
+            ],
+            "value_metrics": value_metrics,
+            "product_id": product.id,
+        }, timeout=prices_settings.PRICE_CACHE_TIMEOUT)
 
         return render(
             request,
             "supplements/pages/detail/_price_list.html",
             {
-                "prices": result, 
-                "product": product, 
-                "unit_analysis": unit_analysis,
+                "prices": top_prices,
+                "product": product,
                 "value_metrics": value_metrics,
             },
         )
     except Exception as e:
         import traceback
-        print(f"[ERROR] product_prices exception: {e}")
-        traceback.print_exc()
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"product_prices exception: {e}", exc_info=True)
         return HttpResponse(
             f'<div class="text-red-500 text-sm p-4 text-center">가격 정보를 불러오는데 실패했습니다.<br><span class="text-xs text-gray-400">{str(e)}</span></div>'
         )

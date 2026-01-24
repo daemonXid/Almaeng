@@ -15,7 +15,10 @@ from pydantic import BaseModel, ConfigDict, Field
 class TossPaymentResult(BaseModel):
     """토스 결제 결과 (Pydantic + JSON-LD)"""
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(
+        populate_by_name=True,
+        frozen=True,  # Immutable Data Flow 강제
+    )
 
     # JSON-LD for inter-domain compatibility
     context: str = Field(default="https://schema.org", alias="@context", exclude=True)

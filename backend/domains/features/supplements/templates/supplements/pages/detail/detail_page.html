@@ -3,17 +3,39 @@
 
 {% block content %}
 <div class="max-w-5xl mx-auto px-4 py-8 pb-32">
-    <!-- Breadcrumb -->
-    <nav class="flex text-sm text-gray-500 mb-6">
-        <a href="{% url 'supplements:search' %}" class="hover:text-emerald-600">검색</a>
-        <span class="mx-2">/</span>
-        <span class="text-gray-900 font-medium truncate">{{ product.name }}</span>
-    </nav>
+        <!-- Breadcrumb -->
+        <nav class="flex text-sm text-gray-500 mb-6">
+            <a href="/" class="hover:text-emerald-600">홈</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-900 font-medium truncate">{{ product.name }}</span>
+        </nav>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         <!-- Left Column: Product Info -->
         <div class="lg:col-span-2 space-y-8">
+            <!-- 네이버 쇼핑 가격 정보 (Top 4) - 상단으로 이동 -->
+            <section
+                class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden order-first">
+                <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30">
+                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <span>💰</span>
+                        <span>네이버 쇼핑 가격 비교 (Top 4)</span>
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">동일 성분 함량 대비 가성비를 비교해보세요</p>
+                </div>
+                <div id="price-list-container" 
+                     hx-get="{% url 'supplements:prices' product.id %}"
+                     hx-trigger="load"
+                     hx-indicator="#price-loading"
+                     class="min-h-[200px]">
+                    <div id="price-loading" class="htmx-indicator p-8 text-center">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                        <p class="mt-2 text-sm text-gray-500">가격 정보를 불러오는 중...</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- Header -->
             <div class="flex items-start gap-6">
                 <!-- Product Image -->
@@ -85,6 +107,85 @@
                     </div>
                 </div>
             </section>
+
+            <!-- 네이버 쇼핑 가격 정보 (Top 4) - 상단으로 이동 -->
+            <section
+                class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden order-first">
+                <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30">
+                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <span>💰</span>
+                        <span>네이버 쇼핑 가격 비교 (Top 4)</span>
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">동일 성분 함량 대비 가성비를 비교해보세요</p>
+                </div>
+                <div id="price-list-container" 
+                     hx-get="{% url 'supplements:prices' product.id %}"
+                     hx-trigger="load"
+                     hx-indicator="#price-loading"
+                     class="min-h-[200px]">
+                    <div id="price-loading" class="htmx-indicator p-8 text-center">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                        <p class="mt-2 text-sm text-gray-500">가격 정보를 불러오는 중...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 동일 성분 함량 비교 분석 -->
+            {% if similar_by_ingredients %}
+            <section
+                class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <span>🔬</span>
+                        <span>동일 성분 함량 비교 분석</span>
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">성분 구성이 유사한 제품을 가성비 순으로 추천합니다</p>
+                </div>
+                <div class="p-6 overflow-x-auto scrollbar-hide" style="scroll-snap-type: x mandatory;">
+                    <div class="flex gap-4 pb-2">
+                        {% for similar in similar_by_ingredients %}
+                        {% for p in similar_products %}
+                        {% if p.id == similar.supplement_id %}
+                        <a href="{% url 'supplements:detail' similar.supplement_id %}"
+                            class="flex-shrink-0 w-72 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-700 hover:shadow-md transition-all group"
+                            style="scroll-snap-align: start;">
+                            <div class="flex items-start gap-4">
+                                <div class="w-16 h-16 rounded-xl bg-white dark:bg-gray-800 flex items-center justify-center shrink-0 p-1 border border-emerald-200 dark:border-emerald-700">
+                                    {% if p.image_url %}
+                                    <img src="{{ p.image_url }}" alt="{{ p.name }}" class="w-full h-full object-contain">
+                                    {% else %}
+                                    <span class="text-2xl">💊</span>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-xs font-bold text-emerald-600">{{ p.brand }}</span>
+                                        {% if forloop.parentloop.counter <= 3 %}
+                                        <span class="px-2 py-0.5 rounded-full text-xs font-bold {% if forloop.parentloop.counter == 1 %}bg-yellow-100 text-yellow-700{% elif forloop.parentloop.counter == 2 %}bg-gray-100 text-gray-700{% else %}bg-orange-100 text-orange-700{% endif %}">
+                                            {% if forloop.parentloop.counter == 1 %}🏆 Top 1{% elif forloop.parentloop.counter == 2 %}🥈 Top 2{% else %}🥉 Top 3{% endif %}
+                                        </span>
+                                        {% else %}
+                                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs font-bold">
+                                            {{ similar.match_percentage }}% 일치
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                    <h4 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-emerald-600 transition-colors line-clamp-2">
+                                        {{ p.name }}
+                                    </h4>
+                                    <div class="flex items-center gap-3 text-xs text-gray-600 dark:text-gray-400">
+                                        <span>✅ {{ similar.matching_count }}개 성분 일치</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+            {% endif %}
         </div>
 
         <!-- Right Column: Price & Actions -->

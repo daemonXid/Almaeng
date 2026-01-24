@@ -11,15 +11,15 @@ from ...services import compare_supplements
 
 
 def compare(request: HttpRequest) -> HttpResponse:
-    """성분 비교 페이지"""
+    """성분 비교 페이지 - 찜 목록만 사용"""
     wishlist_products = []
     if request.user.is_authenticated:
-        from ...models import MFDSHealthFood
-        from ...features.wishlist.interface import get_user_wishlist
+        from ...models import Supplement
+        from domains.features.wishlist.interface import get_user_wishlist
         
         wishlist_items = get_user_wishlist(request.user.id)
         ids = [item.supplement_id for item in wishlist_items]
-        wishlist_products = MFDSHealthFood.objects.filter(id__in=ids)
+        wishlist_products = Supplement.objects.filter(id__in=ids)
 
     return render(
         request,

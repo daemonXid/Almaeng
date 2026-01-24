@@ -1,0 +1,54 @@
+{% load humanize %}
+
+{% if results %}
+<div class="space-y-3">
+    {% for item in results %}
+    <a href="{% url 'supplements:detail' item.supplement_id %}"
+        class="block p-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-700 transition-all shadow-sm">
+        <div class="flex items-start gap-4">
+            <!-- Product Image -->
+            <div class="w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-700 flex items-center justify-center shrink-0">
+                {% if item.image_url %}
+                <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-full h-full object-contain rounded-xl">
+                {% else %}
+                <span class="text-2xl">💊</span>
+                {% endif %}
+            </div>
+
+            <!-- Product Info -->
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-bold text-emerald-600">{{ item.brand }}</span>
+                    {% if forloop.counter <= 3 %}
+                    <span class="text-xs font-bold px-2 py-0.5 rounded-full {% if forloop.counter == 1 %}bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300{% elif forloop.counter == 2 %}bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300{% else %}bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300{% endif %}">
+                        {% if forloop.counter == 1 %}🏆 Top 1{% elif forloop.counter == 2 %}🥈 Top 2{% else %}🥉 Top 3{% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+                <h3 class="font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                    {{ item.name }}
+                </h3>
+                <div class="flex items-center gap-4 text-xs text-gray-600 dark:text-gray-400">
+                    {% if item.amount_per_serving %}
+                    <span>함량: {{ item.amount_per_serving|intcomma }}{{ item.unit|default:"mg" }}</span>
+                    {% endif %}
+                    {% if item.price %}
+                    <span>가격: {{ item.price|intcomma }}원</span>
+                    {% endif %}
+                    {% if item.price_per_unit %}
+                    <span class="font-bold text-emerald-600 dark:text-emerald-400">
+                        {{ item.price_per_unit|floatformat:2 }}원/{{ item.unit|default:"mg" }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-12">
+    <p class="text-gray-500">검색 결과가 없습니다.</p>
+    <p class="text-sm text-gray-400 mt-2">다른 성분명으로 검색해보세요.</p>
+</div>
+{% endif %}

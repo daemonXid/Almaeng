@@ -17,7 +17,10 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 class ExtractedIngredient(BaseModel):
     """추출된 성분 정보 (Schema.org/NutritionInformation 호환)"""
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(
+        populate_by_name=True,
+        frozen=True,  # Immutable Data Flow 강제
+    )
 
     # JSON-LD
     type: str = Field(default="NutritionInformation", alias="@type")
@@ -30,7 +33,10 @@ class ExtractedIngredient(BaseModel):
 
 class LabelAnalysisResult(BaseModel):
     """라벨 분석 결과 (JSON-LD)"""
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(
+        populate_by_name=True,
+        frozen=True,  # Immutable Data Flow 강제
+    )
 
     # JSON-LD Context
     context: str = Field(default="https://schema.org", alias="@context")

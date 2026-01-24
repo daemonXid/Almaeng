@@ -16,13 +16,13 @@ from .services import check_alerts, get_lowest_price, send_price_alert_notificat
 
 async def crawl_all_prices():
     """모든 영양제 가격 수집 (배치 작업)"""
-    from domains.features.supplements.models import Supplement
+    from domains.features.supplements.interface import get_all_supplements
 
     orchestrator = get_orchestrator()
     results = []
 
-    # 모든 영양제 조회
-    supplements = Supplement.objects.all()
+    # 모든 영양제 조회 - interface.py를 통해
+    supplements = get_all_supplements()
 
     for supplement in supplements:
         # 각 영양제의 저장된 플랫폼 URL 가져오기
@@ -44,10 +44,10 @@ async def crawl_all_prices():
 
 def check_all_price_alerts():
     """모든 가격 알림 체크 및 발송"""
-    from domains.features.supplements.models import Supplement
+    from domains.features.supplements.interface import get_all_supplements
 
     triggered_alerts = []
-    supplements = Supplement.objects.all()
+    supplements = get_all_supplements()
 
     for supplement in supplements:
         alerts = check_alerts(supplement.id)

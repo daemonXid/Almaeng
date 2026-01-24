@@ -75,9 +75,34 @@ def get_price_trend(supplement_id: int, platform: str, days: int = 30) -> PriceT
 
 
 def get_lowest_price(supplement_id: int) -> Decimal | None:
-    """현재 최저가 조회"""
+    """현재 최저가 조회 (가격만)"""
     prices = get_current_prices(supplement_id)
     return prices[0].price if prices else None
+
+
+def get_lowest_price_record(supplement_id: int) -> PriceHistory | None:
+    """현재 최저가 기록 조회 (PriceHistory 객체)"""
+    return PriceHistory.objects.filter(
+        supplement_id=supplement_id
+    ).order_by("price", "-recorded_at").first()
+
+
+def get_price_history(supplement_id: int, limit: int = 10) -> list[PriceHistory]:
+    """영양제의 가격 이력 조회"""
+    return list(
+        PriceHistory.objects.filter(supplement_id=supplement_id)
+        .order_by("-recorded_at")[:limit]
+    )
+
+
+def get_active_alerts_count() -> int:
+    """활성 가격 알림 개수"""
+    return PriceAlert.objects.filter(is_active=True).count()
+
+
+def get_total_price_records_count() -> int:
+    """전체 가격 기록 개수"""
+    return PriceHistory.objects.count()
 
 
 def check_alerts(supplement_id: int) -> list[PriceAlert]:
@@ -130,15 +155,14 @@ def send_price_alert_notification(alert: PriceAlert, current_price: Decimal) -> 
     except User.DoesNotExist:
         return False
 
-    # 영양제 이름 조회 (Supplement 또는 MFDSHealthFood)
+    # 영양제 이름 조회 (interface.py를 통해)
     product_name = f"영양제 #{alert.supplement_id}"
     try:
-        from domains.features.supplements.models import Supplement
+        from domains.features.supplements.interface import get_supplement_name
 
-        supplement = Supplement.objects.filter(id=alert.supplement_id).first()
-        if supplement:
-            product_name = supplement.name
+        product_name = get_supplement_name(alert.supplement_id)
     except Exception:
+        # 실패 시 기본값 유지
         pass
 
     # In-app 알림 생성

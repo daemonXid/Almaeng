@@ -4,7 +4,7 @@
 Groups products by ingredient composition and calculates value scores.
 
 Usage:
-    from domains.features.supplements.logic.sets import (
+    from .sets import (
         get_primary_ingredient,
         calculate_value_metrics,
     )

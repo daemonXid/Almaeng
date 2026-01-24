@@ -40,8 +40,8 @@
         </a>
 
         <!-- Search -->
-        <a href="{% url 'supplements:search' %}"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'search' in request.path %}bg-[#C8E6C9] text-[#1B5E20] font-bold shadow-sm{% else %}text-[#1B5E20] hover:bg-[#DCEDC8] hover:text-[#0D3810]{% endif %}"
+        <a href="/"
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'search' in request.path or 'ingredient-search' in request.path %}bg-[#C8E6C9] text-[#1B5E20] font-bold shadow-sm{% else %}text-[#1B5E20] hover:bg-[#DCEDC8] hover:text-[#0D3810]{% endif %}"
             title="{% trans '영양제 검색' %}">
             <span class="text-xl shrink-0 text-center w-6">🔍</span>
             <span class="font-medium transition-opacity duration-300 transform origin-left"

@@ -149,6 +149,7 @@ INSTALLED_APPS = [
     # Must be BEFORE third-party apps for template overrides (e.g. allauth)
     *PROJECT_APPS,
     # --- Third Party ---
+    "pgvector",  # Vector similarity search
     "ninja_extra",
     "django_components",
     "django_htmx",
@@ -317,6 +318,12 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # Auto-signup: 소셜 로그인 시 자동 가입
 SOCIALACCOUNT_AUTO_SIGNUP = True
+
+# 소셜 로그인 중간 페이지 제거 (바로 OAuth provider로 리다이렉트)
+SOCIALACCOUNT_LOGIN_ON_GET = True  # GET 요청으로 바로 로그인 시작
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"  # 소셜 로그인은 이메일 인증 불필요
 
 # 👤 Identity
 AUTH_USER_MODEL = "daemon_auth.User"

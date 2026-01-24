@@ -7,13 +7,15 @@ https://developers.naver.com/docs/serviceapi/search/shopping/shopping.md
 
 import httpx
 from django.conf import settings
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, ConfigDict, HttpUrl
 
 from .base import BaseCrawler, CrawlResult
 
 
 class NaverProduct(BaseModel):
     """네이버 쇼핑 상품 정보 (API 응답)"""
+    model_config = ConfigDict(frozen=True)  # Immutable Data Flow 강제
+    
     title: str
     link: str
     image: str

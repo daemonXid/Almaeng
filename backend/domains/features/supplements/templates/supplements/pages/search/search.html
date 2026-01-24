@@ -18,7 +18,7 @@
                 </svg>
             </a>
 
-            <form action="{% url 'supplements:search' %}" method="get" class="flex-1 relative group">
+            <form action="{% url 'supplements:search_direct' %}" method="get" class="flex-1 relative group">
                 <input type="search" name="q" value="{{ initial_query }}"
                     hx-get="{% url 'supplements:search_results' %}" hx-trigger="keyup changed delay:300ms, search"
                     hx-target="#search-results" hx-push-url="true" hx-indicator="#search-loading"

@@ -31,7 +31,7 @@
                 </p>
                 <div class="flex flex-wrap gap-2">
                     {% for source in sources %}
-                    <a href="{% url 'supplements:search' %}?q={{ source.name }}" target="_blank"
+                    <a href="{% url 'supplements:search_direct' %}?q={{ source.name }}" target="_blank"
                         class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:border-emerald-200 hover:text-emerald-600 transition-colors no-underline">
                         💊 {{ source.name }}
                     </a>

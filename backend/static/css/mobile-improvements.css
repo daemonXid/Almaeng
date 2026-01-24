@@ -1,0 +1,59 @@
+/* 모바일 인터페이스 개선 스타일 */
+
+/* 스크롤바 숨기기 */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* 스와이프 가능한 카드 */
+.swipeable-cards {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+}
+
+.swipeable-cards > * {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 640px) {
+    /* 검색바 상단 고정 */
+    .sticky-search {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--bg-color, #FAFAF9);
+        padding-top: 0.5rem;
+        padding-bottom: 1rem;
+        margin-left: -1.25rem;
+        margin-right: -1.25rem;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+
+    /* 카드 간격 조정 */
+    .mobile-card-spacing {
+        gap: 0.75rem;
+    }
+
+    /* 텍스트 크기 조정 */
+    .mobile-text-sm {
+        font-size: 0.875rem;
+    }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+    .sticky-search {
+        background: #111827;
+    }
+}

@@ -25,9 +25,15 @@ from .schemas import (
     SupplementSchema,
 )
 from .services import (
+    compare_by_ingredient_price,
     compare_supplements,
     find_similar_supplements,
+    generate_embedding_for_mfds,
+    generate_embedding_for_supplement,
     get_supplement_with_ingredients,
+    search_by_ingredient,
+    search_by_vector,
+    search_mfds_by_vector,
 )
 
 if TYPE_CHECKING:
@@ -118,6 +124,19 @@ def get_supplement_name(supplement_id: int) -> str:
     return supplement["name"] if supplement else f"영양제 #{supplement_id}"
 
 
+def get_all_supplements() -> "QuerySet[Supplement]":
+    """
+    모든 Supplement 조회 (배치 작업용).
+
+    Args:
+        None
+
+    Returns:
+        Supplement QuerySet
+    """
+    return Supplement.objects.all()
+
+
 __all__ = [
     # Models (read-only access)
     "Ingredient",
@@ -130,15 +149,23 @@ __all__ = [
     "SupplementDetailSchema",
     "SupplementSchema",
     # Services
+    "compare_by_ingredient_price",
     "compare_supplements",
     "find_similar_supplements",
     "get_supplement_with_ingredients",
+    "search_by_ingredient",
     # MFDS 함수
     "get_mfds_count",
     "get_mfds_product",
     "get_mfds_products_by_ids",
     "search_mfds_products",
     # Supplement 함수
+    "get_all_supplements",
     "get_supplement",
     "get_supplement_name",
+    # Vector Search 함수
+    "search_by_vector",
+    "search_mfds_by_vector",
+    "generate_embedding_for_supplement",
+    "generate_embedding_for_mfds",
 ]
