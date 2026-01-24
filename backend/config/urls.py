@@ -23,8 +23,14 @@ api = NinjaExtraAPI(
 
 # Register domain routers
 from domains.features.payments.api import router as payments_router
+from ninja import ConfigError
 
-api.add_router("/payments/", payments_router)
+# Prevent duplicate router registration
+try:
+    api.add_router("/payments/", payments_router)
+except ConfigError:
+    # Router already registered, skip silently
+    pass
 
 urlpatterns = [
     # 🔍 SEO - robots.txt, sitemap.xml (must be at root level)
