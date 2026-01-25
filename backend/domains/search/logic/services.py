@@ -86,7 +86,7 @@ async def search_products(query: str, limit: int = 20) -> CompareResult:
     # 5. AI 추천 메시지 생성
     import json
     products_json = json.dumps([p.model_dump() for p in products[:5]], ensure_ascii=False)
-    recommendation = generate_recommendation(products_json)
+    recommendation = generate_recommendation(query, products_json)
 
     return CompareResult(
         query=query,

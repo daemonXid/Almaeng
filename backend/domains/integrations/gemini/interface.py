@@ -20,14 +20,15 @@ def extract_keywords(query: str):
     return gemini_client.extract_keywords(query)
 
 
-def generate_recommendation(products_json: str) -> str:
+def generate_recommendation(query: str, products_json: str) -> str:
     """
     검색 결과를 바탕으로 추천 메시지 생성
     
     Args:
+        query: 사용자 질문
         products_json: 상품 검색 결과 JSON 문자열
         
     Returns:
         str: 추천 메시지
     """
-    return gemini_client.generate_recommendation(products_json)
+    return gemini_client.generate_recommendation(query, products_json)

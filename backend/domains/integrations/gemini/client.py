@@ -103,11 +103,12 @@ class GeminiClient:
                 category="",
             )
 
-    def generate_recommendation(self, products_json: str) -> str:
+    def generate_recommendation(self, query: str, products_json: str) -> str:
         """
         검색 결과를 바탕으로 추천 메시지 생성
 
         Args:
+            query: 사용자 질문 (검색어)
             products_json: 상품 검색 결과 JSON 문자열
 
         Returns:
@@ -117,7 +118,7 @@ class GeminiClient:
             return "검색 결과를 확인해보세요."
 
         try:
-            prompt = RECOMMENDATION_PROMPT.format(products_json=products_json)
+            prompt = RECOMMENDATION_PROMPT.format(query=query, products_json=products_json)
             response = self._client.models.generate_content(
                 model="gemini-2.0-flash",
                 contents=prompt,
