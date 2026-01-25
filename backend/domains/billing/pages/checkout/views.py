@@ -6,9 +6,8 @@
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.urls import reverse
-import uuid
 
 from ...state.interface import create_order, get_order_by_uuid, update_order_payment
 

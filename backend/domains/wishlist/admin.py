@@ -2,7 +2,6 @@
 🔧 Admin Configuration - Wishlist Domain
 """
 
-from django.contrib import admin
 
 # from .models import ExampleWishlist
 #

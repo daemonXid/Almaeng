@@ -6,7 +6,7 @@ PRD v2: 결제 페이지 라우팅
 
 from django.urls import path
 
-from .pages.checkout.views import checkout_page, payment_success, payment_fail
+from .pages.checkout.views import checkout_page, payment_fail, payment_success
 
 app_name = "billing"
 

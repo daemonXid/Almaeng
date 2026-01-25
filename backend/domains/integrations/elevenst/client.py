@@ -88,7 +88,9 @@ class ElevenStreetClient(BaseCrawler):
 
                             # 원래 가격 (할인 전)
                             original_price_str = self._get_text(product, "Price", "0")
-                            original_price = Decimal(original_price_str.replace(",", "")) if original_price_str else None
+                            original_price = (
+                                Decimal(original_price_str.replace(",", "")) if original_price_str else None
+                            )
 
                             # 할인율
                             discount_percent = None
@@ -96,7 +98,7 @@ class ElevenStreetClient(BaseCrawler):
                                 discount_percent = int(((original_price - price) / original_price) * 100)
 
                             # 상품 ID 및 URL
-                            product_code = self._get_text(product, "ProductCode", "")
+                            self._get_text(product, "ProductCode", "")
                             detail_page_url = self._get_text(product, "DetailPageUrl", "")
 
                             # 이미지

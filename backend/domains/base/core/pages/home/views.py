@@ -5,7 +5,7 @@ AI 쇼핑 도우미 메인 랜딩 페이지.
 """
 
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
 
 def home(request: HttpRequest) -> HttpResponse:
@@ -36,7 +36,7 @@ def landing(request: HttpRequest) -> HttpResponse:
                 {
                     "icon": "🗣️",
                     "title": "자연어 검색",
-                    "desc": "\"눈 피로에 좋은 영양제 3만원 이하\" 처럼 자연스럽게 검색",
+                    "desc": '"눈 피로에 좋은 영양제 3만원 이하" 처럼 자연스럽게 검색',
                 },
                 {
                     "icon": "⚖️",

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load humanize %}
 
 {% block title %}{{ page_title }}{% endblock %}
 
@@ -9,10 +10,10 @@
         <!-- Header -->
         <header class="mb-6">
             <button onclick="history.back()"
-                class="text-emerald-600 hover:text-emerald-700 flex items-center gap-2 mb-3 text-sm">
+                class="text-brand-600 hover:text-brand-700 flex items-center gap-2 mb-3 text-sm font-medium">
                 <span>←</span> 뒤로가기
             </button>
-            <h1 class="text-xl font-bold text-gray-800 dark:text-white">
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">
                 💳 결제하기
             </h1>
         </header>
@@ -23,25 +24,26 @@
             <p class="text-4xl mb-3">⚠️</p>
             <p class="text-gray-600 dark:text-gray-400">{{ error }}</p>
             <a href="{% url 'daemon:home' %}"
-                class="inline-block mt-4 px-6 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors">
+                class="inline-block mt-4 px-6 py-2 bg-brand-600 text-white rounded-xl hover:bg-brand-700 transition-colors">
                 홈으로 돌아가기
             </a>
         </section>
         {% else %}
         <!-- Order Summary -->
         <section class="mb-6">
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-5">
-                <h2 class="text-base font-bold text-gray-800 dark:text-white mb-4">주문 상품</h2>
+            <div
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 shadow-sm">
+                <h2 class="text-base font-bold text-gray-900 dark:text-white mb-4">주문 상품</h2>
 
                 <div class="flex gap-4">
                     {% if image_url %}
                     <img src="{{ image_url }}" alt="{{ product_name }}"
-                        class="w-24 h-24 object-cover rounded-xl bg-gray-100 flex-shrink-0">
+                        class="w-24 h-24 object-cover rounded-xl bg-gray-100 flex-shrink-0 border border-gray-100 dark:border-gray-700">
                     {% endif %}
                     <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-800 dark:text-white mb-1">{{ product_name }}</p>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white mb-1">{{ product_name }}</p>
                         <p class="text-xs text-gray-500 mb-2">{{ platform|upper }}</p>
-                        <p class="text-xl font-bold text-emerald-600">₩{{ amount|floatformat:0 }}</p>
+                        <p class="text-xl font-bold text-brand-600">₩{{ amount|floatformat:0|intcomma }}</p>
                     </div>
                 </div>
             </div>
@@ -49,11 +51,12 @@
 
         <!-- Payment Widget -->
         <section class="mb-6">
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-5">
-                <h2 class="text-base font-bold text-gray-800 dark:text-white mb-4">결제 수단</h2>
+            <div
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 shadow-sm">
+                <h2 class="text-base font-bold text-gray-900 dark:text-white mb-4">결제 수단</h2>
 
                 <!-- Toss Payments Widget Container -->
-                <div id="payment-widget" class="mb-4"></div>
+                <div id="payment-widget" class="mb-4 translate-x-[-10px]"></div>
 
                 <!-- Agreement Widget -->
                 <div id="agreement-widget" class="mb-4"></div>
@@ -62,13 +65,13 @@
 
         <!-- Payment Button -->
         <section
-            class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
-            <div class="max-w-xl mx-auto">
+            class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 p-4 z-50">
+            <div class="max-w-xl mx-auto pb-[env(safe-area-inset-bottom)]">
                 <button id="pay-button" type="button"
-                    class="w-full py-4 bg-blue-500 hover:bg-blue-600 text-white font-bold text-lg rounded-2xl transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
-                    ₩{{ amount|floatformat:0 }} 결제하기
+                    class="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold text-lg rounded-2xl transition-all shadow-lg active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                    ₩{{ amount|floatformat:0|intcomma }} 결제하기
                 </button>
-                <p class="text-xs text-gray-500 text-center mt-2">
+                <p class="text-xs text-gray-500 text-center mt-3">
                     결제는 토스페이먼츠를 통해 안전하게 처리됩니다.
                 </p>
             </div>
@@ -83,59 +86,57 @@
 <script>
     (async function () {
         const clientKey = "{{ toss_client_key }}";
-        const customerKey = "customer_" + Date.now();  // 고유 고객 키
+        const customerKey = "customer_" + Date.now();
 
-        // Initialize Toss Payments
         const tossPayments = TossPayments(clientKey);
-
-        // Create widgets
         const widgets = tossPayments.widgets({ customerKey });
 
-        // Set amount
+        // Django 변수를 JS 숫자로 변환 (린트 오류 방지)
+        const amount = parseInt("{{ amount|default:'0' }}") || 0;
+
         await widgets.setAmount({
             currency: "KRW",
-            value: {{ amount }},
-    });
+            value: amount,
+        });
 
-    // Render payment methods widget
-    await widgets.renderPaymentMethods({
-        selector: "#payment-widget",
-        variantKey: "DEFAULT",
-    });
+        await widgets.renderPaymentMethods({
+            selector: "#payment-widget",
+            variantKey: "DEFAULT",
+        });
 
-    // Render agreement widget
-    await widgets.renderAgreement({
-        selector: "#agreement-widget",
-        variantKey: "AGREEMENT",
-    });
+        await widgets.renderAgreement({
+            selector: "#agreement-widget",
+            variantKey: "AGREEMENT",
+        });
 
-    // Pay button click handler
-    document.getElementById("pay-button").addEventListener("click", async function () {
-        const button = this;
-        button.disabled = true;
-        button.textContent = "처리 중...";
+        document.getElementById("pay-button").addEventListener("click", async function () {
+            const button = this;
+            button.disabled = true;
+            button.textContent = "처리 중...";
 
-        try {
-            await widgets.requestPayment({
-                orderId: "{{ order_id }}",
-                orderName: "{{ product_name }}",
-                successUrl: "{{ success_url }}",
-                failUrl: "{{ fail_url }}",
-            });
-        } catch (error) {
-            console.error("Payment error:", error);
-            button.disabled = false;
-            button.textContent = "₩{{ amount|floatformat:0 }} 결제하기";
+            try {
+                await widgets.requestPayment({
+                    orderId: "{{ order_id }}",
+                    orderName: "{{ product_name }}",
+                    successUrl: "{{ success_url }}",
+                    failUrl: "{{ fail_url }}",
+                });
+            } catch (error) {
+                console.error("Payment error:", error);
+                button.disabled = false;
 
-            if (error.code === "USER_CANCEL") {
-                // 사용자가 결제를 취소한 경우
-                alert("결제가 취소되었습니다.");
-            } else {
-                alert("결제 처리 중 오류가 발생했습니다: " + (error.message || "알 수 없는 오류"));
+                // 가격 다시 표시를 위한 포맷팅
+                const amountFormatted = amount.toLocaleString();
+                button.textContent = `₩${amountFormatted} 결제하기`;
+
+                if (error.code === "USER_CANCEL") {
+                    alert("결제가 취소되었습니다.");
+                } else {
+                    alert("결제 처리 중 오류가 발생했습니다: " + (error.message || "알 수 없는 오류"));
+                }
             }
-        }
-    });
-}) ();
+        });
+    })();
 </script>
 {% endif %}
 {% endblock %}

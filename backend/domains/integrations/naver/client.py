@@ -5,10 +5,11 @@
 https://developers.naver.com/docs/serviceapi/search/shopping/shopping.md
 """
 
+from decimal import Decimal
+
 import httpx
 from django.conf import settings
 from pydantic import BaseModel, ConfigDict
-from decimal import Decimal
 
 from ..base import BaseCrawler, CrawlResult
 
@@ -48,11 +49,11 @@ class NaverClient(BaseCrawler):
     async def search(self, keyword: str, limit: int = 20) -> list[CrawlResult]:
         """
         네이버 쇼핑 검색 API 호출
-        
+
         Args:
             keyword: 검색 키워드
             limit: 최대 결과 수 (10~100)
-            
+
         Returns:
             list[CrawlResult]: 검색 결과 리스트
         """
@@ -92,7 +93,7 @@ class NaverClient(BaseCrawler):
 
                             price = Decimal(lprice_str)
                             hprice = Decimal(item.get("hprice", lprice_str)) if item.get("hprice") else None
-                            
+
                             # 할인율 계산
                             discount_percent = None
                             if hprice and hprice > price:

@@ -4,12 +4,12 @@
 토스페이먼츠 Webhook 수신 및 처리.
 """
 
-import json
-import hmac
 import hashlib
+import hmac
+import json
 
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.conf import settings
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
@@ -21,7 +21,7 @@ from ...webhook import handle_webhook
 def toss_payments_webhook(request: HttpRequest) -> HttpResponse:
     """
     토스페이먼츠 Webhook 수신
-    
+
     Webhook 시그니처 검증 후 처리.
     """
     # Webhook 시그니처 검증
@@ -48,6 +48,7 @@ def toss_payments_webhook(request: HttpRequest) -> HttpResponse:
 
     # Webhook 처리 (비동기)
     import asyncio
+
     try:
         loop = asyncio.get_event_loop()
     except RuntimeError:

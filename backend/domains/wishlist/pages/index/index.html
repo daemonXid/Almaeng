@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load humanize %}
 
 {% block title %}찜 목록 | ALMAENG{% endblock %}
 
@@ -12,14 +13,15 @@
                 찜 목록 ❤️
             </h1>
             <span class="text-sm font-medium text-gray-500">
-                0개
+                {{ wishlist_items|length }}개
             </span>
         </header>
 
         <!-- Empty State -->
+        {% if not wishlist_items %}
         <div class="flex flex-col items-center justify-center py-20 text-center">
             <div
-                class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-4xl mb-6">
+                class="w-20 h-20 bg-brand-50 dark:bg-brand-900/20 rounded-full flex items-center justify-center text-4xl mb-6">
                 💔
             </div>
             <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-2">
@@ -33,12 +35,43 @@
                 상품 검색하러 가기
             </a>
         </div>
+        {% else %}
+        <!-- Product List -->
+        <div class="space-y-4">
+            {% for item in wishlist_items %}
+            <article
+                class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-4 flex gap-4 relative group shadow-sm">
+                <div class="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
+                    {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-3xl">📦</div>
+                    {% endif %}
+                </div>
+                <div class="flex-1 min-w-0 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-gray-900 dark:text-white line-clamp-2 mb-1">
+                            {{ item.name }}
+                        </h2>
+                        <p class="text-xs text-gray-500">{{ item.platform|upper }}</p>
+                    </div>
+                    <p class="text-lg font-bold text-brand-600">
+                        {{ item.price|intcomma }}원
+                    </p>
+                </div>
+                <div class="flex flex-col justify-between items-end">
+                    <!-- Wishlist Toggle Button -->
+                    {% include "wishlist/pages/index/_wishlist_button.html" with product=item is_in_wishlist=True %}
 
-        <!-- Product Grid (Skeleton) -->
-        <!-- 나중에 실제 데이터가 들어오면 이 부분이 채워집니다 -->
-        <div class="grid grid-cols-2 gap-4 hidden">
-            <!-- Product Card Component -->
+                    <a href="{{ item.product_url }}" target="_blank" rel="noopener"
+                        class="text-xs text-brand-600 font-bold hover:underline">
+                        구매하기 →
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
         </div>
+        {% endif %}
     </div>
 </main>
 {% endblock %}

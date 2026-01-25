@@ -1,27 +1,17 @@
-"""
-📖 Selectors - Read Operations (R)
-
-Query logic for reading data.
-Optimize with select_related, prefetch_related.
-
-Usage:
-    from domains.wishlist.selectors import get_example_by_id
-"""
-
-from typing import List, Optional
+from .models import WishlistItem
 
 
-# def get_example_by_id(*, example_id: int) -> Optional[Example]:
-#     """
-#     Get example by ID.
-#
-#     Args:
-#         example_id: Example primary key
-#
-#     Returns:
-#         Example instance or None
-#     """
-#     try:
-#         return Example.objects.get(id=example_id)
-#     except Example.DoesNotExist:
-#         return None
+def get_wishlist_by_user(*, user_id: int):
+    """
+    특정 사용자의 찜 목록을 조회합니다.
+    """
+    return WishlistItem.objects.filter(user_id=user_id).order_by("-created_at")
+
+
+def is_product_in_wishlist(*, user_id: int, product_id: str, platform: str) -> bool:
+    """
+    특정 상품이 찜 목록에 있는지 확인합니다.
+    """
+    return WishlistItem.objects.filter(
+        user_id=user_id, product_id=product_id, platform=platform
+    ).exists()

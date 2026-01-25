@@ -4,22 +4,21 @@
 결제 처리 로직.
 """
 
-from decimal import Decimal
+from domains.integrations.tosspayments.interface import cancel_payment, confirm_payment
 
-from domains.integrations.tosspayments.interface import confirm_payment, cancel_payment
-from ..state.models import Order, Payment
 from ..state.interface import get_order_by_id
+from ..state.models import Payment
 
 
 async def process_payment(payment_key: str, order_id: str, amount: int) -> dict:
     """
     결제 처리
-    
+
     Args:
         payment_key: 토스페이먼츠 결제 키
         order_id: 주문 UUID 문자열
         amount: 결제 금액
-        
+
     Returns:
         dict: 처리 결과
     """
@@ -36,7 +35,7 @@ async def process_payment(payment_key: str, order_id: str, amount: int) -> dict:
 
     if result.success:
         # Payment 생성 또는 업데이트
-        payment, created = Payment.objects.get_or_create(
+        payment, created = Payment.objects.get_or_create(  # type: ignore
             order=order,
             defaults={
                 "payment_key": result.payment_key,
@@ -73,11 +72,11 @@ async def process_payment(payment_key: str, order_id: str, amount: int) -> dict:
 async def cancel_order_payment(order_id: str, cancel_reason: str) -> dict:
     """
     주문 결제 취소
-    
+
     Args:
         order_id: 주문 UUID 문자열
         cancel_reason: 취소 사유
-        
+
     Returns:
         dict: 취소 결과
     """

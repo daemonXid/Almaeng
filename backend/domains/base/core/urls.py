@@ -23,4 +23,3 @@ urlpatterns = [
     path("terms/", legal_views.terms, name="terms"),
     path("privacy/", legal_views.privacy, name="privacy"),
 ]
-

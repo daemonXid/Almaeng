@@ -1,58 +1,28 @@
-"""
-🔑 Public Interface - Wishlist Domain
+from .services import toggle_wishlist_item
+from .selectors import get_wishlist_by_user
 
-Other domains should ONLY import from here, never from internal files.
-Uses Pydantic schemas for type-safe inter-domain communication.
 
-Usage:
-    from domains.wishlist.interface import (
-        # your exports here
+def toggle_wishlist(
+    user_id: int,
+    product_id: str,
+    platform: str,
+    name: str = "",
+    price: int = 0,
+    image_url: str = "",
+    product_url: str = "",
+) -> tuple[bool, str]:
+    """Expose wishlist toggle logic"""
+    return toggle_wishlist_item(
+        user_id=user_id,
+        product_id=product_id,
+        platform=platform,
+        name=name,
+        price=price,
+        image_url=image_url,
+        product_url=product_url,
     )
-"""
-
-from __future__ import annotations
-
-from pydantic import BaseModel
-from typing import Optional
 
 
-# =============================================================================
-# 📋 Pydantic Schemas
-# =============================================================================
-
-class WishlistSchema(BaseModel):
-    """Schema for wishlist data transfer."""
-    id: int
-    name: str
-    # Add fields as needed
-
-    class Config:
-        from_attributes = True
-
-
-# =============================================================================
-# 📖 Read Operations (from selectors.py)
-# =============================================================================
-
-# from .selectors import (
-#     # Export read functions here
-# )
-
-
-# =============================================================================
-# 🔧 Write Operations (from services.py)
-# =============================================================================
-
-# from .services import (
-#     # Export write functions here
-# )
-
-
-# =============================================================================
-# 📋 Explicit Public API
-# =============================================================================
-
-__all__ = [
-    "WishlistSchema",
-    # Add public functions
-]
+def get_user_wishlist(user_id: int):
+    """Expose wishlist listing logic"""
+    return get_wishlist_by_user(user_id=user_id)

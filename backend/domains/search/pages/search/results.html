@@ -52,7 +52,12 @@
             <div class="space-y-3">
                 <!-- Cheapest Product -->
                 {% if result.cheapest %}
-                <article class="bg-white dark:bg-gray-800 border-2 border-brand-400 rounded-2xl p-4 shadow-sm">
+                <article
+                    class="bg-white dark:bg-gray-800 border-2 border-brand-400 rounded-2xl p-4 shadow-sm relative group">
+                    <div class="absolute top-4 right-4 z-10">
+                        {% include "wishlist/pages/index/_wishlist_button.html" with product=result.cheapest
+                        is_in_wishlist=result.cheapest.id|stringformat:"s" in wishlist_ids %}
+                    </div>
                     <div class="flex items-center gap-2 mb-2">
                         <span class="px-2 py-0.5 bg-brand-100 text-brand-700 text-xs font-bold rounded-full">🏷️
                             최저가</span>
@@ -76,7 +81,8 @@
                         </div>
                     </div>
                     <div class="flex gap-2 mt-3">
-                        <a href="{{ result.cheapest.product_url }}" target="_blank" rel="noopener"
+                        <a href="{% url 'search:track_click' %}?id={{ result.cheapest.id }}&name={{ result.cheapest.name|urlencode }}&price={{ result.cheapest.price }}&image={{ result.cheapest.image_url|urlencode }}&url={{ result.cheapest.product_url|urlencode }}"
+                            target="_blank" rel="noopener"
                             class="flex-1 py-2 text-center text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
                             상품 보기
                         </a>
@@ -91,7 +97,12 @@
                 <!-- Other Products -->
                 {% for product in result.products %}
                 {% if product.id != result.cheapest.id %}
-                <article class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4">
+                <article
+                    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 relative group">
+                    <div class="absolute top-4 right-4 z-10">
+                        {% include "wishlist/pages/index/_wishlist_button.html" with product=product
+                        is_in_wishlist=product.id|stringformat:"s" in wishlist_ids %}
+                    </div>
                     <div class="flex items-center gap-2 mb-2">
                         <span
                             class="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
@@ -129,7 +140,8 @@
                         </div>
                     </div>
                     <div class="flex gap-2 mt-3">
-                        <a href="{{ product.product_url }}" target="_blank" rel="noopener"
+                        <a href="{% url 'search:track_click' %}?id={{ product.id }}&name={{ product.name|urlencode }}&price={{ product.price }}&image={{ product.image_url|urlencode }}&url={{ product.product_url|urlencode }}"
+                            target="_blank" rel="noopener"
                             class="flex-1 py-2 text-center text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
                             상품 보기
                         </a>
