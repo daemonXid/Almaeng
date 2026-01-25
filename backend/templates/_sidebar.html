@@ -9,10 +9,11 @@
     <div class="h-20 flex items-center px-5 mb-2 overflow-hidden whitespace-nowrap">
         <a href="/" class="flex items-center gap-3 no-underline group/logo">
             <div
-                class="w-10 h-10 shrink-0 rounded-2xl bg-emerald-500 flex items-center justify-center text-xl font-bold shadow-sm group-hover/logo:scale-110 transition-transform cursor-pointer text-white">
+                class="w-10 h-10 shrink-0 rounded-2xl bg-brand-500 flex items-center justify-center text-xl font-bold shadow-sm group-hover/logo:scale-110 transition-transform cursor-pointer text-white">
                 🛒
             </div>
-            <span class="font-extrabold text-xl tracking-tight transition-opacity duration-300 text-gray-900 dark:text-white"
+            <span
+                class="font-extrabold text-xl tracking-tight transition-opacity duration-300 text-gray-900 dark:text-white"
                 :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
                 AI 쇼핑 도우미
             </span>
@@ -30,7 +31,7 @@
 
         <!-- Home -->
         <a href="/"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if request.path == '/' %}bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if request.path == '/' %}bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
             title="{% trans '홈' %}">
             <span class="text-xl shrink-0 text-center w-6">🏠</span>
             <span class="font-medium transition-opacity duration-300 transform origin-left"
@@ -41,7 +42,7 @@
 
         <!-- Search -->
         <a href="{% url 'search:search' %}"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'search' in request.path %}bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'search' in request.path %}bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
             title="{% trans '상품 검색' %}">
             <span class="text-xl shrink-0 text-center w-6">🔍</span>
             <span class="font-medium transition-opacity duration-300 transform origin-left"
@@ -50,9 +51,20 @@
             </span>
         </a>
 
+        <!-- Wishlist -->
+        <a href="{% url 'wishlist:index' %}"
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'wishlist' in request.path %}bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
+            title="{% trans '찜 목록' %}">
+            <span class="text-xl shrink-0 text-center w-6">❤️</span>
+            <span class="font-medium transition-opacity duration-300 transform origin-left"
+                :class="sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 w-0 hidden scale-90'">
+                {% trans "찜 목록" %}
+            </span>
+        </a>
+
         <!-- Compare -->
         <a href="{% url 'compare:compare' %}"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'compare' in request.path %}bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'compare' in request.path %}bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
             title="{% trans '가격 비교' %}">
             <span class="text-xl shrink-0 text-center w-6">⚖️</span>
             <span class="font-medium transition-opacity duration-300 transform origin-left"
@@ -85,7 +97,8 @@
                 class="w-full py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md transition-all shadow-sm"
                 title="{% trans '로그인' %}">
                 <span class="text-xl">✨</span>
-                <span class="transition-opacity duration-300" :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
+                <span class="transition-opacity duration-300"
+                    :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
                     {% trans "로그인" %}
                 </span>
             </a>

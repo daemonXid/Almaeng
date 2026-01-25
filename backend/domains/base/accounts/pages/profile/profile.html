@@ -1,5 +1,6 @@
 {% extends "_dashboard_base.html" %}
 {% load i18n %}
+{% load humanize %}
 
 {% block title %}마이페이지 | ALMAENG{% endblock %}
 
@@ -22,7 +23,7 @@
                     class="w-24 h-24 rounded-full object-cover border-4 border-gray-50 dark:border-gray-700 shadow-md">
                 {% else %}
                 <div
-                    class="w-24 h-24 rounded-full bg-gradient-to-br from-[#A7D7C5] to-[#5C9482] flex items-center justify-center text-4xl font-bold text-white border-4 border-white shadow-md">
+                    class="w-24 h-24 rounded-full bg-gradient-to-br from-brand-200 to-brand-400 flex items-center justify-center text-4xl font-bold text-white border-4 border-white shadow-md">
                     {{ user.email|slice:":1"|upper }}
                 </div>
                 {% endif %}
@@ -74,8 +75,8 @@
                 <p class="text-xs font-medium text-gray-900 dark:text-gray-100 line-clamp-2 leading-relaxed">
                     {{ product.name }}
                 </p>
-                <p class="text-sm font-bold text-emerald-600 mt-0.5">
-                    {{ product.price }}원
+                <p class="text-sm font-bold text-brand-600 mt-0.5">
+                    {{ product.price|intcomma }}원
                 </p>
             </a>
             {% endfor %}
@@ -129,7 +130,7 @@
             <a href="/accounts/email/"
                 class="flex items-center gap-4 p-5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <div
-                    class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xl shrink-0">
+                    class-="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xl shrink-0">
                     📧
                 </div>
                 <div class="flex-1">
@@ -142,6 +143,21 @@
 
         <!-- Customer Support -->
         <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider ml-1 pt-4">고객센터</h3>
+
+        <!-- Login Button -->
+        {% if user.is_authenticated %}
+        {% else %}
+        <div class="space-y-2 mb-3">
+            <a href="/accounts/login/"
+                class="w-full py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 bg-brand-600 text-white hover:bg-brand-700 hover:shadow-md transition-all shadow-sm"
+                title="{% trans '로그인' %}">
+                <span class="text-xl">✨</span>
+                <span class="transition-opacity duration-300">
+                    {% trans "로그인" %}
+                </span>
+            </a>
+        </div>
+        {% endif %}
 
         <div
             class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm divide-y divide-gray-100 dark:divide-gray-700">

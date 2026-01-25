@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load humanize %}
 
 {% block title %}{{ result.query }} 검색 결과 | AI 쇼핑 도우미{% endblock %}
 
@@ -9,7 +10,7 @@
         <!-- Header -->
         <header class="mb-4">
             <a href="{% url 'daemon:home' %}"
-                class="text-emerald-600 hover:text-emerald-700 flex items-center gap-2 mb-3 text-sm">
+                class="text-brand-600 hover:text-brand-700 flex items-center gap-2 mb-3 text-sm">
                 <span>←</span> 홈으로
             </a>
             <h1 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
@@ -26,11 +27,11 @@
         {% if result.recommendation %}
         <section class="mb-6">
             <div
-                class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 border border-emerald-200 dark:border-emerald-700 rounded-2xl p-4">
+                class="bg-gradient-to-r from-brand-50 to-indigo-50 dark:from-brand-900/30 dark:to-indigo-900/30 border border-brand-200 dark:border-brand-700 rounded-2xl p-4">
                 <div class="flex items-start gap-3">
                     <span class="text-2xl">🤖</span>
                     <div>
-                        <p class="text-sm font-medium text-emerald-800 dark:text-emerald-200 mb-1">AI 추천</p>
+                        <p class="text-sm font-medium text-brand-800 dark:text-brand-200 mb-1">AI 추천</p>
                         <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                             {{ result.recommendation }}
                         </p>
@@ -51,9 +52,9 @@
             <div class="space-y-3">
                 <!-- Cheapest Product -->
                 {% if result.cheapest %}
-                <article class="bg-white dark:bg-gray-800 border-2 border-emerald-400 rounded-2xl p-4 shadow-sm">
+                <article class="bg-white dark:bg-gray-800 border-2 border-brand-400 rounded-2xl p-4 shadow-sm">
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">🏷️
+                        <span class="px-2 py-0.5 bg-brand-100 text-brand-700 text-xs font-bold rounded-full">🏷️
                             최저가</span>
                         <span class="text-xs text-gray-500">{{ result.cheapest.platform|upper }}</span>
                     </div>
@@ -66,8 +67,8 @@
                             <h3 class="text-sm font-medium text-gray-800 dark:text-white line-clamp-2 mb-1">
                                 {{ result.cheapest.name }}
                             </h3>
-                            <p class="text-lg font-bold text-emerald-600">
-                                ₩{{ result.cheapest.price|floatformat:0 }}
+                            <p class="text-lg font-bold text-brand-600">
+                                ₩{{ result.cheapest.price|floatformat:0|intcomma }}
                             </p>
                             {% if result.cheapest.mall_name %}
                             <p class="text-xs text-gray-500">{{ result.cheapest.mall_name }}</p>
@@ -114,11 +115,11 @@
                             </h3>
                             <div class="flex items-baseline gap-2">
                                 <p class="text-base font-bold text-gray-800 dark:text-white">
-                                    ₩{{ product.price|floatformat:0 }}
+                                    ₩{{ product.price|floatformat:0|intcomma }}
                                 </p>
                                 {% if product.original_price and product.discount_rate %}
                                 <span class="text-xs text-gray-400 line-through">₩{{
-                                    product.original_price|floatformat:0 }}</span>
+                                    product.original_price|floatformat:0|intcomma }}</span>
                                 <span class="text-xs text-red-500 font-medium">{{ product.discount_rate }}%</span>
                                 {% endif %}
                             </div>
@@ -160,10 +161,10 @@
         <section class="mt-8">
             <form action="{% url 'search:search' %}" method="get" class="relative">
                 <input type="text" name="q" placeholder="다른 상품 검색..."
-                    class="w-full h-12 pl-4 pr-20 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-400 text-sm placeholder-gray-400 text-gray-800 dark:text-white"
+                    class="w-full h-12 pl-4 pr-20 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-brand-400 text-sm placeholder-gray-400 text-gray-800 dark:text-white"
                     autocomplete="off" required>
                 <button type="submit"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg transition-colors">
+                    class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold rounded-lg transition-colors">
                     검색
                 </button>
             </form>

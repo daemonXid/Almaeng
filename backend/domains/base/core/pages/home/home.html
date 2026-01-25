@@ -11,10 +11,10 @@
             <h1 class="text-2xl font-bold text-gray-800 dark:text-white leading-tight">
                 {% if user.is_authenticated %}
                 안녕하세요, {{ user.get_short_name|default:user.username }}님! 👋<br>
-                <span class="text-emerald-600">뭘 찾고 계세요?</span>
+                <span class="text-brand-600">뭘 찾고 계세요?</span>
                 {% else %}
                 뭘 사야 할지 모르시나요?<br>
-                <span class="text-emerald-600">자유롭게 물어보세요</span> 🛒
+                <span class="text-brand-600">자유롭게 물어보세요</span> 🛒
                 {% endif %}
             </h1>
         </header>
@@ -23,11 +23,11 @@
         <section class="mb-10">
             <form id="homeSearchForm" action="{% url 'search:search' %}" method="get" class="relative mb-4">
                 <input type="text" name="q" x-model="searchQuery" placeholder="예: 눈 피로에 좋은 영양제 추천해줘"
-                    class="w-full h-16 pl-16 pr-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 text-base transition-all placeholder-gray-400 text-gray-800 dark:text-white"
+                    class="w-full h-16 pl-16 pr-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-lg focus:ring-2 focus:ring-brand-400 focus:border-brand-400 text-base transition-all placeholder-gray-400 text-gray-800 dark:text-white"
                     autocomplete="off" required>
                 <span class="absolute left-5 top-1/2 -translate-y-1/2 text-2xl" aria-hidden="true">🔍</span>
                 <button type="submit"
-                    class="absolute right-5 top-1/2 -translate-y-1/2 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors">
+                    class="absolute right-5 top-1/2 -translate-y-1/2 px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition-colors">
                     검색
                 </button>
             </form>
@@ -38,17 +38,17 @@
                 <div class="flex flex-wrap gap-2">
                     <button type="button"
                         @click="searchQuery = '20만원대 무선 이어폰 추천'; $nextTick(() => document.getElementById('homeSearchForm').submit())"
-                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors cursor-pointer">
+                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors cursor-pointer">
                         20만원대 무선 이어폰 추천
                     </button>
                     <button type="button"
                         @click="searchQuery = '허리 아플 때 좋은 의자'; $nextTick(() => document.getElementById('homeSearchForm').submit())"
-                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors cursor-pointer">
+                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors cursor-pointer">
                         허리 아플 때 좋은 의자
                     </button>
                     <button type="button"
                         @click="searchQuery = '캠핑용 휴대용 선풍기'; $nextTick(() => document.getElementById('homeSearchForm').submit())"
-                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors cursor-pointer">
+                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors cursor-pointer">
                         캠핑용 휴대용 선풍기
                     </button>
                 </div>

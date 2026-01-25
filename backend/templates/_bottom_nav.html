@@ -2,31 +2,38 @@
 <!-- Mobile Bottom Navigation -->
 <nav
     class="fixed bottom-0 left-0 right-0 lg:hidden bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 pb-[env(safe-area-inset-bottom)] z-50">
-    <div class="grid grid-cols-4 h-16">
+    <div class="grid grid-cols-5 h-16">
         <!-- Home -->
         <a href="/"
-            class="flex flex-col items-center justify-center gap-1 {% if request.path == '/' %}text-gray-900 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
+            class="flex flex-col items-center justify-center gap-1 {% if request.path == '/' %}text-brand-600 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
             <span class="text-xl">🏠</span>
             <span class="text-[10px]">홈</span>
         </a>
 
         <!-- Search -->
         <a href="{% url 'search:search' %}"
-            class="flex flex-col items-center justify-center gap-1 {% if 'search' in request.path %}text-gray-900 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
+            class="flex flex-col items-center justify-center gap-1 {% if 'search' in request.path %}text-brand-600 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
             <span class="text-xl">🔍</span>
             <span class="text-[10px]">검색</span>
         </a>
 
         <!-- Wishlist -->
         <a href="{% url 'wishlist:index' %}"
-            class="flex flex-col items-center justify-center gap-1 {% if 'wishlist' in request.path %}text-gray-900 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
+            class="flex flex-col items-center justify-center gap-1 {% if 'wishlist' in request.path %}text-brand-600 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
             <span class="text-xl">❤️</span>
             <span class="text-[10px]">찜</span>
         </a>
 
+        <!-- Compare -->
+        <a href="{% url 'compare:compare' %}"
+            class="flex flex-col items-center justify-center gap-1 {% if 'compare' in request.path %}text-brand-600 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
+            <span class="text-xl">⚖️</span>
+            <span class="text-[10px]">비교</span>
+        </a>
+
         <!-- My Page -->
         <a href="{% if user.is_authenticated %}{% url 'auth:profile' %}{% else %}{% url 'account_login' %}?next={% url 'auth:profile' %}{% endif %}"
-            class="flex flex-col items-center justify-center gap-1 {% if 'profile' in request.path %}text-gray-900 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
+            class="flex flex-col items-center justify-center gap-1 {% if 'profile' in request.path %}text-brand-600 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
             <span class="text-xl">👤</span>
             <span class="text-[10px]">MY</span>
         </a>
