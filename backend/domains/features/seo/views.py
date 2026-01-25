@@ -1,15 +1,11 @@
 """
 🔍 SEO Views
 
-robots.txt, sitemap.xml 생성.
+robots.txt, sitemap.xml 생성 (PRD v2).
 """
 
 from django.http import HttpRequest, HttpResponse
-from django.conf import settings
-from django.urls import reverse
 from django.utils import timezone
-
-from domains.features.supplements.interface import MFDSHealthFood
 
 
 def robots_txt(request: HttpRequest) -> HttpResponse:
@@ -25,8 +21,7 @@ def robots_txt(request: HttpRequest) -> HttpResponse:
         "# Disallow admin and private areas",
         "Disallow: /admin/",
         "Disallow: /accounts/",
-        "Disallow: /cart/",
-        "Disallow: /payments/",
+        "Disallow: /billing/",
         "Disallow: /api/",
         "",
         "# Sitemaps",
@@ -40,7 +35,7 @@ def robots_txt(request: HttpRequest) -> HttpResponse:
 
 
 def sitemap_xml(request: HttpRequest) -> HttpResponse:
-    """sitemap.xml 생성 - 동적 URL 포함"""
+    """sitemap.xml 생성 - PRD v2 정적 페이지"""
     host = request.get_host()
     protocol = "https" if request.is_secure() else "http"
     base_url = f"{protocol}://{host}"
@@ -48,31 +43,19 @@ def sitemap_xml(request: HttpRequest) -> HttpResponse:
 
     urls = []
 
-    # Static pages
+    # Static pages (PRD v2)
     static_pages = [
         {"loc": "/", "priority": "1.0", "changefreq": "daily"},
-        {"loc": "/supplements/", "priority": "0.9", "changefreq": "daily"},
-        {"loc": "/supplements/compare/", "priority": "0.8", "changefreq": "weekly"},
-        {"loc": "/prices/search/", "priority": "0.8", "changefreq": "daily"},
-        {"loc": "/recommend/", "priority": "0.7", "changefreq": "weekly"},
+        {"loc": "/search/", "priority": "0.9", "changefreq": "daily"},
+        {"loc": "/compare/", "priority": "0.8", "changefreq": "weekly"},
     ]
 
     for page in static_pages:
         urls.append(f"""  <url>
-    <loc>{base_url}{page['loc']}</loc>
+    <loc>{base_url}{page["loc"]}</loc>
     <lastmod>{now}</lastmod>
-    <changefreq>{page['changefreq']}</changefreq>
-    <priority>{page['priority']}</priority>
-  </url>""")
-
-    # Dynamic supplement pages (limit to 1000 for performance)
-    supplements = MFDSHealthFood.objects.values_list("id", flat=True)[:50000]
-    for supp_id in supplements:
-        urls.append(f"""  <url>
-    <loc>{base_url}/supplements/{supp_id}/</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <changefreq>{page["changefreq"]}</changefreq>
+    <priority>{page["priority"]}</priority>
   </url>""")
 
     xml_content = f"""<?xml version="1.0" encoding="UTF-8"?>

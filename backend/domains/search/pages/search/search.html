@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}AI 쇼핑 도우미 | 검색{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-[#FAFAF9] dark:bg-gray-900 pb-24 font-sans" x-data="{ searchQuery: '' }">
+    <div class="max-w-xl mx-auto px-5 pt-8">
+        <!-- Header -->
+        <header class="mb-6">
+            <a href="{% url 'daemon:home' %}"
+                class="text-emerald-600 hover:text-emerald-700 flex items-center gap-2 mb-4">
+                <span>←</span> 홈으로
+            </a>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+                🔍 AI 쇼핑 도우미
+            </h1>
+        </header>
+
+        <!-- Search Form -->
+        <section class="mb-8">
+            <form id="searchForm" action="{% url 'search:search' %}" method="get" class="relative">
+                <input type="text" name="q" x-model="searchQuery" placeholder="뭘 찾고 계세요? 자연어로 물어보세요"
+                    class="w-full h-14 pl-5 pr-24 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 text-base transition-all placeholder-gray-400 text-gray-800 dark:text-white"
+                    autocomplete="off" required>
+                <button type="submit"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors">
+                    검색
+                </button>
+            </form>
+        </section>
+
+        <!-- Example Queries -->
+        <section>
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">💡 이런 것도 물어보세요:</p>
+            <div class="space-y-3">
+                <button type="button"
+                    @click="searchQuery = '눈 피로에 좋은 영양제 추천해줘'; $nextTick(() => $refs.form ? $refs.form.submit() : document.getElementById('searchForm').submit())"
+                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-emerald-50 hover:border-emerald-200 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                    <span class="text-lg">👁️</span> "눈 피로에 좋은 영양제 추천해줘"
+                </button>
+                <button type="button"
+                    @click="searchQuery = '20만원대 무선 이어폰'; $nextTick(() => document.getElementById('searchForm').submit())"
+                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-emerald-50 hover:border-emerald-200 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                    <span class="text-lg">🎧</span> "20만원대 무선 이어폰"
+                </button>
+                <button type="button"
+                    @click="searchQuery = '허리 아플 때 좋은 의자'; $nextTick(() => document.getElementById('searchForm').submit())"
+                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-emerald-50 hover:border-emerald-200 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                    <span class="text-lg">🪑</span> "허리 아플 때 좋은 의자"
+                </button>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

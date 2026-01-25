@@ -1,16 +1,18 @@
 import os
 import sys
+
 import django
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '../backend'))
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+sys.path.append(os.path.join(os.path.dirname(__file__), "../backend"))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
 from domains.features.supplements.models import MFDSHealthFood
 
+
 def seed():
     # Create or Get dummy product
-    p, created = MFDSHealthFood.objects.get_or_create(
+    p, _created = MFDSHealthFood.objects.get_or_create(
         license_number="TEST-2026-001",
         defaults={
             "report_number": "2026002",
@@ -24,10 +26,11 @@ def seed():
             "cautions": "None",
             "shape": "Tablet",
             "standard": "Standard",
-            "product_form": "Tablet"
-        }
+            "product_form": "Tablet",
+        },
     )
     print(f"Seeded Product ID: {p.id}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     seed()

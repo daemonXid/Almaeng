@@ -119,32 +119,32 @@ __all__ = [
     "AIAnalysisResponse",
     "BaseSchema",
     "ErrorResponse",
+    # Config
+    "ModuleSettings",
     "PaginationSchema",
     "SuccessResponse",
     "TimestampMixin",
+    # Models
+    "TimestampedModel",
     "UserCreateSchema",
     "UserListSchema",
     "UserResponseSchema",
     "UserUpdateSchema",
-    # Models
-    "TimestampedModel",
-    # Config
-    "ModuleSettings",
-    "daemon_settings",
-    # Read Operations
-    "get_active_users",
-    "get_user_by_email",
-    "get_user_by_id",
-    "user_exists",
-    # Write Operations
-    "create_user",
-    "deactivate_user",
-    "delete_user",
-    "update_user",
     # Utility Functions
     "chunk_text",
     "clean_text_for_ai",
     "cosine_similarity",
     "count_tokens_approx",
+    # Write Operations
+    "create_user",
+    "daemon_settings",
+    "deactivate_user",
+    "delete_user",
     "find_top_k_similar",
+    # Read Operations
+    "get_active_users",
+    "get_user_by_email",
+    "get_user_by_id",
+    "update_user",
+    "user_exists",
 ]

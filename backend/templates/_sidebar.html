@@ -1,7 +1,7 @@
 {% load i18n %}
-<!-- Left Sidebar - Pastel Green Theme -->
+<!-- Left Sidebar -->
 <aside
-    class="fixed top-0 left-0 h-full z-50 hidden lg:flex flex-col transition-all duration-300 group overscroll-contain bg-[#E8F5E9] border-r border-[#C8E6C9]"
+    class="fixed top-0 left-0 h-full z-50 hidden lg:flex flex-col transition-all duration-300 group overscroll-contain bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800"
     :class="sidebarOpen ? 'w-64' : 'w-20 lg:translate-x-0'" @click="sidebarOpen = true"
     @click.outside="sidebarOpen = false">
 
@@ -9,40 +9,40 @@
     <div class="h-20 flex items-center px-5 mb-2 overflow-hidden whitespace-nowrap">
         <a href="/" class="flex items-center gap-3 no-underline group/logo">
             <div
-                class="w-10 h-10 shrink-0 rounded-2xl bg-white flex items-center justify-center text-xl font-bold shadow-sm group-hover/logo:scale-110 group-hover/logo:rotate-3 transition-transform cursor-pointer text-[#2E7D32]">
-                🌱
+                class="w-10 h-10 shrink-0 rounded-2xl bg-emerald-500 flex items-center justify-center text-xl font-bold shadow-sm group-hover/logo:scale-110 transition-transform cursor-pointer text-white">
+                🛒
             </div>
-            <span class="font-extrabold text-xl tracking-tight transition-opacity duration-300 text-[#1B5E20]"
+            <span class="font-extrabold text-xl tracking-tight transition-opacity duration-300 text-gray-900 dark:text-white"
                 :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
-                ALMAENG
+                AI 쇼핑 도우미
             </span>
         </a>
     </div>
 
     <!-- Navigation Links -->
     <nav
-        class="flex-1 overflow-y-auto overflow-x-hidden py-4 px-4 space-y-1.5 scrollbar-thin scrollbar-thumb-[#A5D6A7] scrollbar-track-transparent">
+        class="flex-1 overflow-y-auto overflow-x-hidden py-4 px-4 space-y-1.5 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
         <!-- Menu Label -->
-        <div class="px-3 mb-2 text-[10px] font-bold text-[#558B2F] uppercase tracking-wider transition-opacity duration-300"
+        <div class="px-3 mb-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider transition-opacity duration-300"
             :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
             MENU
         </div>
 
-        <!-- Overview (Home) -->
+        <!-- Home -->
         <a href="/"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if request.path == '/' %}bg-[#C8E6C9] text-[#1B5E20] font-bold shadow-sm{% else %}text-[#1B5E20] hover:bg-[#DCEDC8] hover:text-[#0D3810]{% endif %}"
-            title="{% trans '대시보드' %}">
-            <span class="text-xl shrink-0 text-center w-6">📊</span>
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if request.path == '/' %}bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
+            title="{% trans '홈' %}">
+            <span class="text-xl shrink-0 text-center w-6">🏠</span>
             <span class="font-medium transition-opacity duration-300 transform origin-left"
                 :class="sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 w-0 hidden scale-90'">
-                대시보드
+                홈
             </span>
         </a>
 
         <!-- Search -->
-        <a href="/"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'search' in request.path or 'ingredient-search' in request.path %}bg-[#C8E6C9] text-[#1B5E20] font-bold shadow-sm{% else %}text-[#1B5E20] hover:bg-[#DCEDC8] hover:text-[#0D3810]{% endif %}"
-            title="{% trans '영양제 검색' %}">
+        <a href="{% url 'search:search' %}"
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'search' in request.path %}bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
+            title="{% trans '상품 검색' %}">
             <span class="text-xl shrink-0 text-center w-6">🔍</span>
             <span class="font-medium transition-opacity duration-300 transform origin-left"
                 :class="sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 w-0 hidden scale-90'">
@@ -50,99 +50,51 @@
             </span>
         </a>
 
-        <!-- Upload/Scan -->
-        <a href="{% if user.is_authenticated %}{% url 'supplements:upload' %}{% else %}{% url 'account_login' %}?next={% url 'daemon:home' %}{% endif %}"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'upload' in request.path %}bg-[#C8E6C9] text-[#1B5E20] font-bold shadow-sm{% else %}text-[#1B5E20] hover:bg-[#DCEDC8] hover:text-[#0D3810]{% endif %}"
-            title="{% trans '라벨 스캔' %}">
-            <span class="text-xl shrink-0 text-center w-6">📷</span>
-            <span class="font-medium transition-opacity duration-300 transform origin-left"
-                :class="sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 w-0 hidden scale-90'">
-                {% trans "스캔" %}
-            </span>
-        </a>
-
         <!-- Compare -->
-        <a href="{% if user.is_authenticated %}{% url 'supplements:compare' %}{% else %}{% url 'account_login' %}?next={% url 'daemon:home' %}{% endif %}"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'compare' in request.path %}bg-[#C8E6C9] text-[#1B5E20] font-bold shadow-sm{% else %}text-[#1B5E20] hover:bg-[#DCEDC8] hover:text-[#0D3810]{% endif %}"
-            title="{% trans '성분 비교' %}">
+        <a href="{% url 'compare:compare' %}"
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'compare' in request.path %}bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
+            title="{% trans '가격 비교' %}">
             <span class="text-xl shrink-0 text-center w-6">⚖️</span>
             <span class="font-medium transition-opacity duration-300 transform origin-left"
                 :class="sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 w-0 hidden scale-90'">
                 {% trans "비교" %}
             </span>
         </a>
-
-        <!-- AI Recommend -->
-        <a href="{% if user.is_authenticated %}{% url 'recommendations:quiz' %}{% else %}{% url 'account_login' %}?next={% url 'daemon:home' %}{% endif %}"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'recommendations' in request.resolver_match.app_name %}bg-[#C8E6C9] text-[#1B5E20] font-bold shadow-sm{% else %}text-[#1B5E20] hover:bg-[#DCEDC8] hover:text-[#0D3810]{% endif %}"
-            title="{% trans 'AI 추천' %}">
-            <span class="text-xl shrink-0 text-center w-6">🩺</span>
-            <span class="font-medium transition-opacity duration-300 transform origin-left"
-                :class="sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 w-0 hidden scale-90'">
-                {% trans "설문" %}
-            </span>
-        </a>
-
-        <!-- General Label -->
-        <div class="px-3 mt-6 mb-2 text-[10px] font-bold text-[#33691E] uppercase tracking-wider transition-opacity duration-300"
-            :class="sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'">
-            GENERAL
-        </div>
-
-        <!-- Wishlist -->
-        <a href="{% if user.is_authenticated %}{% url 'wishlist:list' %}{% else %}{% url 'account_login' %}?next={% url 'daemon:home' %}{% endif %}"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'wishlist' in request.resolver_match.app_name %}bg-[#C8E6C9] text-[#1B5E20] font-bold shadow-sm{% else %}text-[#1B5E20] hover:bg-[#DCEDC8] hover:text-[#0D3810]{% endif %}"
-            title="{% trans '찜 목록' %}">
-            <span class="text-xl shrink-0 text-center w-6">❤️</span>
-            <span class="font-medium transition-opacity duration-300 transform origin-left"
-                :class="sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 w-0 hidden scale-90'">
-                {% trans "찜 목록" %}
-            </span>
-        </a>
-
-        <!-- Chatbot -->
-        <a href="/chatbot/"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'chatbot' in request.path %}bg-[#C8E6C9] text-[#1B5E20] font-bold shadow-sm{% else %}text-[#1B5E20] hover:bg-[#DCEDC8] hover:text-[#0D3810]{% endif %}"
-            title="{% trans 'AI 챗봇' %}">
-            <span class="text-xl shrink-0 text-center w-6">🐤</span>
-            <span class="font-medium transition-opacity duration-300 transform origin-left"
-                :class="sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 w-0 hidden scale-90'">
-                {% trans "AI 챗봇" %}
-            </span>
-        </a>
     </nav>
 
     <!-- Footer Area (User & Theme) -->
-    <div class="p-4 border-t border-[#C8E6C9] bg-[#E8F5E9]">
+    <div class="p-4 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         {% if user.is_authenticated %}
         <div
-            class="flex items-center gap-3 mb-3 p-2 rounded-xl hover:bg-[#C8E6C9]/50 transition-colors cursor-pointer group/user">
+            class="flex items-center gap-3 mb-3 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer group/user">
             <div
-                class="w-10 h-10 rounded-full bg-[#A5D6A7] text-[#1B5E20] flex items-center justify-center text-sm font-bold shrink-0 shadow-sm border-2 border-white">
+                class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center text-sm font-bold shrink-0 shadow-sm border-2 border-white">
                 {{ user.email|slice:":1"|upper }}
             </div>
             <div class="flex-1 min-w-0 transition-opacity duration-300"
                 :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
-                <p class="text-sm font-bold text-[#1B5E20] truncate">{{ user.email }}</p>
+                <p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ user.email }}</p>
                 <a href="/accounts/logout/"
-                    class="text-xs text-[#33691E] hover:text-red-500 font-medium transition-colors">{% trans "로그아웃"
+                    class="text-xs text-gray-500 hover:text-red-500 font-medium transition-colors">{% trans "로그아웃"
                     %}</a>
             </div>
         </div>
         {% else %}
-        <a href="/accounts/login/"
-            class="w-full py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 bg-[#2E7D32] text-white hover:bg-[#1B5E20] hover:shadow-md transition-all mb-3 shadow-sm"
-            title="{% trans '로그인' %}">
-            <span class="text-xl">✨</span>
-            <span class="transition-opacity duration-300" :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
-                {% trans "로그인" %}
-            </span>
-        </a>
+        <div class="space-y-2 mb-3">
+            <a href="/accounts/login/"
+                class="w-full py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md transition-all shadow-sm"
+                title="{% trans '로그인' %}">
+                <span class="text-xl">✨</span>
+                <span class="transition-opacity duration-300" :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
+                    {% trans "로그인" %}
+                </span>
+            </a>
+        </div>
         {% endif %}
 
-        <!-- Theme Toggle (Hidden for pastel focus as dark mode might clash, but kept functional) -->
+        <!-- Theme Toggle -->
         <button @click.stop="theme = theme === 'dark' ? 'light' : 'dark'"
-            class="w-full flex items-center gap-3 px-2 py-1.5 rounded-lg text-xs font-medium text-[#558B2F] hover:bg-[#C8E6C9] transition-colors"
+            class="w-full flex items-center gap-3 px-2 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             title="{% trans '테마 변경' %}">
             <div class="shrink-0 w-6 flex justify-center">
                 <span x-show="theme === 'light'" class="text-lg">☀️</span>

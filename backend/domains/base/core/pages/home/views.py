@@ -1,318 +1,57 @@
 """
-🌐 Core Home Views - HTMX Endpoints
+🏠 Core Home Views - PRD v2
 
-This module provides HTMX-friendly views that return HTML fragments.
-Following the HATEOAS principle: Server returns HTML, not JSON.
-
-Usage:
-    # In urls.py
-    from domains.base.core.pages.home.views import home, htmx_counter
-
-    urlpatterns = [
-        path("", home, name="home"),
-        path("htmx/counter/", htmx_counter, name="htmx_counter"),
-    ]
+AI 쇼핑 도우미 메인 랜딩 페이지.
 """
 
-from django.conf import settings
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
-from django.views.decorators.http import require_GET, require_POST
-
-# =============================================================================
-# 📄 Page Views (Full HTML)
-# =============================================================================
+from django.shortcuts import render, redirect
 
 
 def home(request: HttpRequest) -> HttpResponse:
     """
-    ALMAENG Dashboard - Main landing page with dynamic stats.
+    AI 쇼핑 도우미 - 메인 랜딩 페이지
+
+    PRD v2: 홈페이지는 랜딩 페이지로 표시, 검색은 /search/에서 처리
     """
-    from django.contrib.auth import get_user_model
-    from domains.features.supplements.interface import get_mfds_count
-    from domains.features.prices.interface import get_active_alerts_count, get_total_price_records_count
-    
-    User = get_user_model()
-    
-    # Dynamic Stats from DB - interface.py를 통해
-    total_products = get_mfds_count()
-    total_users = User.objects.count()
-    total_price_records = get_total_price_records_count()
-    active_alerts = get_active_alerts_count()
-    
-    # Placeholder: Recent searches (would come from user session/DB)
-    recent_searches = ["오메가3", "비타민D", "유산균", "멀티비타민", "마그네슘", "루테인"]
-    
-    # Platform status (could be dynamic based on API health checks)
-    platforms = [
-        {"name": "iHerb", "status": "active"},
-        {"name": "쿠팡", "status": "active"},
-        {"name": "네이버 쇼핑", "status": "active"},
-        {"name": "Amazon", "status": "coming_soon"},
-        {"name": "다나와", "status": "coming_soon"},
-    ]
-    
     return render(
         request,
         "core/pages/home/home.html",
         {
-            "page_title": "ALMAENG | 영양제 성분 비교 대시보드",
-            # Dynamic Stats
-            "total_products": total_products,
-            "total_users": total_users,
-            "total_price_records": total_price_records,
-            "active_alerts": active_alerts,
-            # Placeholder Data
-            "recent_searches": recent_searches,
-            "popular_keywords": ["오메가3", "비타민C", "마그네슘", "유산균", "밀크씨슬", "루테인", "콜라겐", "비오틴", "아르기닌", "테아닌", "칼슘", "비타민D", "아연", "프로폴리스", "홍삼", "쏘팔메토", "글루타치온", "코큐텐", "엽산", "철분"],
-            "platforms": platforms,
+            "page_title": "AI 쇼핑 도우미 | 자연어로 검색하고, 최저가로 구매하세요",
         },
     )
 
 
-def getting_started(request: HttpRequest) -> HttpResponse:
+def landing(request: HttpRequest) -> HttpResponse:
     """
-    Getting Started documentation page.
+    랜딩 페이지 (마케팅용)
     """
     return render(
         request,
-        "core/pages/getting_started/getting_started.html",
+        "core/pages/home/home.html",
         {
-            "page_title": "Getting Started | DAEMON-ONE",
-        },
-    )
-
-
-def modules_list(request: HttpRequest) -> HttpResponse:
-    """
-    Display all registered project domains categorized by purpose.
-    """
-    project_apps = getattr(settings, "PROJECT_APPS", [])
-
-    categories = {
-        "Identity & Access": [],
-        "AI & Intelligence": [],
-        "Core Infrastructure": [],
-        "Business & Growth": [],
-        "Custom Extensions": [],
-    }
-
-    for app in project_apps:
-        app_lower = app.lower()
-        if any(key in app_lower for key in ["accounts", "auth", "profile", "oauth"]):
-            categories["Identity & Access"].append(app)
-        elif "ai." in app_lower or "chatbot" in app_lower or "providers" in app_lower:
-            categories["AI & Intelligence"].append(app)
-        elif any(key in app_lower for key in ["core", "health", "tasks", "media", "registry", "monitoring"]):
-            categories["Core Infrastructure"].append(app)
-        elif any(key in app_lower for key in ["analytics", "seo", "marketing", "commerce", "manual"]):
-            categories["Business & Growth"].append(app)
-        elif "custom." in app_lower:
-            categories["Custom Extensions"].append(app)
-        else:
-            categories["Core Infrastructure"].append(app)
-
-    # Process names for display and remove empty categories
-    processed_categories = {}
-    for cat_name, apps in categories.items():
-        if not apps:
-            continue
-
-        domain_list = []
-        for app in apps:
-            # Create a clean display name (e.g., domains.base.core -> Core, domains.ai.service.chatbot -> AI > Chatbot)
-            display_name = app.replace("domains.", "").replace(".", " > ").title()
-            domain_list.append(
+            "page_title": "AI 쇼핑 도우미 | 자연어로 검색하고, 최저가로 구매하세요",
+            "features": [
                 {
-                    "path": app,
-                    "display_name": display_name,
-                    "is_core": any(k in app.lower() for k in ["core", "accounts", "ai", "health"]),
-                }
-            )
-        processed_categories[cat_name] = domain_list
-
-    return render(
-        request,
-        "core/pages/domains_list/domains_list.html",
-        {
-            "page_title": "Domains | DAEMON-ONE",
-            "categories": processed_categories,
+                    "icon": "🗣️",
+                    "title": "자연어 검색",
+                    "desc": "\"눈 피로에 좋은 영양제 3만원 이하\" 처럼 자연스럽게 검색",
+                },
+                {
+                    "icon": "⚖️",
+                    "title": "가격 비교",
+                    "desc": "네이버쇼핑, 11번가 실시간 가격 비교",
+                },
+                {
+                    "icon": "💳",
+                    "title": "원클릭 결제",
+                    "desc": "토스페이로 간편하게 결제",
+                },
+            ],
+            "platforms": [
+                {"name": "네이버쇼핑", "status": "active"},
+                {"name": "11번가", "status": "active"},
+            ],
         },
     )
-
-
-# =============================================================================
-# ⚡ HTMX Fragment Views (Partial HTML)
-# =============================================================================
-
-
-@require_GET
-def htmx_time(request: HttpRequest) -> HttpResponse:
-    """
-    Return current server time as HTML fragment.
-
-    Usage:
-        <button hx-get="/htmx/time/" hx-target="#time-display">
-            Get Server Time
-        </button>
-        <div id="time-display"></div>
-    """
-    from datetime import datetime
-
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    return HttpResponse(f"""
-        <div class="glass-card" style="padding: 1rem; display: inline-block;">
-            <span style="color: var(--accent-purple);">🕐</span>
-            <strong>{current_time}</strong>
-        </div>
-    """)
-
-
-@require_POST
-def htmx_counter(request: HttpRequest) -> HttpResponse:
-    """
-    Increment/decrement counter via HTMX.
-
-    Usage:
-        <div hx-target="this" hx-swap="outerHTML">
-            <button hx-post="/htmx/counter/" hx-vals='{"action": "increment", "count": 5}'>
-                Count: 5
-            </button>
-        </div>
-    """
-    action = request.POST.get("action", "increment")
-    count = int(request.POST.get("count", 0))
-
-    if action == "increment":
-        count += 1
-    elif action == "decrement":
-        count -= 1
-
-    return HttpResponse(f"""
-        <div class="glass-card" style="padding: 1rem; display: flex; gap: 1rem; align-items: center;">
-            <button
-                hx-post="/htmx/counter/"
-                hx-vals='{{"action": "decrement", "count": {count}}}'
-                hx-target="closest div"
-                hx-swap="outerHTML"
-                class="badge" style="cursor: pointer; padding: 0.5rem 1rem;">
-                ➖
-            </button>
-            <span class="gradient-text" style="font-size: 1.5rem; font-weight: bold;">
-                {count}
-            </span>
-            <button
-                hx-post="/htmx/counter/"
-                hx-vals='{{"action": "increment", "count": {count}}}'
-                hx-target="closest div"
-                hx-swap="outerHTML"
-                class="badge" style="cursor: pointer; padding: 0.5rem 1rem;">
-                ➕
-            </button>
-        </div>
-    """)
-
-
-@require_GET
-def htmx_search(request: HttpRequest) -> HttpResponse:
-    """
-    Live search with HTMX.
-
-    Usage:
-        <input type="search"
-               name="q"
-               hx-get="/htmx/search/"
-               hx-trigger="keyup changed delay:300ms"
-               hx-target="#search-results">
-        <div id="search-results"></div>
-    """
-    query = request.GET.get("q", "").strip().lower()
-
-    # Sample data (replace with actual database query)
-    items = [
-        {"icon": "🐍", "name": "Python", "desc": "Backend language"},
-        {"icon": "🦀", "name": "Rust", "desc": "High-performance core"},
-        {"icon": "⚡", "name": "HTMX", "desc": "Hypermedia AJAX"},
-        {"icon": "🏔️", "name": "Alpine.js", "desc": "Lightweight reactivity"},
-        {"icon": "🎨", "name": "Tailwind", "desc": "Utility-first CSS"},
-        {"icon": "🐘", "name": "PostgreSQL", "desc": "Database"},
-        {"icon": "🔴", "name": "Redis", "desc": "Cache & Queue"},
-    ]
-
-    if query:
-        items = [item for item in items if query in item["name"].lower() or query in item["desc"].lower()]
-
-    if not items:
-        return HttpResponse("""
-            <div style="padding: 1rem; color: var(--text-secondary);">
-                No results found
-            </div>
-        """)
-
-    results_html = "".join(
-        [
-            f"""
-        <div class="glass-card" style="padding: 0.75rem; margin-bottom: 0.5rem; display: flex; gap: 0.75rem; align-items: center;">
-            <span style="font-size: 1.25rem;">{item["icon"]}</span>
-            <div>
-                <strong style="color: var(--text-primary);">{item["name"]}</strong>
-                <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0;">{item["desc"]}</p>
-            </div>
-        </div>
-        """
-            for item in items
-        ]
-    )
-
-    return HttpResponse(results_html)
-
-
-@require_GET
-def htmx_toast(request: HttpRequest) -> HttpResponse:
-    """
-    Trigger a toast notification via HTMX OOB swap.
-
-    Usage:
-        <button hx-get="/htmx/toast/?message=Hello&type=success">
-            Show Toast
-        </button>
-    """
-    message = request.GET.get("message", "Notification")
-    toast_type = request.GET.get("type", "info")
-
-    icons = {
-        "success": "✅",
-        "error": "❌",
-        "info": "ℹ️",
-        "warning": "⚠️",
-    }
-    icon = icons.get(toast_type, "ℹ️")
-
-    # OOB = Out of Band swap (updates element outside hx-target)
-    return HttpResponse(f"""
-        <div id="toast-container"
-             hx-swap-oob="true"
-             style="
-                position: fixed;
-                bottom: 2rem;
-                right: 2rem;
-                padding: 1rem 1.5rem;
-                border-radius: 0.75rem;
-                background: rgba(0, 0, 0, 0.9);
-                border: 1px solid var(--accent-purple);
-                backdrop-filter: blur(10px);
-                color: #f1f5f9;
-                font-size: 0.875rem;
-                z-index: 1000;
-                animation: slideIn 0.3s ease;
-             ">
-            {icon} {message}
-        </div>
-        <style>
-            @keyframes slideIn {{
-                from {{ transform: translateX(100%); opacity: 0; }}
-                to {{ transform: translateX(0); opacity: 1; }}
-            }}
-        </style>
-    """)

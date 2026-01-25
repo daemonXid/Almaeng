@@ -9,11 +9,11 @@ Module Version: 2026-01-20-v2 (Force reload)
 import os
 from dataclasses import dataclass
 
-from django.db.models import Q
 from django.conf import settings
+from django.db.models import Q
 from google import genai
 
-from domains.features.supplements.interface import Ingredient, Supplement, MFDSHealthFood
+from domains.features.supplements.interface import Ingredient, MFDSHealthFood, Supplement
 
 from .prompts import ANSWER_PROMPT, OFF_TOPIC_RESPONSE, SYSTEM_PROMPT, TOPIC_CHECK_PROMPT
 
@@ -59,11 +59,11 @@ class GeminiChatService:
 
         # 키워드 추출 (간단한 방식)
         keywords = [word for word in question.split() if len(word) > 1]
-        
+
         # 키워드가 없으면 전체 질문을 키워드로 사용
         if not keywords:
             keywords = [question.strip()[:30]]
-        
+
         print(f"[DEBUG] Chatbot search - Question: {question}, Keywords: {keywords}")
 
         # ========================================
@@ -72,13 +72,13 @@ class GeminiChatService:
         q = Q()
         for keyword in keywords[:3]:
             q |= (
-                Q(product_name__icontains=keyword) |
-                Q(functionality__icontains=keyword) |
-                Q(raw_materials__icontains=keyword) |
-                Q(company_name__icontains=keyword)
+                Q(product_name__icontains=keyword)
+                | Q(functionality__icontains=keyword)
+                | Q(raw_materials__icontains=keyword)
+                | Q(company_name__icontains=keyword)
             )
         mfds_results = list(MFDSHealthFood.objects.filter(q)[:5])
-        
+
         print(f"[DEBUG] MFDS results count: {len(mfds_results)}")
 
         for mfds in mfds_results:
@@ -86,15 +86,11 @@ class GeminiChatService:
 [식약처 인증 제품]
 제품명: {mfds.product_name}
 제조사: {mfds.company_name}
-주요 기능: {mfds.functionality[:200] if mfds.functionality else '정보 없음'}
-섭취 방법: {mfds.intake_method[:100] if mfds.intake_method else '정보 없음'}
-주의사항: {mfds.cautions[:100] if mfds.cautions else '정보 없음'}
+주요 기능: {mfds.functionality[:200] if mfds.functionality else "정보 없음"}
+섭취 방법: {mfds.intake_method[:100] if mfds.intake_method else "정보 없음"}
+주의사항: {mfds.cautions[:100] if mfds.cautions else "정보 없음"}
 """)
-            sources.append({
-                "id": mfds.id,
-                "name": mfds.product_name[:50],
-                "brand": mfds.company_name
-            })
+            sources.append({"id": mfds.id, "name": mfds.product_name[:50], "brand": mfds.company_name})
 
         # ========================================
         # 2. Supplement 검색 (사용자 등록 제품)
@@ -116,7 +112,7 @@ class GeminiChatService:
 제품명: {supp.name}
 브랜드: {supp.brand}
 1회 섭취량: {supp.serving_size}
-성분: {ingredient_list if ingredient_list else '정보 없음'}
+성분: {ingredient_list if ingredient_list else "정보 없음"}
 """)
                     sources.append({"id": f"supp_{supp.id}", "name": supp.name, "brand": supp.brand})
 

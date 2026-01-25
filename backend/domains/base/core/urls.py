@@ -16,16 +16,11 @@ app_name = "daemon"
 urlpatterns = [
     # Page views
     path("", views.home, name="home"),
-    path("getting-started/", views.getting_started, name="getting_started"),
-    path("domains/", views.modules_list, name="modules_list"),
+    path("landing/", views.landing, name="landing"),
     path("offline/", offline_views.offline, name="offline"),
     # Legal pages
     path("faq/", legal_views.faq, name="faq"),
     path("terms/", legal_views.terms, name="terms"),
     path("privacy/", legal_views.privacy, name="privacy"),
-    # HTMX fragment endpoints
-    path("htmx/time/", views.htmx_time, name="htmx_time"),
-    path("htmx/counter/", views.htmx_counter, name="htmx_counter"),
-    path("htmx/search/", views.htmx_search, name="htmx_search"),
-    path("htmx/toast/", views.htmx_toast, name="htmx_toast"),
 ]
+

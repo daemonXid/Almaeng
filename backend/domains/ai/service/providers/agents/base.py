@@ -12,7 +12,6 @@ from typing import Any, TypeVar
 from pydantic import BaseModel
 from pydantic_ai.models.gemini import GeminiModel
 
-
 T = TypeVar("T", bound=BaseModel)
 
 

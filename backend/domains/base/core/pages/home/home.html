@@ -1,211 +1,64 @@
 {% extends "base.html" %}
-{% load i18n humanize %}
+{% load i18n %}
 
-{% block title %}ALMAENG - 건강한 선택{% endblock %}
+{% block title %}AI 쇼핑 도우미 - 자연어 검색부터 결제까지{% endblock %}
 
 {% block content %}
-<style>
-/* 모바일 인터페이스 개선 스타일 - Vertical Slice 내 포함 */
-/* 스크롤바 숨기기 */
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-
-/* 스와이프 가능한 카드 */
-.swipeable-cards {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 1rem;
-    padding-bottom: 0.5rem;
-}
-
-.swipeable-cards > * {
-    flex-shrink: 0;
-    scroll-snap-align: start;
-}
-
-/* 모바일 최적화 */
-@media (max-width: 640px) {
-    /* 검색바 상단 고정 */
-    .sticky-search {
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        background: var(--bg-color, #FAFAF9);
-        padding-top: 0.5rem;
-        padding-bottom: 1rem;
-        margin-left: -1.25rem;
-        margin-right: -1.25rem;
-        padding-left: 1.25rem;
-        padding-right: 1.25rem;
-    }
-
-    /* 카드 간격 조정 */
-    .mobile-card-spacing {
-        gap: 0.75rem;
-    }
-
-    /* 텍스트 크기 조정 */
-    .mobile-text-sm {
-        font-size: 0.875rem;
-    }
-}
-
-/* 다크 모드 지원 */
-@media (prefers-color-scheme: dark) {
-    .sticky-search {
-        background: #111827;
-    }
-}
-</style>
-
-<main class="min-h-screen bg-[#FAFAF9] dark:bg-gray-900 pb-24 font-sans">
+<main class="min-h-screen bg-[#FAFAF9] dark:bg-gray-900 pb-24 font-sans" x-data="{ searchQuery: '' }">
     <div class="max-w-xl mx-auto px-5 pt-8">
-
-        <!-- 1. Header & Greeting -->
+        <!-- Header & Greeting -->
         <header class="mb-6">
             <h1 class="text-2xl font-bold text-gray-800 dark:text-white leading-tight">
                 {% if user.is_authenticated %}
                 안녕하세요, {{ user.get_short_name|default:user.username }}님! 👋<br>
-                <span class="text-emerald-600">오늘의 영양제</span> 챙기셨나요?
+                <span class="text-emerald-600">뭘 찾고 계세요?</span>
                 {% else %}
-                내 몸에 딱 맞는<br>
-                <span class="text-emerald-600">인생 영양제</span>를 찾아보세요 🌱
+                뭘 사야 할지 모르시나요?<br>
+                <span class="text-emerald-600">자유롭게 물어보세요</span> 🛒
                 {% endif %}
             </h1>
         </header>
 
-        <!-- 2. Search & Popular Keywords - 상단 고정 -->
-        <section class="mb-10 sticky top-0 z-10 bg-[#FAFAF9] dark:bg-gray-900 pt-2 pb-4 -mx-5 px-5">
-            <!-- Search Bar -->
-            <form action="{% url 'supplements:search_direct' %}" method="get" class="relative mb-4">
-                <input type="search" name="q" placeholder="증상이나 성분을 검색해보세요 (예: 비타민C 1000mg)"
-                    class="w-full h-14 pl-14 pr-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 text-base transition-all placeholder-gray-400 text-gray-800 dark:text-white">
-                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-2xl">🔍</span>
-            </form>
-            
-            <!-- Quick Links -->
-            <nav class="flex gap-2 mb-3" aria-label="빠른 링크">
-                <a href="{% url 'supplements:ingredient_search' %}"
-                    class="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-xl transition-colors text-center">
-                    🔬 성분 검색
-                </a>
-            </nav>
-
-            <!-- Top 20 Keywords Tags - 스와이프 가능한 카드 -->
-            <aside class="px-1" aria-label="인기 검색어">
-                <h2 class="text-xs font-bold text-gray-500 mb-3 ml-1">🔥 인기 검색어</h2>
-                <nav class="flex gap-2 overflow-x-auto scrollbar-hide pb-2" aria-label="인기 검색어 목록" style="scroll-snap-type: x mandatory;">
-                    {% for keyword in popular_keywords %}
-                    <a href="{% url 'supplements:search_direct' %}?q={{ keyword }}"
-                        class="flex-shrink-0 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors shadow-sm whitespace-nowrap"
-                        style="scroll-snap-align: start;">
-                        #{{ keyword }}
-                    </a>
-                    {% endfor %}
-                </nav>
-            </aside>
-        </section>
-
-        <!-- 3. Health Quiz Banner (Hero) -->
+        <!-- Search Bar -->
         <section class="mb-10">
-            <a href="{% if user.is_authenticated %}{% url 'recommendations:quiz' %}{% else %}{% url 'account_login' %}?next={% url 'daemon:home' %}{% endif %}"
-                class="block relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#FFCDD2] to-[#EF9A9A] text-[#802022] p-6 shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 active:scale-95">
-                <div class="relative z-10">
-                    <span
-                        class="inline-block px-2.5 py-1 rounded-lg bg-white/30 text-xs font-bold mb-2 backdrop-blur-sm">⏰
-                        3분 컷</span>
-                    <h2 class="text-2xl font-extrabold mb-1">나에게 필요한<br>영양제는 뭘까?</h2>
-                    <p class="text-sm font-medium opacity-80 mb-4">AI가 분석하는 맞춤 건강 설문</p>
-                    <div
-                        class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white text-[#802022] shadow-sm">
-                        ➜
-                    </div>
-                </div>
-                <!-- Deco -->
-                <div class="absolute right-[-20px] bottom-[-20px] text-[120px] opacity-20 rotate-12">🩺</div>
-            </a>
-        </section>
+            <form id="homeSearchForm" action="{% url 'search:search' %}" method="get" class="relative mb-4">
+                <input type="text" name="q" x-model="searchQuery" placeholder="예: 눈 피로에 좋은 영양제 추천해줘"
+                    class="w-full h-16 pl-16 pr-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 text-base transition-all placeholder-gray-400 text-gray-800 dark:text-white"
+                    autocomplete="off" required>
+                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-2xl" aria-hidden="true">🔍</span>
+                <button type="submit"
+                    class="absolute right-5 top-1/2 -translate-y-1/2 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors">
+                    검색
+                </button>
+            </form>
 
-        <!-- 4. Users' Favorite Functions (Chart) -->
-        <section class="mb-8" aria-labelledby="popular-functionality-heading">
-            <article
-                class="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
-                <header class="flex items-center justify-between mb-6">
-                    <h2 id="popular-functionality-heading" class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                        <span class="text-xl" aria-hidden="true">📊</span> 사람들이 많이 찾는 기능성
-                    </h2>
-                </header>
-
-                <div class="space-y-5">
-                    <!-- 뼈/관절 건강 -->
-                    <a href="{% url 'supplements:search_direct' %}?q=관절" class="block group">
-                        <div class="flex justify-between text-sm mb-2 font-medium text-gray-600 dark:text-gray-300">
-                            <span class="flex items-center gap-2">🦴 뼈/관절 건강</span>
-                            <span
-                                class="text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-0.5 rounded-md">1위</span>
-                        </div>
-                        <div class="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full bg-gradient-to-r from-emerald-300 to-emerald-500 w-[85%]">
-                            </div>
-                        </div>
-                    </a>
-                    <!-- 피로 개선 -->
-                    <a href="{% url 'supplements:search_direct' %}?q=피로" class="block group">
-                        <div class="flex justify-between text-sm mb-2 font-medium text-gray-600 dark:text-gray-300">
-                            <span class="flex items-center gap-2">💪 피로 개선</span>
-                            <span class="text-blue-500 text-xs font-bold bg-blue-50 px-2 py-0.5 rounded-md">2위</span>
-                        </div>
-                        <div class="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full bg-gradient-to-r from-blue-300 to-blue-500 w-[72%]"></div>
-                        </div>
-                    </a>
-                    <!-- 혈행 개선 -->
-                    <a href="{% url 'supplements:search_direct' %}?q=혈행" class="block group">
-                        <div class="flex justify-between text-sm mb-2 font-medium text-gray-600 dark:text-gray-300">
-                            <span class="flex items-center gap-2">❤️ 혈행 개선</span>
-                            <span class="text-rose-500 text-xs font-bold bg-rose-50 px-2 py-0.5 rounded-md">3위</span>
-                        </div>
-                        <div class="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full bg-gradient-to-r from-rose-300 to-rose-500 w-[58%]"></div>
-                        </div>
-                    </a>
-                    <!-- 눈 건강 -->
-                    <a href="{% url 'supplements:search_direct' %}?q=눈건강" class="block group">
-                        <div class="flex justify-between text-sm mb-2 font-medium text-gray-600 dark:text-gray-300">
-                            <span class="flex items-center gap-2">👁️ 눈 건강</span>
-                            <span class="text-amber-500 text-xs font-bold bg-amber-50 px-2 py-0.5 rounded-md">4위</span>
-                        </div>
-                        <div class="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full bg-gradient-to-r from-amber-300 to-amber-500 w-[45%]"></div>
-                        </div>
-                    </a>
-                    <!-- 기억력 개선 -->
-                    <a href="{% url 'supplements:search_direct' %}?q=기억력" class="block group">
-                        <div class="flex justify-between text-sm mb-2 font-medium text-gray-600 dark:text-gray-300">
-                            <span class="flex items-center gap-2">🧠 기억력 개선</span>
-                            <span
-                                class="text-purple-500 text-xs font-bold bg-purple-50 px-2 py-0.5 rounded-md">5위</span>
-                        </div>
-                        <div class="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full bg-gradient-to-r from-purple-300 to-purple-500 w-[38%]">
-                            </div>
-                        </div>
-                    </a>
+            <!-- Example Queries -->
+            <div class="mt-4">
+                <p class="text-xs font-bold text-gray-500 mb-3">💡 이런 것도 물어보세요:</p>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button"
+                        @click="searchQuery = '20만원대 무선 이어폰 추천'; $nextTick(() => document.getElementById('homeSearchForm').submit())"
+                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors cursor-pointer">
+                        20만원대 무선 이어폰 추천
+                    </button>
+                    <button type="button"
+                        @click="searchQuery = '허리 아플 때 좋은 의자'; $nextTick(() => document.getElementById('homeSearchForm').submit())"
+                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors cursor-pointer">
+                        허리 아플 때 좋은 의자
+                    </button>
+                    <button type="button"
+                        @click="searchQuery = '캠핑용 휴대용 선풍기'; $nextTick(() => document.getElementById('homeSearchForm').submit())"
+                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors cursor-pointer">
+                        캠핑용 휴대용 선풍기
+                    </button>
                 </div>
-            </article>
+            </div>
         </section>
 
         <!-- Footer Info -->
         <footer class="text-center text-xs text-gray-400 py-6">
-            <p>식약처 데이터 & 네이버 쇼핑 실시간 가격 연동</p>
-            <p class="mt-1">© 2026 ALMAENG</p>
+            <p>네이버 쇼핑 & 11번가 실시간 가격 연동</p>
+            <p class="mt-1">© 2026 AI 쇼핑 도우미</p>
         </footer>
     </div>
 </main>

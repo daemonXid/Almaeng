@@ -4,9 +4,10 @@
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
-from .interface import get_recent_notifications, get_unread_count, mark_all_read as mark_all_read_service
+from .interface import get_recent_notifications, get_unread_count
+from .interface import mark_all_read as mark_all_read_service
 from .models import Notification
 
 

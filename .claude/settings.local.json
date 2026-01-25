@@ -14,7 +14,9 @@
       "Bash(find:*)",
       "Bash(for d in /d/dev-DAEMON/1-SERVICES/Almaeng/backend/domains/features/*/)",
       "Bash(do [ ! -f \"$d/interface.py\" ])",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(tree:*)",
+      "Bash(ls:*)"
     ]
   }
 }

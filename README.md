@@ -1,23 +1,21 @@
-# ALMAENG 🧬
+# ALMAENG 🛒
 
-> **AI-Driven Nutrient Ingredient Comparison & Price Tracker**
-> **43,000+ analyzed products**
+> **AI 쇼핑 도우미 - 자연어 검색 기반 가격 비교 서비스**
 >
-> 영양제 성분을 AI로 분석하고, 동일 성분 구성의 가성비 제품을 찾아주는 서비스
+> 자연어로 원하는 상품을 검색하면 AI가 키워드를 추출하고,
+> 11번가 + 네이버 쇼핑에서 실시간 최저가를 찾아주는 서비스
 
 ---
 
-## 🎯 Core Features
+## 🎯 Core Features (PRD v2)
 
 | Feature | Description |
 |:---|:---|
-| 💊 **성분 비교** | 두 영양제의 성분을 비교하여 일치율 표시 |
-| 📷 **Vision AI OCR** | Gemini 2.0 Flash 기반 라벨 성분 자동 추출 (Pydantic + JSON-LD) |
-| 💰 **가격 추적** | 쿠팡, 네이버 쇼핑, 아이허브 실시간 가격 비교 |
-| 🎯 **AI 추천** | 건강 설문 기반 맞춤 영양제 추천 |
-| 🛒 **장바구니** | HTMX 실시간 업데이트 |
-| ❤️ **찜 목록** | 관심 상품 저장 및 가격 변동 알림(예정) |
-| 💳 **Toss 결제** | Toss Payment Widget 연동 (Mobile Optimized) |
+| 🔍 **자연어 검색** | "피로 회복에 좋은 영양제 추천해줘" → AI가 검색 키워드 추출 |
+| 🤖 **Gemini AI** | google-genai SDK (gemini-2.0-flash) 기반 키워드 추출 |
+| 💰 **가격 비교** | 11번가 + 네이버 쇼핑 실시간 최저가 비교 |
+| ⚖️ **상품 비교** | 최대 4개 상품 사양 비교 |
+| 💳 **Toss Pay** | 원클릭 결제 (Toss Payments V2 Widget) |
 
 ---
 
@@ -25,35 +23,47 @@
 
 | Layer | Technologies |
 |:---|:---|
-| **Backend** | Python 3.12+, Django Ninja, Pydantic (Strict + JSON-LD) |
+| **Backend** | Python 3.12+, Django Ninja, Pydantic |
 | **Frontend** | HTMX + Alpine.js + Tailwind CSS (Mobile First) |
-| **AI** | Google Gemini 2.0 Flash (Stable) |
-| **Payments** | Toss Payments Widget SDK |
-| **i18n** | 🇰🇷 한국어, 🇺🇸 English |
+| **AI** | Google Gemini 2.0 Flash (google-genai SDK) |
+| **Shopping APIs** | 11번가 Open API, 네이버 쇼핑 검색 API |
+| **Payments** | Toss Payments V2 Widget SDK |
+| **i18n** | 🇰🇷 한국어 |
 
 ---
 
-## 📁 Domain Structure
+## 📁 Domain Structure (PRD v2)
 
 ```
 backend/domains/
-├── ai/
-│   ├── service/              # 🐤 AI 챗봇 (캐치)
-│   └── recommendations/      # 🎯 AI 추천 + 건강 설문
+├── search/                 # 🔍 자연어 검색 (핵심)
+│   ├── state/              # DB 모델 (검색 기록)
+│   ├── logic/              # 검색 서비스
+│   └── pages/              # 검색 UI
+│       └── search/
 │
-├── base/
-│   ├── accounts/             # 👤 사용자 인증
-│   ├── core/                 # 🏠 홈
-│   └── ...                   # health, analytics, settings 등
+├── compare/                # ⚖️ 상품 비교
+│   ├── state/
+│   ├── logic/
+│   └── pages/
+│       └── compare/
 │
-└── features/
-    ├── supplements/          # 💊 영양제 (핵심)
-    │   └── pages/            # search, compare, upload
-    ├── prices/               # 💰 가격 추적
-    ├── cart/                 # 🛒 장바구니
-    ├── wishlist/             # ❤️ 찜 목록
-    └── payments/             # 💳 Toss 결제
-        └── integrations/     # toss.py
+├── billing/                # 💳 결제 (Toss Pay)
+│   ├── state/              # Order, Payment 모델
+│   ├── logic/
+│   └── pages/
+│       └── checkout/
+│
+├── integrations/           # 🔌 외부 API 클라이언트
+│   ├── gemini/             # Google Gemini AI
+│   ├── naver/              # 네이버 쇼핑 API
+│   ├── elevenst/           # 11번가 Open API
+│   └── tosspayments/       # Toss Payments
+│
+└── base/                   # 기본 도메인
+    ├── core/               # 홈 (→ 검색으로 리다이렉트)
+    ├── accounts/           # 사용자 인증
+    └── health/             # 헬스체크
 ```
 
 ---
@@ -61,49 +71,55 @@ backend/domains/
 ## 🚀 Quick Start
 
 ```bash
-just setup    # 의존성 설치
-just dev      # 개발 서버 → http://127.0.0.1:8000
+# 의존성 설치
+just setup
+
+# 개발 서버 시작
+just dev
+# → http://127.0.0.1:8000
 ```
 
 ---
 
-## 🔗 Key URLs
+## 🔗 Key URLs (PRD v2)
 
 | Path | Description |
 |:---|:---|
-| `/supplements/` | 영양제 검색 |
-| `/supplements/compare/` | 성분 비교 |
-| `/supplements/upload/` | 라벨 OCR |
-| `/recommend/` | AI 추천 |
-| `/recommend/quiz/` | 건강 설문 |
-| `/cart/` | 장바구니 |
-| `/wishlist/` | 찜 목록 |
-| `/payments/checkout/` | 결제 |
-| `/faq/` | 자주 묻는 질문 |
-| `/terms/` | 이용약관 |
-| `/privacy/` | 개인정보처리방침 |
-
----
-
-## 🎨 UI Features
-
-- 🌙 **다크/라이트 모드** - 테마 토글 (사이드바 하단)
-- 🐤 **AI 챗봇 (캐치)** - 전용 상담 페이지 (/chatbot/) + 사이드바 연동
-- 📱 **반응형 디자인** - 모바일 우선 (Collapsible Sidebar)
-- ⚡ **HTMX** - SPA 느낌의 빠른 인터랙션
+| `/` | 홈 (검색 페이지로 리다이렉트) |
+| `/search/` | 🔍 자연어 검색 |
+| `/search/?q=피로회복 영양제` | 검색 결과 |
+| `/compare/` | ⚖️ 상품 비교 |
+| `/checkout/` | 💳 결제 |
+| `/checkout/success/` | 결제 성공 |
+| `/checkout/fail/` | 결제 실패 |
 
 ---
 
 ## 🔧 Environment Variables
 
 ```env
+# AI (google-genai SDK)
+GEMINI_API_KEY=your-gemini-api-key
+
+# 11번가 Open API
+ELEVENST_API_KEY=your-11st-api-key
+
+# 네이버 쇼핑 API
+NAVER_CLIENT_ID=your-naver-client-id
+NAVER_CLIENT_SECRET=your-naver-client-secret
+
 # Toss Payments
 TOSS_CLIENT_KEY=test_ck_xxx
 TOSS_SECRET_KEY=test_sk_xxx
-
-# AI
-GEMINI_API_KEY=xxx
 ```
+
+---
+
+## 🎨 UI Features
+
+- 📱 **모바일 퍼스트** - 반응형 디자인
+- ⚡ **HTMX** - SPA 느낌의 빠른 인터랙션
+- 🌙 **다크/라이트 모드** - 테마 토글
 
 ---
 
@@ -143,48 +159,24 @@ just deploy-info   # 배포 파이프라인 정보 출력
 just logs-remote   # Coolify 로그 대시보드 안내
 ```
 
-### Coolify Environment Variables
+---
 
-Coolify Dashboard에서 설정해야 할 필수 환경 변수:
+## 📦 Active Domains (PRD v2)
 
-```env
-# Production Security
-DEBUG=false
-SECRET_KEY=<strong-random-key>
-ALLOWED_HOSTS=almaeng.daemonx.cc
-CSRF_TRUSTED_ORIGINS=https://almaeng.daemonx.cc
-
-# Database (Coolify Internal Network)
-POSTGRES_HOST=postgres
-DATABASE_URL=postgresql://user:pass@postgres:5432/almaeng
-
-# Redis (Coolify Internal Network)
-REDIS_HOST=redis
-
-# External APIs
-GEMINI_API_KEY=<your-key>
-```
+- **search** - 🔍 자연어 검색
+- **compare** - ⚖️ 상품 비교
+- **billing** - 💳 결제
+- **integrations** - 🔌 외부 API
+  - gemini (AI)
+  - naver (쇼핑 API)
+  - elevenst (11번가 API)
+  - tosspayments (결제)
+- **base > core** - 홈
+- **base > accounts** - 인증
+- **base > health** - 헬스체크
 
 ---
 
-<!-- DOMAINS_START -->
+## 📜 License
 
-### 📦 Active Domains (15)
-
-- **ai > recommendations**
-- **base > accounts**
-- **base > analytics**
-- **base > core**
-- **base > health**
-- **base > media**
-- **base > notifications**
-- **base > settings**
-- **features > cart**
-- **features > marketing**
-- **features > payments**
-- **features > prices**
-- **features > seo**
-- **features > supplements**
-- **features > wishlist**
-
-<!-- DOMAINS_END -->
+MIT License © 2026 xid

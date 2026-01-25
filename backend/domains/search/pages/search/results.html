@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ result.query }} 검색 결과 | AI 쇼핑 도우미{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-[#FAFAF9] dark:bg-gray-900 pb-24 font-sans">
+    <div class="max-w-xl mx-auto px-5 pt-6">
+        <!-- Header -->
+        <header class="mb-4">
+            <a href="{% url 'daemon:home' %}"
+                class="text-emerald-600 hover:text-emerald-700 flex items-center gap-2 mb-3 text-sm">
+                <span>←</span> 홈으로
+            </a>
+            <h1 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                🔍 "{{ result.query }}"
+            </h1>
+            {% if result.keywords %}
+            <p class="text-xs text-gray-500 mt-1">
+                키워드: {% for kw in result.keywords %}{{ kw }}{% if not forloop.last %}, {% endif %}{% endfor %}
+            </p>
+            {% endif %}
+        </header>
+
+        <!-- AI Recommendation -->
+        {% if result.recommendation %}
+        <section class="mb-6">
+            <div
+                class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 border border-emerald-200 dark:border-emerald-700 rounded-2xl p-4">
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl">🤖</span>
+                    <div>
+                        <p class="text-sm font-medium text-emerald-800 dark:text-emerald-200 mb-1">AI 추천</p>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                            {{ result.recommendation }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Price Comparison -->
+        <section class="mb-6">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-base font-bold text-gray-800 dark:text-white">📊 가격 비교</h2>
+                <span class="text-xs text-gray-500">총 {{ result.products|length }}개</span>
+            </div>
+
+            {% if result.products %}
+            <div class="space-y-3">
+                <!-- Cheapest Product -->
+                {% if result.cheapest %}
+                <article class="bg-white dark:bg-gray-800 border-2 border-emerald-400 rounded-2xl p-4 shadow-sm">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">🏷️
+                            최저가</span>
+                        <span class="text-xs text-gray-500">{{ result.cheapest.platform|upper }}</span>
+                    </div>
+                    <div class="flex gap-3">
+                        {% if result.cheapest.image_url %}
+                        <img src="{{ result.cheapest.image_url }}" alt="{{ result.cheapest.name }}"
+                            class="w-20 h-20 object-cover rounded-lg bg-gray-100 flex-shrink-0">
+                        {% endif %}
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-medium text-gray-800 dark:text-white line-clamp-2 mb-1">
+                                {{ result.cheapest.name }}
+                            </h3>
+                            <p class="text-lg font-bold text-emerald-600">
+                                ₩{{ result.cheapest.price|floatformat:0 }}
+                            </p>
+                            {% if result.cheapest.mall_name %}
+                            <p class="text-xs text-gray-500">{{ result.cheapest.mall_name }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-3">
+                        <a href="{{ result.cheapest.product_url }}" target="_blank" rel="noopener"
+                            class="flex-1 py-2 text-center text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+                            상품 보기
+                        </a>
+                        <a href="{% url 'billing:checkout' %}?product_id={{ result.cheapest.id }}&platform={{ result.cheapest.platform }}&name={{ result.cheapest.name|urlencode }}&price={{ result.cheapest.price }}&url={{ result.cheapest.product_url|urlencode }}&image={{ result.cheapest.image_url|urlencode }}"
+                            class="flex-1 py-2 text-center text-sm font-bold text-white bg-blue-500 hover:bg-blue-600 rounded-xl transition-colors">
+                            💳 토스페이 구매
+                        </a>
+                    </div>
+                </article>
+                {% endif %}
+
+                <!-- Other Products -->
+                {% for product in result.products %}
+                {% if product.id != result.cheapest.id %}
+                <article class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span
+                            class="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
+                            {{ product.platform|upper }}
+                        </span>
+                        {% if product.rating %}
+                        <span class="text-xs text-yellow-500">⭐ {{ product.rating }}</span>
+                        {% endif %}
+                        {% if product.review_count %}
+                        <span class="text-xs text-gray-500">({{ product.review_count }})</span>
+                        {% endif %}
+                    </div>
+                    <div class="flex gap-3">
+                        {% if product.image_url %}
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}"
+                            class="w-16 h-16 object-cover rounded-lg bg-gray-100 flex-shrink-0">
+                        {% endif %}
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-medium text-gray-800 dark:text-white line-clamp-2 mb-1">
+                                {{ product.name }}
+                            </h3>
+                            <div class="flex items-baseline gap-2">
+                                <p class="text-base font-bold text-gray-800 dark:text-white">
+                                    ₩{{ product.price|floatformat:0 }}
+                                </p>
+                                {% if product.original_price and product.discount_rate %}
+                                <span class="text-xs text-gray-400 line-through">₩{{
+                                    product.original_price|floatformat:0 }}</span>
+                                <span class="text-xs text-red-500 font-medium">{{ product.discount_rate }}%</span>
+                                {% endif %}
+                            </div>
+                            {% if product.mall_name %}
+                            <p class="text-xs text-gray-500 mt-0.5">{{ product.mall_name }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-3">
+                        <a href="{{ product.product_url }}" target="_blank" rel="noopener"
+                            class="flex-1 py-2 text-center text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+                            상품 보기
+                        </a>
+                        <a href="{% url 'billing:checkout' %}?product_id={{ product.id }}&platform={{ product.platform }}&name={{ product.name|urlencode }}&price={{ product.price }}&url={{ product.product_url|urlencode }}&image={{ product.image_url|urlencode }}"
+                            class="flex-1 py-2 text-center text-xs font-bold text-white bg-blue-500 hover:bg-blue-600 rounded-xl transition-colors">
+                            💳 구매
+                        </a>
+                    </div>
+                </article>
+                {% endif %}
+                {% empty %}
+                <div class="text-center py-8 text-gray-500">
+                    <p class="text-4xl mb-2">😢</p>
+                    <p>검색 결과가 없습니다.</p>
+                    <p class="text-sm mt-1">다른 키워드로 검색해보세요.</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12 text-gray-500">
+                <p class="text-4xl mb-3">🔍</p>
+                <p class="font-medium">검색 결과가 없습니다</p>
+                <p class="text-sm mt-1">다른 키워드로 검색해보세요.</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- New Search -->
+        <section class="mt-8">
+            <form action="{% url 'search:search' %}" method="get" class="relative">
+                <input type="text" name="q" placeholder="다른 상품 검색..."
+                    class="w-full h-12 pl-4 pr-20 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-400 text-sm placeholder-gray-400 text-gray-800 dark:text-white"
+                    autocomplete="off" required>
+                <button type="submit"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg transition-colors">
+                    검색
+                </button>
+            </form>
+        </section>
+    </div>
+</main>
+{% endblock %}

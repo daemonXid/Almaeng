@@ -5,6 +5,7 @@ JSON-LD 구조화 데이터 생성.
 """
 
 import json
+
 from django import template
 from django.utils.safestring import mark_safe
 
@@ -26,12 +27,9 @@ def jsonld_website(context):
         "description": "AI 기반 영양제 가격 비교 및 추천 서비스",
         "potentialAction": {
             "@type": "SearchAction",
-            "target": {
-                "@type": "EntryPoint",
-                "urlTemplate": f"{base_url}supplements/?q={{search_term_string}}"
-            },
-            "query-input": "required name=search_term_string"
-        }
+            "target": {"@type": "EntryPoint", "urlTemplate": f"{base_url}supplements/?q={{search_term_string}}"},
+            "query-input": "required name=search_term_string",
+        },
     }
 
     return mark_safe(f'<script type="application/ld+json">{json.dumps(data, ensure_ascii=False)}</script>')
@@ -49,9 +47,7 @@ def jsonld_organization(context):
         "name": "ALMAENG",
         "url": base_url,
         "logo": f"{base_url}static/img/logo.png",
-        "sameAs": [
-            "https://github.com/daemonxid"
-        ]
+        "sameAs": ["https://github.com/daemonxid"],
     }
 
     return mark_safe(f'<script type="application/ld+json">{json.dumps(data, ensure_ascii=False)}</script>')
@@ -68,10 +64,7 @@ def jsonld_product(context, product):
         "@type": "Product",
         "name": getattr(product, "product_name", getattr(product, "name", "Unknown")),
         "description": getattr(product, "functionality", "")[:200] if hasattr(product, "functionality") else "",
-        "brand": {
-            "@type": "Brand",
-            "name": getattr(product, "company_name", getattr(product, "brand", "Unknown"))
-        },
+        "brand": {"@type": "Brand", "name": getattr(product, "company_name", getattr(product, "brand", "Unknown"))},
         "category": "Health Supplements",
         "url": f"{base_url}supplements/{product.id}/",
     }
@@ -83,7 +76,7 @@ def jsonld_product(context, product):
             "@type": "Offer",
             "price": str(price),
             "priceCurrency": "KRW",
-            "availability": "https://schema.org/InStock"
+            "availability": "https://schema.org/InStock",
         }
 
     return mark_safe(f'<script type="application/ld+json">{json.dumps(data, ensure_ascii=False)}</script>')
@@ -101,18 +94,16 @@ def jsonld_breadcrumb(context, items):
 
     item_list = []
     for i, item in enumerate(items, 1):
-        item_list.append({
-            "@type": "ListItem",
-            "position": i,
-            "name": item.get("name", ""),
-            "item": f"{base_url.rstrip('/')}{item.get('url', '/')}"
-        })
+        item_list.append(
+            {
+                "@type": "ListItem",
+                "position": i,
+                "name": item.get("name", ""),
+                "item": f"{base_url.rstrip('/')}{item.get('url', '/')}",
+            }
+        )
 
-    data = {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": item_list
-    }
+    data = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": item_list}
 
     return mark_safe(f'<script type="application/ld+json">{json.dumps(data, ensure_ascii=False)}</script>')
 
@@ -126,19 +117,14 @@ def jsonld_faq(context, faqs):
     """
     qa_list = []
     for faq in faqs:
-        qa_list.append({
-            "@type": "Question",
-            "name": faq.get("question", ""),
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": faq.get("answer", "")
+        qa_list.append(
+            {
+                "@type": "Question",
+                "name": faq.get("question", ""),
+                "acceptedAnswer": {"@type": "Answer", "text": faq.get("answer", "")},
             }
-        })
+        )
 
-    data = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": qa_list
-    }
+    data = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": qa_list}
 
     return mark_safe(f'<script type="application/ld+json">{json.dumps(data, ensure_ascii=False)}</script>')

@@ -5,10 +5,10 @@
 from django.urls import path
 
 from .views import (
-    notification_list,
-    notification_dropdown,
-    mark_read,
     mark_all_read,
+    mark_read,
+    notification_dropdown,
+    notification_list,
 )
 
 app_name = "notifications"

@@ -23,6 +23,11 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6456
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      # Shopping APIs
+      - ELEVENST_API_KEY=${ELEVENST_API_KEY:-}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID:-}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET:-}
+      # Monitoring
       - SENTRY_DSN=${SENTRY_DSN:-}
       - SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT:-true}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}

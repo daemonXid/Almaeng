@@ -3,34 +3,34 @@
 -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-<meta name="theme-color" content="#030712">
+<meta name="theme-color" content="#10b981">
 <meta name="view-transition" content="same-origin">
 
 <!-- Primary Meta Tags -->
-<title>{% block title %}{{ site.name|default:'ALMAENG' }}{% endblock %}</title>
-<meta name="title" content="{% block seo_title %}{{ site.name|default:'ALMAENG' }}{% endblock %}">
+<title>{% block title %}{{ site.name|default:'AI 쇼핑 도우미' }}{% endblock %}</title>
+<meta name="title" content="{% block seo_title %}{{ site.name|default:'AI 쇼핑 도우미' }}{% endblock %}">
 <meta name="description"
-    content="{% block meta_description %}{{ site.description|default:'AI-First Django Template with Domain-Driven Architecture' }}{% endblock %}">
+    content="{% block meta_description %}{{ site.description|default:'자연어 질문으로 상품을 검색하고, 멀티 플랫폼 최저가를 비교한 후 토스페이로 바로 구매하세요.' }}{% endblock %}">
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="{% if request %}{{ request.build_absolute_uri|default:'' }}{% endif %}">
-<meta property="og:title" content="{% block og_title %}{{ site.name|default:'ALMAENG' }}{% endblock %}">
+<meta property="og:title" content="{% block og_title %}{{ site.name|default:'AI 쇼핑 도우미' }}{% endblock %}">
 <meta property="og:description"
-    content="{% block og_description %}{{ site.description|default:'AI-First Django Template' }}{% endblock %}">
+    content="{% block og_description %}{{ site.description|default:'자연어 질문으로 상품을 검색하고, 멀티 플랫폼 최저가를 비교한 후 토스페이로 바로 구매하세요.' }}{% endblock %}">
 <meta property="og:image" content="{{ site.og_image|default:'/static/img/og-image.png' }}">
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image">
 <meta property="twitter:url" content="{% if request %}{{ request.build_absolute_uri|default:'' }}{% endif %}">
-<meta property="twitter:title" content="{% block twitter_title %}{{ site.name|default:'ALMAENG' }}{% endblock %}">
+<meta property="twitter:title" content="{% block twitter_title %}{{ site.name|default:'AI 쇼핑 도우미' }}{% endblock %}">
 <meta property="twitter:description"
-    content="{% block twitter_description %}{{ site.description|default:'AI-First Django Template' }}{% endblock %}">
+    content="{% block twitter_description %}{{ site.description|default:'자연어 질문으로 상품을 검색하고, 멀티 플랫폼 최저가를 비교한 후 토스페이로 바로 구매하세요.' }}{% endblock %}">
 <meta property="twitter:image" content="{{ site.og_image|default:'/static/img/og-image.png' }}">
 
 <!-- Favicons -->
 <link rel="icon" type="image/svg+xml"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>😈</text></svg>">
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
 <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
 
 <!-- PWA -->
@@ -51,7 +51,7 @@
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/static/sw.js')
-                .then(reg => console.log('😈 SW registered:', reg.scope))
+                .then(reg => console.log('🛒 SW registered:', reg.scope))
                 .catch(err => console.warn('SW failed:', err));
         });
     }

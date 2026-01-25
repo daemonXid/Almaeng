@@ -1,9 +1,8 @@
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" x-data="{
-          theme: localStorage.getItem('theme') || 'dark',
-          mobileMenuOpen: false,
-          chatOpen: false
+          theme: localStorage.getItem('theme') || 'light',
+          mobileMenuOpen: false
       }"
     x-init="$watch('theme', val => { localStorage.setItem('theme', val); document.documentElement.classList.toggle('dark', val === 'dark') })"
     :class="{ 'dark': theme === 'dark' }">
@@ -22,10 +21,10 @@
 
     <style>
         :root {
-            --bg-light: #f9fafb;
+            --bg-light: #FAFAF9;
             --bg-dark: #030712;
-            --surface-light: rgba(255, 255, 255, 0.8);
-            --surface-dark: rgba(17, 24, 39, 0.6);
+            --surface-light: rgba(255, 255, 255, 0.9);
+            --surface-dark: rgba(17, 24, 39, 0.8);
             --text-light: #111827;
             --text-dark: #f9fafb;
             --accent: #10b981;
@@ -87,10 +86,10 @@
     {% block styles %}{% endblock %}
 </head>
 
-<body hx-boost="true" class="h-[100dvh] overflow-hidden bg-gray-50 dark:bg-gray-900" x-data="{ 
+<body hx-boost="true" class="min-h-screen bg-gray-50 dark:bg-gray-900" x-data="{ 
           sidebarOpen: false, 
           mobileMenuOpen: false,
-          theme: localStorage.getItem('theme') || 'dark' 
+          theme: localStorage.getItem('theme') || 'light' 
       }"
     x-init="$watch('theme', val => { localStorage.setItem('theme', val); document.documentElement.classList.toggle('dark', val === 'dark') })"
     :class="{ 'dark': theme === 'dark' }">
@@ -98,13 +97,11 @@
     {% block layout %}
     {% include "_sidebar.html" %}
 
-    <!-- Main Content Area with Fixed Left Padding (Sidebar overlays on top) -->
-    <main class="h-full overflow-y-auto overscroll-contain transition-all duration-300 pb-20 lg:pb-0 lg:pl-20">
-        <div class="p-4 md:p-8 pb-32"> <!-- Added padding container for content -->
+    <!-- Main Content Area -->
+    <main class="min-h-screen transition-all duration-300 pb-20 lg:pb-0 lg:pl-20">
+        <div class="p-4 md:p-8">
             {% block content %}{% endblock %}
         </div>
-
-
     </main>
 
     {% include "_bottom_nav.html" %}

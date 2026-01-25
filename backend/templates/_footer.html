@@ -1,18 +1,18 @@
 {% load i18n %}
 <footer class="mt-20 border-t border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-black/20">
     <div class="container mx-auto px-4 py-12">
-        <div class="grid md:grid-cols-4 gap-8 mb-12">
+        <div class="grid md:grid-cols-3 gap-8 mb-12">
             <!-- Brand -->
             <div>
                 <div class="flex items-center gap-2 mb-4">
                     <div
                         class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-lg">
-                        🧬
+                        🛒
                     </div>
-                    <span class="font-bold text-lg text-gray-900 dark:text-white">ALMAENG</span>
+                    <span class="font-bold text-lg text-gray-900 dark:text-white">AI 쇼핑 도우미</span>
                 </div>
                 <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                    {% trans "AI로 영양제 성분을 분석하고, 동일 성분 구성의 가성비 제품을 찾아드립니다." %}
+                    {% trans "자연어 질문으로 상품을 검색하고, 멀티 플랫폼 최저가를 비교한 후 토스페이로 바로 구매하세요." %}
                 </p>
             </div>
 
@@ -22,36 +22,12 @@
                     {% trans "서비스" %}
                 </h4>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="/"
-                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">💊 {%
-                            trans "영양제 검색" %}</a></li>
-                    <li><a href="{% url 'supplements:compare' %}"
+                    <li><a href="{% url 'search:search' %}"
+                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">🔍 {%
+                            trans "상품 검색" %}</a></li>
+                    <li><a href="{% url 'compare:compare' %}"
                             class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">⚖️ {%
-                            trans "성분 비교" %}</a></li>
-                    <li><a href="{% url 'supplements:upload' %}"
-                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">📷 {%
-                            trans "라벨 스캔" %}</a></li>
-                    <li><a href="{% url 'recommendations:home' %}"
-                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">🎯 {%
-                            trans "AI 추천" %}</a></li>
-                </ul>
-            </div>
-
-            <!-- 고객 -->
-            <div>
-                <h4 class="font-semibold text-gray-900 dark:text-white mb-4 text-sm uppercase tracking-wide">
-                    {% trans "고객" %}
-                </h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="{% url 'cart:cart' %}"
-                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">🛒 {%
-                            trans "장바구니" %}</a></li>
-                    <li><a href="{% url 'wishlist:list' %}"
-                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">❤️ {%
-                            trans "찜 목록" %}</a></li>
-                    <li><a href="/accounts/profile/"
-                            class="text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-colors">👤 {%
-                            trans "내 계정" %}</a></li>
+                            trans "가격 비교" %}</a></li>
                 </ul>
             </div>
 
@@ -78,20 +54,8 @@
         <div
             class="pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="text-gray-500 dark:text-gray-400 text-sm">
-                © 2026 <strong>ALMAENG</strong>. {% trans "영양제 성분 비교 서비스" %}
+                © 2026 <strong>AI 쇼핑 도우미</strong>. {% trans "자연어 검색부터 결제까지 원스톱" %}
             </p>
-            <div class="flex items-center gap-4 text-sm text-gray-500">
-                <span id="system-time" class="font-mono opacity-60"></span>
-            </div>
         </div>
     </div>
 </footer>
-
-<script>
-    function updateFooterTime() {
-        const now = new Date();
-        document.getElementById('system-time').innerText = now.toLocaleTimeString('ko-KR', { hour12: false });
-    }
-    setInterval(updateFooterTime, 1000);
-    updateFooterTime();
-</script>

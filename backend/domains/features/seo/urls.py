@@ -6,7 +6,7 @@ robots.txt, sitemap.xml 엔드포인트.
 
 from django.urls import path
 
-from .views import robots_txt, sitemap_xml, sitemap_index
+from .views import robots_txt, sitemap_index, sitemap_xml
 
 app_name = "seo"
 

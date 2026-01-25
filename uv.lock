@@ -85,7 +85,7 @@ wheels = [
 
 [[package]]
 name = "almaeng"
-version = "5.0.0"
+version = "6.0.0"
 source = { virtual = "." }
 dependencies = [
     { name = "django" },
@@ -133,6 +133,7 @@ dependencies = [
     { name = "django-watson" },
     { name = "google-genai" },
     { name = "granian" },
+    { name = "httpx" },
     { name = "instructor" },
     { name = "logfire", extra = ["django"] },
     { name = "outlines" },
@@ -234,6 +235,7 @@ requires-dist = [
     { name = "django-watson" },
     { name = "google-genai" },
     { name = "granian", specifier = ">=2.6.0" },
+    { name = "httpx", specifier = ">=0.27.0" },
     { name = "instructor", specifier = ">=1.13.0" },
     { name = "logfire", extras = ["django"], specifier = ">=4.16.0" },
     { name = "mediapipe", marker = "extra == 'vision'" },

@@ -4,14 +4,13 @@
 Full-page Claude-style chatbot with persistent history.
 """
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpRequest, HttpResponse
-from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
-from django.db.models import Prefetch
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
 
 from domains.ai.service.chatbot.gemini_service import ask_supplement_question
-from domains.ai.service.chatbot.models import ChatSession, ChatMessage
+from domains.ai.service.chatbot.models import ChatMessage, ChatSession
 
 
 def chat_page(request: HttpRequest, session_id: int | None = None) -> HttpResponse:
@@ -19,12 +18,12 @@ def chat_page(request: HttpRequest, session_id: int | None = None) -> HttpRespon
     Main Chat Interface (Claude Style)
     """
     context = {}
-    
+
     # Load Sidebar History (Only for logged-in users)
     if request.user.is_authenticated:
         sessions = ChatSession.objects.filter(user=request.user, is_active=True)
         context["sessions"] = sessions
-    
+
         # Load Active Session
         if session_id:
             active_session = get_object_or_404(ChatSession, id=session_id, user=request.user)
@@ -56,7 +55,7 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
         # Use first 30 chars as title
         title = content[:30] + "..." if len(content) > 30 else content
         session = ChatSession.objects.create(user=request.user, title=title)
-    
+
     # 2. Save User Message (if session exists)
     if session:
         ChatMessage.objects.create(session=session, role="user", content=content)
@@ -72,12 +71,7 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
 
     # 4. Save AI Message
     if session:
-        ChatMessage.objects.create(
-            session=session, 
-            role="assistant", 
-            content=answer,
-            sources=sources
-        )
+        ChatMessage.objects.create(session=session, role="assistant", content=answer, sources=sources)
 
     # 5. Render Response Fragment
     # If it was a new session, we need to redirect to the new URL to update history list
@@ -89,11 +83,9 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
         return response_obj
 
     # Render message bubbles (User + AI)
-    return render(request, "_message_fragment.html", {
-        "user_message": content,
-        "ai_message": answer,
-        "sources": sources
-    })
+    return render(
+        request, "_message_fragment.html", {"user_message": content, "ai_message": answer, "sources": sources}
+    )
 
 
 @login_required
@@ -107,6 +99,6 @@ def new_chat(request: HttpRequest) -> HttpResponse:
 def delete_session(request: HttpRequest, session_id: int) -> HttpResponse:
     """Delete a chat session"""
     session = get_object_or_404(ChatSession, id=session_id, user=request.user)
-    session.is_active = False # Soft delete
+    session.is_active = False  # Soft delete
     session.save()
-    return HttpResponse("") # Helper to remove element in UI
+    return HttpResponse("")  # Helper to remove element in UI

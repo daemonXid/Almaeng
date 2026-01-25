@@ -3,12 +3,12 @@ package = false
 
 [project]
 name = "almaeng"
-version = "5.0.0"
-description = "The AI-First Django HATEOAS Template"
+version = "6.0.0"
+description = "AI 쇼핑 도우미 - 자연어 검색 기반 가격 비교 서비스"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "xid", email = "xid@daemon.dev" }]
-keywords = ["django", "htmx", "ai", "gemini", "hateoas", "hypermedia"]
+keywords = ["django", "htmx", "ai", "gemini", "shopping", "price-comparison", "11st", "naver"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Framework :: Django :: 5.0",
@@ -93,11 +93,15 @@ dependencies = [
     "google-genai",             # Gemini API (new unified SDK)
     "pydantic>=2.0",            # Schema Validation (AI structured output)
     # ============================================
-    # 8. Config & RBAC
+    # 8. Shopping APIs (PRD v2)
+    # ============================================
+    "httpx>=0.27.0",            # Async HTTP Client (11st, Naver APIs)
+    # ============================================
+    # 9. Config & RBAC
     # ============================================
     "pyyaml",                   # Policy-as-Code RBAC
     # ============================================
-    # 9. Server & Infrastructure
+    # 10. Server & Infrastructure
     # ============================================
     "django-environ",           # Environment Config
     "django-compressor",        # Asset Compression
@@ -124,9 +128,9 @@ vision = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/daemonXid/ALMAENG"
-Documentation = "https://github.com/daemonXid/ALMAENG#readme"
-Repository = "https://github.com/daemonXid/ALMAENG"
+Homepage = "https://almaeng.daemonx.cc"
+Documentation = "https://github.com/daemonXid/almaeng#readme"
+Repository = "https://github.com/daemonXid/almaeng"
 
 [dependency-groups]
 dev = [

@@ -70,6 +70,9 @@ GEMINI_API_KEY = env("GEMINI_API_KEY", default="")
 NAVER_CLIENT_ID = env("NAVER_CLIENT_ID", default="")
 NAVER_CLIENT_SECRET = env("NAVER_CLIENT_SECRET", default="")
 
+# 11번가 Open API
+ELEVENST_API_KEY = env("ELEVENST_API_KEY", default="")
+
 # Coupang Partners
 COUPANG_ACCESS_KEY = env("COUPANG_ACCESS_KEY", default="")
 COUPANG_SECRET_KEY = env("COUPANG_SECRET_KEY", default="")
@@ -197,6 +200,11 @@ TEMPLATES = [
             BASE_DIR / "backend" / "domains" / "base",
             BASE_DIR / "backend" / "domains" / "features",
             BASE_DIR / "backend" / "domains" / "ai" / "service",
+            # PRD v2 신규 도메인
+            BASE_DIR / "backend" / "domains" / "search",
+            BASE_DIR / "backend" / "domains" / "billing",
+            BASE_DIR / "backend" / "domains" / "compare",
+            BASE_DIR / "backend" / "domains" / "integrations",
         ],
         "APP_DIRS": False,  # Loader 활용 예정 (django-components 등)
         "OPTIONS": {
@@ -205,7 +213,6 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "domains.base.settings.context_processors.site_settings",  # Site Settings
             ],
             "loaders": [
                 (
