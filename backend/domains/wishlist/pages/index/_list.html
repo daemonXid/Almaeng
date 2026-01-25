@@ -1,0 +1,10 @@
+{# HTMX Fragment - Use with hx-target #}
+<div id="wishlist-list">
+    {% for item in items %}
+    <div class="glass-panel" style="padding: 1rem; margin-bottom: 0.5rem;">
+        {{ item.name }}
+    </div>
+    {% empty %}
+    <p style="color: var(--muted);">No items yet.</p>
+    {% endfor %}
+</div>

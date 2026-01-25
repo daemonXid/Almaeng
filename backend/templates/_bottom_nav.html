@@ -17,11 +17,11 @@
             <span class="text-[10px]">검색</span>
         </a>
 
-        <!-- Compare -->
-        <a href="{% url 'compare:compare' %}"
-            class="flex flex-col items-center justify-center gap-1 {% if 'compare' in request.path %}text-gray-900 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
-            <span class="text-xl">⚖️</span>
-            <span class="text-[10px]">비교</span>
+        <!-- Wishlist -->
+        <a href="{% url 'wishlist:index' %}"
+            class="flex flex-col items-center justify-center gap-1 {% if 'wishlist' in request.path %}text-gray-900 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
+            <span class="text-xl">❤️</span>
+            <span class="text-[10px]">찜</span>
         </a>
 
         <!-- My Page -->

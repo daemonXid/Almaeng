@@ -37,6 +37,8 @@ urlpatterns = [
     path("compare/", include("domains.compare.urls")),
     # 💳 Billing - 결제
     path("billing/", include("domains.billing.urls")),
+    # ❤️ Wishlist - 찜 목록
+    path("wishlist/", include("domains.wishlist.urls")),
     # 💳 Toss Payments Webhook
     path("toss/webhook/", include("domains.integrations.tosspayments.urls")),
     # 🔔 Notifications

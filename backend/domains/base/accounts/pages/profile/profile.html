@@ -47,14 +47,41 @@
             </div>
         </div>
 
-        <!-- Hidden Form for Image Upload -->
-        <form method="POST" enctype="multipart/form-data" id="profile-form" class="hidden">
-            {% csrf_token %}
-            <input type="file" id="profile-upload" name="profile_image" accept="image/*"
-                onchange="if(confirm('프로필 이미지를 변경하시겠습니까?')) document.getElementById('profile-form').submit();">
-            <input type="hidden" name="action" value="update_image">
         </form>
     </section>
+
+    <!-- Recent Products -->
+    {% if recent_products %}
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-4 px-1">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">최근 본 상품</h3>
+            <!-- <button class="text-sm text-gray-500 hover:text-emerald-600">전체보기</button> -->
+        </div>
+
+        <div class="flex gap-4 overflow-x-auto pb-4 -mx-5 px-5 scrollbar-hide snap-x snap-mandatory">
+            {% for product in recent_products %}
+            <a href="{{ product.url }}" class="flex-none w-32 snap-start group">
+                <div
+                    class="relative w-32 h-32 rounded-2xl overflow-hidden bg-white border border-gray-100 dark:border-gray-700 mb-2 shadow-sm">
+                    {% if product.image %}
+                    <img src="{{ product.image }}" alt="{{ product.name }}"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-gray-800 text-2xl">📦
+                    </div>
+                    {% endif %}
+                </div>
+                <p class="text-xs font-medium text-gray-900 dark:text-gray-100 line-clamp-2 leading-relaxed">
+                    {{ product.name }}
+                </p>
+                <p class="text-sm font-bold text-emerald-600 mt-0.5">
+                    {{ product.price }}원
+                </p>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
 
     <!-- Quick Stats for Mobile -->
     <section class="grid grid-cols-3 gap-3 mb-6">

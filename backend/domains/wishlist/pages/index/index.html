@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}찜 목록 | ALMAENG{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-[#FAFAF9] dark:bg-gray-900 pb-24 font-sans">
+    <div class="max-w-xl mx-auto px-5 pt-8">
+        <!-- Header -->
+        <header class="mb-6 flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                찜 목록 ❤️
+            </h1>
+            <span class="text-sm font-medium text-gray-500">
+                0개
+            </span>
+        </header>
+
+        <!-- Empty State -->
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+            <div
+                class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-4xl mb-6">
+                💔
+            </div>
+            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-2">
+                아직 찜한 상품이 없어요
+            </h2>
+            <p class="text-sm text-gray-500 mb-8">
+                마음에 드는 상품을 찾아보세요!
+            </p>
+            <a href="{% url 'daemon:home' %}"
+                class="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-colors shadow-sm">
+                상품 검색하러 가기
+            </a>
+        </div>
+
+        <!-- Product Grid (Skeleton) -->
+        <!-- 나중에 실제 데이터가 들어오면 이 부분이 채워집니다 -->
+        <div class="grid grid-cols-2 gap-4 hidden">
+            <!-- Product Card Component -->
+        </div>
+    </div>
+</main>
+{% endblock %}
