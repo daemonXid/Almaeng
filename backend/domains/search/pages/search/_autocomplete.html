@@ -1,0 +1,26 @@
+{% if suggestions %}
+<div id="autocomplete-suggestions" 
+    x-data="{ selectedIndex: -1 }"
+    @keydown.arrow-down.prevent="selectedIndex = Math.min(selectedIndex + 1, {{ suggestions|length }} - 1)"
+    @keydown.arrow-up.prevent="selectedIndex = Math.max(selectedIndex - 1, -1)"
+    @keydown.enter.prevent="if (selectedIndex >= 0) { document.querySelectorAll('#autocomplete-suggestions button')[selectedIndex].click() }"
+    class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-50 max-h-64 overflow-y-auto">
+    {% for suggestion in suggestions %}
+    <button type="button"
+        hx-get="{% url 'search:search' %}?q={{ suggestion|urlencode }}"
+        hx-target="body"
+        hx-push-url="true"
+        :class="selectedIndex === {{ forloop.counter0 }} ? 'bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300' : 'hover:bg-brand-50 dark:hover:bg-gray-700'"
+        class="w-full text-left px-4 py-3 transition-colors flex items-center gap-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+        <span class="text-gray-400">🔍</span>
+        <span class="text-gray-700 dark:text-gray-300 flex-1">{{ suggestion }}</span>
+    </button>
+    {% endfor %}
+</div>
+{% else %}
+{% if query and query|length >= 2 %}
+<div class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-50 p-4 text-center text-sm text-gray-500">
+    검색어를 찾을 수 없습니다
+</div>
+{% endif %}
+{% endif %}

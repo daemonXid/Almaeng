@@ -1,14 +1,14 @@
 """
 🔍 Search Schemas
 
-Pydantic 스키마 정의 (PRD v2).
+Pydantic schema definitions (PRD v2).
 """
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
 class ProductResult(BaseModel):
-    """통합 상품 검색 결과 (Schema.org Product)"""
+    """Unified product search result (Schema.org Product)"""
 
     model_config = ConfigDict(frozen=True)
 
@@ -16,27 +16,27 @@ class ProductResult(BaseModel):
     context: str = Field(default="https://schema.org", alias="@context", exclude=True)
     type: str = Field(default="Product", alias="@type", exclude=True)
 
-    id: str  # 플랫폼_상품ID
+    id: str  # platform_product_id
     platform: str  # "naver" | "11st"
-    name: str  # 상품명
-    price: int  # 가격
-    original_price: int | None = None  # 원가 (할인 전)
-    discount_rate: int | None = None  # 할인율
-    rating: float | None = None  # 평점 (1.0-5.0)
-    review_count: int = 0  # 리뷰 수
-    image_url: str  # 상품 이미지
-    product_url: str  # 상품 페이지 링크
-    mall_name: str = ""  # 판매처명
+    name: str  # Product name
+    price: int  # Price
+    original_price: int | None = None  # Original price (before discount)
+    discount_rate: int | None = None  # Discount rate
+    rating: float | None = None  # Rating (1.0-5.0)
+    review_count: int = 0  # Review count
+    image_url: str  # Product image URL
+    product_url: str  # Product page URL
+    mall_name: str = ""  # Mall name
 
 
 class CompareResult(BaseModel):
-    """플랫폼 비교 결과"""
+    """Platform comparison result"""
 
     model_config = ConfigDict(frozen=True)
 
-    query: str  # 원본 질문
-    keywords: list[str]  # 추출된 키워드
-    products: list[ProductResult]  # 검색 결과
-    recommendation: str  # AI 추천 메시지
-    cheapest: ProductResult | None = None  # 최저가 상품
-    best_rated: ProductResult | None = None  # 최고 평점 상품
+    query: str  # Original query
+    keywords: list[str]  # Extracted keywords
+    products: list[ProductResult]  # Search results
+    recommendation: str  # AI recommendation message
+    cheapest: ProductResult | None = None  # Cheapest product
+    best_rated: ProductResult | None = None  # Best rated product

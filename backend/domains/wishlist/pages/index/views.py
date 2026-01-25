@@ -3,18 +3,37 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
-from ...interface import toggle_wishlist, get_user_wishlist
+from ...interface import get_user_wishlist, mark_alert_as_read, toggle_wishlist
 from ...selectors import is_product_in_wishlist
 
 
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
     """찜 목록 페이지"""
-    wishlist_items = get_user_wishlist(user_id=request.user.id)
+    from ...interface import get_user_price_alerts
+    
+    sort_by = request.GET.get("sort", "created")  # created, price, name
+    wishlist_items = list(get_user_wishlist(user_id=request.user.id))
+    
+    # Apply sorting
+    if sort_by == "price":
+        wishlist_items = sorted(wishlist_items, key=lambda x: x.price)
+    elif sort_by == "name":
+        wishlist_items = sorted(wishlist_items, key=lambda x: x.name.lower())
+    # created is default (already sorted by -created_at in get_user_wishlist)
+    
+    # Get price alerts for wishlist items (only unread for display)
+    price_alerts = get_user_price_alerts(request.user.id, unread_only=True)
+    alert_map = {alert.wishlist_item.id: alert for alert in price_alerts if alert.wishlist_item.id}
+    
     return render(
         request,
         "wishlist/pages/index/index.html",
-        {"wishlist_items": wishlist_items},
+        {
+            "wishlist_items": wishlist_items,
+            "alert_map": alert_map,
+            "sort_by": sort_by,
+        },
     )
 
 
@@ -59,3 +78,11 @@ def toggle(request: HttpRequest) -> HttpResponse:
             },
         },
     )
+
+
+@login_required
+@require_POST
+def dismiss_alert(request: HttpRequest, alert_id: int) -> HttpResponse:
+    """Dismiss price alert"""
+    success = mark_alert_as_read(alert_id, request.user.id)
+    return HttpResponse(status=200 if success else 404)

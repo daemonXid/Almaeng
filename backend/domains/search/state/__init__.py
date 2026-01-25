@@ -1,5 +1,5 @@
 """
 🔍 Search State
 
-검색 히스토리 모델.
+Search history model.
 """

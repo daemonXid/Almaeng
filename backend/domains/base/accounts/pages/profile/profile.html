@@ -94,17 +94,35 @@
         </div>
         <div
             class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 text-center shadow-sm">
+            <span class="text-2xl mb-1 block">🔍</span>
+            <span class="text-xs font-medium text-gray-500">검색 기록</span>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">{{ search_history|length }}</p>
+        </div>
+        <div
+            class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 text-center shadow-sm">
             <span class="text-2xl mb-1 block">📊</span>
             <span class="text-xs font-medium text-gray-500">비교함</span>
             <p class="text-lg font-bold text-gray-900 dark:text-white">-</p>
         </div>
-        <div
-            class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 text-center shadow-sm">
-            <span class="text-2xl mb-1 block">🩺</span>
-            <span class="text-xs font-medium text-gray-500">설문</span>
-            <p class="text-lg font-bold text-gray-900 dark:text-white">-</p>
+    </section>
+
+    <!-- Search History -->
+    {% if search_history %}
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-4 px-1">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">최근 검색어</h3>
+            <a href="{% url 'search:search' %}" class="text-sm text-brand-600 hover:text-brand-700">전체보기</a>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            {% for history in search_history|slice:":5" %}
+            <a href="{% url 'search:search' %}?q={{ history.query|urlencode }}"
+                class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-700 dark:text-gray-300 hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:border-brand-300 dark:hover:border-brand-600 transition-colors">
+                {{ history.query }}
+            </a>
+            {% endfor %}
         </div>
     </section>
+    {% endif %}
 
     <!-- Menu Links -->
     <section class="space-y-4">

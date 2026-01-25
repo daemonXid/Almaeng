@@ -27,11 +27,16 @@ def profile(request: HttpRequest) -> HttpResponse:
     from domains.wishlist.interface import get_user_wishlist
     wishlist_count = get_user_wishlist(request.user.id).count()
 
+    # 검색 히스토리 조회
+    from domains.search.interface import get_user_search_history
+    search_history = get_user_search_history(request.user.id, limit=10)
+
     return render(
         request,
         "accounts/pages/profile/profile.html",
         {
             "recent_products": recent_products,
             "wishlist_count": wishlist_count,
+            "search_history": search_history,
         }
     )

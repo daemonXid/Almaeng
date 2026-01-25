@@ -33,6 +33,30 @@ else:
 
 logfire.instrument_django()
 
+# --- Sentry Error Tracking ---
+SENTRY_DSN = env("SENTRY_DSN")
+if SENTRY_DSN and not DEBUG:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.logging import LoggingIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(
+                transaction_style="url",
+                middleware_spans=True,
+                signals_spans=True,
+                cache_spans=True,
+            ),
+            LoggingIntegration(level=None, event_level=None),
+        ],
+        traces_sample_rate=0.1,  # 10% of transactions
+        profiles_sample_rate=0.1,  # 10% of transactions
+        send_default_pii=False,  # Don't send user data
+        environment="production" if not DEBUG else "development",
+    )
+
 # --- Core Django Settings ---
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-almaeng-local-dev-key")
 DEBUG = env("DEBUG")
@@ -374,6 +398,63 @@ LANGUAGES = [
 LOCALE_PATHS = [
     BASE_DIR / "backend" / "locale",
 ]
+
+# ============================================
+# 📝 Logging Configuration
+# ============================================
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "json": {
+            "()": "structlog.stdlib.ProcessorFormatter",
+            "processor": "structlog.dev.ConsoleRenderer",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose" if DEBUG else "json",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO" if not DEBUG else "DEBUG",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "domains": {
+            "handlers": ["console"],
+            "level": "DEBUG" if DEBUG else "INFO",
+            "propagate": False,
+        },
+    },
+}
+
+# ============================================
+# 🔒 Security Settings (django-axes)
+# ============================================
+
+AXES_ENABLED = not DEBUG
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # 1 hour
+AXES_LOCKOUT_CALLABLE = "axes.lockout.database_lockout"
+AXES_LOCKOUT_TEMPLATE = "account/lockout.html"
+AXES_RESET_ON_SUCCESS = True
 
 # ============================================
 # 💳 Toss Payments

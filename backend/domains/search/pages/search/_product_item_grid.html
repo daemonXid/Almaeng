@@ -1,0 +1,78 @@
+{% load humanize %}
+{% load search_tags %}
+
+<!-- Product Grid Items (Grid View) -->
+{% for product in result.products %}
+{% if not result.cheapest or product.id != result.cheapest.id %}
+<article
+    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 relative group flex flex-col shadow-sm hover:shadow-md transition-shadow">
+    <div class="absolute top-2 right-2 z-10">
+        {% with product_id=product.id|stringformat:"s" %}
+        {% include "wishlist/pages/index/_wishlist_button.html" with product=product is_in_wishlist=product_wishlist_map|get_item:product_id %}
+        {% endwith %}
+    </div>
+    <!-- Product Image -->
+    {% if product.image_url %}
+    <div class="w-full aspect-square mb-2 rounded-lg overflow-hidden bg-gray-100">
+        <img src="{{ product.image_url }}" alt="{{ product.name }}"
+            class="w-full h-full object-cover">
+    </div>
+    {% else %}
+    <div class="w-full aspect-square mb-2 rounded-lg bg-gray-100 flex items-center justify-center text-3xl">📦</div>
+    {% endif %}
+    <!-- Product Info -->
+    <div class="flex-1 flex flex-col">
+        <div class="flex items-center gap-1 mb-1.5">
+            <span class="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded">
+                {{ product.platform|upper }}
+            </span>
+            {% if product.rating %}
+            <span class="text-[10px] text-yellow-500">⭐ {{ product.rating }}</span>
+            {% endif %}
+        </div>
+        <h3 class="text-xs font-medium text-gray-800 dark:text-white line-clamp-2 mb-1.5 flex-1">
+            {{ product.name }}
+        </h3>
+        <div class="mb-1">
+            <p class="text-sm font-bold text-gray-800 dark:text-white">
+                ₩{{ product.price|floatformat:0|intcomma }}
+            </p>
+            {% if product.original_price and product.discount_rate %}
+            <div class="flex items-center gap-1 mt-0.5">
+                <span class="text-[10px] text-gray-400 line-through">₩{{ product.original_price|floatformat:0|intcomma }}</span>
+                <span class="text-[10px] text-red-500 font-medium">{{ product.discount_rate }}%</span>
+            </div>
+            {% endif %}
+        </div>
+        {% if product.mall_name %}
+        <p class="text-[10px] text-gray-500 mb-2">{{ product.mall_name }}</p>
+        {% endif %}
+        <!-- Action Buttons -->
+        <div class="flex flex-col gap-1.5 mt-auto">
+            <a href="{% url 'search:track_click' %}?id={{ product.id }}&name={{ product.name|urlencode }}&price={{ product.price }}&image={{ product.image_url|urlencode }}&url={{ product.product_url|urlencode }}"
+                target="_blank" rel="noopener"
+                class="w-full py-1.5 text-center text-[10px] font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                상품 보기
+            </a>
+            <a href="{% url 'billing:checkout' %}?product_id={{ product.id }}&platform={{ product.platform }}&name={{ product.name|urlencode }}&price={{ product.price }}&url={{ product.product_url|urlencode }}&image={{ product.image_url|urlencode }}"
+                class="w-full py-1.5 text-center text-[10px] font-bold text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors">
+                💳 구매
+            </a>
+        </div>
+    </div>
+</article>
+{% endif %}
+{% endfor %}
+
+<!-- Infinite Scroll Trigger (Grid) -->
+{% if has_next %}
+<div hx-get="{% url 'search:search' %}?q={{ result.query|urlencode }}&sort={{ sort_by }}&platform={{ filter_platform }}&page={{ page|add:1 }}&view=grid"
+    hx-trigger="revealed"
+    hx-swap="afterend"
+    hx-target="this"
+    class="htmx-indicator col-span-2">
+    <div class="text-center py-4">
+        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-brand-600"></div>
+    </div>
+</div>
+{% endif %}

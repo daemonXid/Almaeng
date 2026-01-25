@@ -1,7 +1,7 @@
 {% load i18n %}
 <!-- Left Sidebar -->
 <aside
-    class="fixed top-0 left-0 h-full z-50 hidden lg:flex flex-col transition-all duration-300 group overscroll-contain bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800"
+    class="fixed top-0 left-0 h-full z-50 hidden lg:flex flex-col transition-all duration-300 group overscroll-contain bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-sm"
     :class="sidebarOpen ? 'w-64' : 'w-20 lg:translate-x-0'" @click="sidebarOpen = true"
     @click.outside="sidebarOpen = false">
 
@@ -80,7 +80,7 @@
         <div
             class="flex items-center gap-3 mb-3 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer group/user">
             <div
-                class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center text-sm font-bold shrink-0 shadow-sm border-2 border-white">
+                class="w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center text-sm font-bold shrink-0 shadow-sm border-2 border-white">
                 {{ user.email|slice:":1"|upper }}
             </div>
             <div class="flex-1 min-w-0 transition-opacity duration-300"
@@ -94,7 +94,7 @@
         {% else %}
         <div class="space-y-2 mb-3">
             <a href="/accounts/login/"
-                class="w-full py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md transition-all shadow-sm"
+                class="w-full py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 bg-brand-600 text-white hover:bg-brand-700 hover:shadow-md transition-all shadow-sm"
                 title="{% trans '로그인' %}">
                 <span class="text-xl">✨</span>
                 <span class="transition-opacity duration-300"

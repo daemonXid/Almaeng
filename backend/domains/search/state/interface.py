@@ -9,16 +9,16 @@ from .models import SearchHistory
 
 def save_search_history(user_id: int | None, query: str, keywords: list[str], category: str = "") -> SearchHistory:
     """
-    검색 히스토리 저장
+    Save search history
 
     Args:
-        user_id: 사용자 ID (로그인 시)
-        query: 원본 질문
-        keywords: 추출된 키워드
-        category: 카테고리
+        user_id: User ID (if logged in)
+        query: Original query
+        keywords: Extracted keywords
+        category: Category
 
     Returns:
-        SearchHistory: 저장된 검색 히스토리
+        SearchHistory: Saved search history
     """
     return SearchHistory.objects.create(
         user_id=user_id,
@@ -30,13 +30,13 @@ def save_search_history(user_id: int | None, query: str, keywords: list[str], ca
 
 def get_user_search_history(user_id: int, limit: int = 20) -> list[SearchHistory]:
     """
-    사용자 검색 히스토리 조회
+    Get user search history
 
     Args:
-        user_id: 사용자 ID
-        limit: 최대 결과 수
+        user_id: User ID
+        limit: Maximum results
 
     Returns:
-        list[SearchHistory]: 검색 히스토리 리스트
+        list[SearchHistory]: Search history list
     """
     return list(SearchHistory.objects.filter(user_id=user_id).order_by("-created_at")[:limit])

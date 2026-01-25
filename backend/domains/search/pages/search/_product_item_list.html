@@ -1,0 +1,62 @@
+{% load humanize %}
+{% load search_tags %}
+
+<!-- Product List Item (List View) -->
+{% for product in result.products %}
+{% if not result.cheapest or product.id != result.cheapest.id %}
+<article
+    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+    <div class="flex gap-3">
+        {% if product.image_url %}
+        <img src="{{ product.image_url }}" alt="{{ product.name }}"
+            class="w-20 h-20 object-cover rounded-lg bg-gray-100 flex-shrink-0">
+        {% endif %}
+        <div class="flex-1 min-w-0">
+            <h3 class="text-sm font-medium text-gray-800 dark:text-white line-clamp-2 mb-1">
+                {{ product.name }}
+            </h3>
+            <div class="flex items-baseline gap-2 mb-1">
+                <p class="text-base font-bold text-gray-800 dark:text-white">
+                    ₩{{ product.price|floatformat:0|intcomma }}
+                </p>
+                {% if product.original_price and product.discount_rate %}
+                <span class="text-xs text-gray-400 line-through">₩{{ product.original_price|floatformat:0|intcomma }}</span>
+                <span class="text-xs text-red-500 font-medium">{{ product.discount_rate }}%</span>
+                {% endif %}
+            </div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-gray-600 dark:text-gray-400">
+                    {{ product.platform|upper }}
+                </span>
+                {% if product.rating %}
+                <span class="text-xs text-yellow-500">⭐ {{ product.rating }}</span>
+                {% endif %}
+            </div>
+            <div class="flex gap-2">
+                <a href="{% url 'search:track_click' %}?id={{ product.id }}&name={{ product.name|urlencode }}&price={{ product.price }}&image={{ product.image_url|urlencode }}&url={{ product.product_url|urlencode }}"
+                    target="_blank" rel="noopener"
+                    class="flex-1 py-2 text-center text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+                    상품 보기
+                </a>
+                {% with product_id=product.id|stringformat:"s" %}
+                {% include "wishlist/pages/index/_wishlist_button.html" with product=product is_in_wishlist=product_wishlist_map|get_item:product_id %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</article>
+{% endif %}
+{% endfor %}
+
+<!-- Infinite Scroll Trigger (List) -->
+{% if has_next %}
+<div hx-get="{% url 'search:search' %}?q={{ result.query|urlencode }}&sort={{ sort_by }}&platform={{ filter_platform }}&page={{ page|add:1 }}&view=list"
+    hx-trigger="revealed"
+    hx-swap="afterend"
+    hx-target="this"
+    class="htmx-indicator">
+    <div class="text-center py-4">
+        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-brand-600"></div>
+    </div>
+</div>
+{% endif %}

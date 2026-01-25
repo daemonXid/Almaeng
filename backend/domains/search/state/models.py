@@ -1,24 +1,24 @@
 """
 🔍 Search State Models
 
-검색 히스토리 모델.
+Search history model.
 """
 
 from django.db import models
 
 
 class SearchHistory(models.Model):
-    """검색 히스토리"""
+    """Search history"""
 
-    user_id = models.IntegerField(db_index=True, null=True, blank=True, verbose_name="사용자 ID")
-    query = models.TextField(verbose_name="원본 질문")
-    keywords = models.JSONField(default=list, verbose_name="추출된 키워드")
-    category = models.CharField(max_length=100, blank=True, verbose_name="카테고리")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="검색 시각")
+    user_id = models.IntegerField(db_index=True, null=True, blank=True, verbose_name="User ID")
+    query = models.TextField(verbose_name="Original Query")
+    keywords = models.JSONField(default=list, verbose_name="Extracted Keywords")
+    category = models.CharField(max_length=100, blank=True, verbose_name="Category")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
 
     class Meta:
-        verbose_name = "검색 히스토리"
-        verbose_name_plural = "검색 히스토리 목록"
+        verbose_name = "Search History"
+        verbose_name_plural = "Search History List"
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
