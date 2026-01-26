@@ -45,9 +45,10 @@ class TestCoreModule:
         assert response.status_code == 200
 
     def test_search_page(self, client):
-        """Test search page."""
-        response = client.get("/search/")
+        """Test search page (now home page)."""
+        response = client.get("/")
         assert response.status_code == 200
+        assert "알맹AI" in response.content.decode() or "검색" in response.content.decode()
 
 
 class TestAIProviders:

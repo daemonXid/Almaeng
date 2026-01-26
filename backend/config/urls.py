@@ -27,16 +27,14 @@ api = NinjaExtraAPI(
 urlpatterns = [
     # 🔍 SEO - robots.txt, sitemap.xml (must be at root level)
     path("", include("domains.features.seo.urls")),
-    # 🏠 Core domain - Home & HTMX endpoints (검색 메인 페이지)
-    path("", include("domains.base.core.urls")),
+    # 🔍 Search - Home & Main Page (검색이 홈페이지)
+    path("", include("domains.search.urls")),
+    # 🏠 Core domain - Base pages
+    path("core/", include("domains.base.core.urls")),
     # 🤖 AI Chatbot - Gemini 챗봇
     path("chat/", include("domains.ai.service.chatbot.urls")),
     # 🏥 Health checks - Kubernetes/Docker/LB probes
     path("health/", include("domains.base.health.urls")),
-    # 🔍 Search - 자연어 검색
-    path("search/", include("domains.search.urls")),
-    # 💪 Calculator - 바디 계산기
-    path("calculator/", include("domains.calculator.urls")),
     # 💳 Billing - 결제
     path("billing/", include("domains.billing.urls")),
     # ❤️ Wishlist - 찜 목록

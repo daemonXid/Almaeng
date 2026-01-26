@@ -226,7 +226,6 @@ TEMPLATES = [
             # PRD v2 신규 도메인
             BASE_DIR / "backend" / "domains" / "search",
             BASE_DIR / "backend" / "domains" / "billing",
-            BASE_DIR / "backend" / "domains" / "calculator",
             BASE_DIR / "backend" / "domains" / "integrations",
         ],
         "APP_DIRS": False,  # Loader 활용 예정 (django-components 등)
@@ -238,12 +237,17 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "loaders": [
+                # Disable template caching in development for faster changes
+                "django.template.loaders.filesystem.Loader",
+                "django.template.loaders.app_directories.Loader",
+                "django_components.template_loader.Loader",
+            ] if DEBUG else [
                 (
                     "django.template.loaders.cached.Loader",
                     [
                         "django.template.loaders.filesystem.Loader",
                         "django.template.loaders.app_directories.Loader",
-                        "django_components.template_loader.Loader",  # Component Loader
+                        "django_components.template_loader.Loader",
                     ],
                 )
             ],

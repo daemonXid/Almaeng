@@ -74,12 +74,19 @@ class NaverClient(BaseCrawler):
 
         results = []
         try:
-            async with httpx.AsyncClient(timeout=10.0) as client:
+            # Disable proxy to avoid connection issues
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"[Naver API] Searching: {keyword}, limit: {limit}")
+
+            async with httpx.AsyncClient(timeout=10.0, proxies={}) as client:
                 response = await client.get(self.BASE_URL, headers=headers, params=params)
+                logger.info(f"[Naver API] Status: {response.status_code}")
 
                 if response.status_code == 200:
                     data = response.json()
                     items = data.get("items", [])
+                    logger.info(f"[Naver API] Items found: {len(items)}")
 
                     for item in items:
                         try:
@@ -115,9 +122,12 @@ class NaverClient(BaseCrawler):
                         except Exception:
                             continue
 
-        except Exception:
-            pass
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.exception(f"[Naver API] Error: {e}")
 
+        logger.info(f"[Naver API] Returning {len(results)} results")
         return results
 
     async def get_price(self, product_url: str) -> CrawlResult | None:

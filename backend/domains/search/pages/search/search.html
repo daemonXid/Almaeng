@@ -1,19 +1,27 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}AI 쇼핑 도우미 | 검색{% endblock %}
+{% block title %}알맹AI - 헬스케어 최저가 쇼핑{% endblock %}
 
 {% block content %}
 <main class="min-h-screen bg-[#FAFAF9] dark:bg-gray-900 pb-24 font-sans" x-data="{ searchQuery: '' }">
     <div class="max-w-xl mx-auto px-5 pt-8">
         <!-- Header -->
-        <header class="mb-6">
-            <a href="{% url 'daemon:home' %}" class="text-brand-600 hover:text-brand-700 flex items-center gap-2 mb-4">
-                <span>←</span> 홈으로
-            </a>
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
-                🔍 AI 쇼핑 도우미
-            </h1>
+        <header class="mb-8 text-center">
+            <div class="inline-flex items-center gap-3 mb-4">
+                <div class="w-16 h-16 bg-brand-500 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span class="text-3xl">💊</span>
+                </div>
+                <div class="text-left">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">알맹AI</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">헬스케어 최저가 쇼핑</p>
+                </div>
+            </div>
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
+                <span class="text-xs text-gray-600 dark:text-gray-400">Powered by</span>
+                <span class="text-xs font-bold bg-gradient-to-r from-brand-500 to-brand-600 bg-clip-text text-transparent">Gemini AI</span>
+                <div class="ai-badge text-xs">✨</div>
+            </div>
         </header>
 
         <!-- Search Form -->
@@ -21,10 +29,12 @@
             <form id="searchForm" action="{% url 'search:search' %}" method="get" class="relative" 
                 x-data="{ loading: false, showSuggestions: false }"
                 @submit="loading = true; showSuggestions = false"
-                @click.outside="showSuggestions = false">
+                @click.outside="showSuggestions = false"
+                hx-indicator="#search-loading">
                 <div class="relative">
-                    <input type="text" name="q" x-model="searchQuery" placeholder="뭘 찾고 계세요? 자연어로 물어보세요"
-                        class="w-full h-14 pl-5 pr-24 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md focus:ring-2 focus:ring-brand-400 focus:border-brand-400 text-base transition-all placeholder-gray-400 text-gray-800 dark:text-white"
+                    <input type="text" name="q" x-model="searchQuery" placeholder="예: 단백질 보충제 추천해줘"
+                        class="w-full h-16 pl-5 pr-28 rounded-2xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 shadow-lg focus:ring-4 focus:ring-brand-400/50 focus:border-brand-500 text-lg transition-all placeholder-gray-400 text-gray-900 dark:text-white"
+                        style="font-size: 16px;"
                         autocomplete="off" required
                         hx-get="{% url 'search:autocomplete' %}"
                         hx-trigger="input changed delay:300ms, keyup changed delay:300ms"
@@ -66,52 +76,62 @@
             {% endif %}
         </section>
 
-        <!-- Example Queries -->
-        <section>
-            <p class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-4">💡 이런 것도 물어보세요:</p>
-            <div class="space-y-3">
-                <button type="button"
-                    @click="searchQuery = '눈 피로에 좋은 영양제 추천해줘'; $nextTick(() => document.getElementById('searchForm').submit())"
-                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-brand-50 hover:border-brand-300 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
-                    <span class="text-lg">👁️</span> <span class="group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">"눈 피로에 좋은 영양제 추천해줘"</span>
+        <!-- Healthcare Product Categories -->
+        <section class="mb-8">
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">💊 인기 헬스케어 상품</p>
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" @click="searchQuery = '단백질 쉐이크'; $nextTick(() => document.getElementById('searchForm').submit())"
+                    class="p-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-gray-700 transition-all active:scale-95">
+                    <div class="text-3xl mb-2">💪</div>
+                    <div class="text-sm font-semibold text-gray-900 dark:text-white">단백질</div>
                 </button>
-                <button type="button"
-                    @click="searchQuery = '20만원대 무선 이어폰'; $nextTick(() => document.getElementById('searchForm').submit())"
-                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-brand-50 hover:border-brand-300 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
-                    <span class="text-lg">🎧</span> <span class="group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">"20만원대 무선 이어폰"</span>
+                <button type="button" @click="searchQuery = '오메가3'; $nextTick(() => document.getElementById('searchForm').submit())"
+                    class="p-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-gray-700 transition-all active:scale-95">
+                    <div class="text-3xl mb-2">🐟</div>
+                    <div class="text-sm font-semibold text-gray-900 dark:text-white">오메가3</div>
                 </button>
-                <button type="button"
-                    @click="searchQuery = '허리 아플 때 좋은 의자'; $nextTick(() => document.getElementById('searchForm').submit())"
-                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-brand-50 hover:border-brand-300 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
-                    <span class="text-lg">🪑</span> <span class="group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">"허리 아플 때 좋은 의자"</span>
+                <button type="button" @click="searchQuery = '비타민D'; $nextTick(() => document.getElementById('searchForm').submit())"
+                    class="p-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-gray-700 transition-all active:scale-95">
+                    <div class="text-3xl mb-2">☀️</div>
+                    <div class="text-sm font-semibold text-gray-900 dark:text-white">비타민D</div>
                 </button>
-                <button type="button"
-                    @click="searchQuery = '운동 후 회복에 좋은 단백질 쉐이크'; $nextTick(() => document.getElementById('searchForm').submit())"
-                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-brand-50 hover:border-brand-300 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
-                    <span class="text-lg">💪</span> <span class="group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">"운동 후 회복에 좋은 단백질 쉐이크"</span>
+                <button type="button" @click="searchQuery = '홍삼'; $nextTick(() => document.getElementById('searchForm').submit())"
+                    class="p-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-gray-700 transition-all active:scale-95">
+                    <div class="text-3xl mb-2">🌿</div>
+                    <div class="text-sm font-semibold text-gray-900 dark:text-white">홍삼</div>
                 </button>
-                <button type="button"
-                    @click="searchQuery = '재택근무용 모니터 추천'; $nextTick(() => document.getElementById('searchForm').submit())"
-                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-brand-50 hover:border-brand-300 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
-                    <span class="text-lg">🖥️</span> <span class="group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">"재택근무용 모니터 추천"</span>
+                <button type="button" @click="searchQuery = '눈 건강 영양제'; $nextTick(() => document.getElementById('searchForm').submit())"
+                    class="p-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-gray-700 transition-all active:scale-95">
+                    <div class="text-3xl mb-2">👁️</div>
+                    <div class="text-sm font-semibold text-gray-900 dark:text-white">눈 건강</div>
                 </button>
-                <button type="button"
-                    @click="searchQuery = '겨울에 따뜻한 패딩 추천해줘'; $nextTick(() => document.getElementById('searchForm').submit())"
-                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-brand-50 hover:border-brand-300 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
-                    <span class="text-lg">🧥</span> <span class="group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">"겨울에 따뜻한 패딩 추천해줘"</span>
+                <button type="button" @click="searchQuery = '간 건강 영양제'; $nextTick(() => document.getElementById('searchForm').submit())"
+                    class="p-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-gray-700 transition-all active:scale-95">
+                    <div class="text-3xl mb-2">🫀</div>
+                    <div class="text-sm font-semibold text-gray-900 dark:text-white">간 건강</div>
                 </button>
-                <button type="button"
-                    @click="searchQuery = '가성비 좋은 무선 마우스'; $nextTick(() => document.getElementById('searchForm').submit())"
-                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-brand-50 hover:border-brand-300 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
-                    <span class="text-lg">🖱️</span> <span class="group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">"가성비 좋은 무선 마우스"</span>
+                <button type="button" @click="searchQuery = '프로바이오틱스'; $nextTick(() => document.getElementById('searchForm').submit())"
+                    class="p-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-gray-700 transition-all active:scale-95">
+                    <div class="text-3xl mb-2">🦠</div>
+                    <div class="text-sm font-semibold text-gray-900 dark:text-white">장 건강</div>
                 </button>
-                <button type="button"
-                    @click="searchQuery = '수면에 도움되는 영양제'; $nextTick(() => document.getElementById('searchForm').submit())"
-                    class="w-full text-left p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-brand-50 hover:border-brand-300 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
-                    <span class="text-lg">😴</span> <span class="group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">"수면에 도움되는 영양제"</span>
+                <button type="button" @click="searchQuery = 'BCAA'; $nextTick(() => document.getElementById('searchForm').submit())"
+                    class="p-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-gray-700 transition-all active:scale-95">
+                    <div class="text-3xl mb-2">🏋️</div>
+                    <div class="text-sm font-semibold text-gray-900 dark:text-white">BCAA</div>
                 </button>
             </div>
         </section>
+        
+        <!-- Footer Info -->
+        <footer class="text-center text-xs text-gray-500 dark:text-gray-400 py-6 border-t border-gray-200 dark:border-gray-700 mt-8">
+            <p class="mb-2">
+                <span class="font-semibold">쿠팡 파트너스</span> · 
+                <span class="font-semibold">네이버 쇼핑</span> · 
+                <span class="font-semibold">11번가</span>
+            </p>
+            <p class="text-gray-400 dark:text-gray-500">© 2026 알맹AI</p>
+        </footer>
     </div>
 </main>
 {% endblock %}

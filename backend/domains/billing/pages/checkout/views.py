@@ -53,7 +53,7 @@ def checkout_page(request: HttpRequest) -> HttpResponse:
     )
 
     # Toss Payments Client Key (settings에서 가져오기)
-    toss_client_key = getattr(settings, "TOSS_CLIENT_KEY", "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq")
+    toss_client_key = getattr(settings, "TOSS_CLIENT_KEY", "")
 
     # Success/Fail URL
     success_url = request.build_absolute_uri(reverse("billing:success"))

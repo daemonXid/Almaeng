@@ -62,16 +62,6 @@
             </span>
         </a>
 
-        <!-- Calculator -->
-        <a href="{% url 'calculator:index' %}"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'calculator' in request.path %}bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
-            title="{% trans '바디 계산기' %}">
-            <span class="text-xl shrink-0 text-center w-6">💪</span>
-            <span class="font-medium transition-opacity duration-300 transform origin-left"
-                :class="sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 w-0 hidden scale-90'">
-                {% trans "계산기" %}
-            </span>
-        </a>
     </nav>
 
     <!-- Footer Area (User & Theme) -->
