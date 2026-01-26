@@ -99,7 +99,7 @@ class CoupangPartnersClient:
             "Content-Type": "application/json;charset=UTF-8",
         }
 
-        async with httpx.AsyncClient(proxies={}) as client:
+        async with httpx.AsyncClient(trust_env=False) as client:
             response = await client.get(
                 f"{self.BASE_URL}{path}",
                 params=query_params,

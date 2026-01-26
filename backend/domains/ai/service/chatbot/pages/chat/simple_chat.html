@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}AI 영양제 상담 - 알맹AI{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-white dark:bg-gray-900 pb-20" 
+    x-data="{ 
+        message: '',
+        messages: [],
+        loading: false
+    }">
+    
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-md">
+                    <span class="text-2xl">🤖</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">AI 영양제 상담</h1>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Powered by Gemini</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Chat Messages -->
+    <div class="max-w-4xl mx-auto px-4 py-6">
+        <div id="messages" class="space-y-4 mb-24">
+            <!-- Welcome Message -->
+            <div class="bg-gradient-to-br from-brand-50 to-purple-50 dark:from-brand-900/20 dark:to-purple-900/20 border border-brand-200 dark:border-brand-700 rounded-2xl p-6">
+                <div class="flex items-start gap-3">
+                    <span class="text-3xl">💊</span>
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">
+                            안녕하세요! AI 영양제 상담사입니다
+                        </h3>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                            궁금한 영양제에 대해 물어보세요. 효능과 함께 관련 상품도 추천해드려요!
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <button @click="message = '피로할 때 좋은 영양제 추천해줘'; $nextTick(() => document.getElementById('chatForm').requestSubmit())"
+                                class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm hover:bg-brand-50 hover:border-brand-300 transition-all">
+                                💪 피로 회복
+                            </button>
+                            <button @click="message = '눈 건강에 좋은 영양제는?'; $nextTick(() => document.getElementById('chatForm').requestSubmit())"
+                                class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm hover:bg-brand-50 hover:border-brand-300 transition-all">
+                                👁️ 눈 건강
+                            </button>
+                            <button @click="message = '장 건강 프로바이오틱스'; $nextTick(() => document.getElementById('chatForm').requestSubmit())"
+                                class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm hover:bg-brand-50 hover:border-brand-300 transition-all">
+                                🦠 장 건강
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Area (Fixed Bottom) -->
+    <div class="fixed bottom-20 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-t border-gray-200 dark:border-gray-800 p-4">
+        <form id="chatForm" 
+            hx-post="/chat/send/" 
+            hx-target="#messages" 
+            hx-swap="beforeend"
+            @htmx:after-request="message = ''; loading = false; $el.querySelector('textarea').focus(); document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight"
+            class="max-w-4xl mx-auto">
+            {% csrf_token %}
+            <div class="flex gap-2">
+                <textarea 
+                    name="message"
+                    x-model="message"
+                    placeholder="예: 피로할 때 좋은 영양제 추천해줘"
+                    rows="1"
+                    class="flex-1 px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 focus:ring-4 focus:ring-brand-400/30 focus:border-brand-500 resize-none"
+                    style="font-size: 16px; max-height: 120px;"
+                    @keydown.enter.prevent="if (!$event.shiftKey) { $event.target.form.requestSubmit() }"
+                    required></textarea>
+                <button type="submit"
+                    :disabled="loading || !message.trim()"
+                    @click="loading = true"
+                    class="px-6 py-3 bg-brand-600 hover:bg-brand-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-2xl transition-all shadow-md">
+                    <span x-show="!loading">전송</span>
+                    <span x-show="loading">
+                        <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<style>
+#messages {
+    height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+</style>
+{% endblock %}

@@ -100,6 +100,64 @@ def new_chat(request: HttpRequest) -> HttpResponse:
     return redirect("ai_chatbot:chat_home")
 
 
+# ============================================
+# 앱인토스용 Simple Chat (세션 저장 없음)
+# ============================================
+
+def simple_chat_page(request: HttpRequest) -> HttpResponse:
+    """Simple AI chat page (앱인토스용)"""
+    return render(request, "chatbot/pages/chat/simple_chat.html")
+
+
+@require_http_methods(["POST"])
+def simple_chat_send(request: HttpRequest) -> HttpResponse:
+    """
+    Send message to AI and get response with keywords
+
+    Flow:
+    1. User asks: "피로할 때 좋은 영양제는?"
+    2. AI responds with explanation + keywords
+    3. User clicks keyword → redirect to search
+    """
+    user_message = request.POST.get("message", "").strip()
+
+    if not user_message:
+        return HttpResponse("")
+
+    # Get AI response
+    try:
+        # Gemini AI with keyword extraction
+
+        response = ask_question(
+            question=user_message,
+            system_instruction="당신은 영양제 전문 상담사입니다. 간결하고 정확하게 답변하세요.",
+        )
+
+        answer = response.answer
+
+        # Extract keywords from response
+        keywords = []
+        if "키워드:" in answer:
+            keyword_line = answer.split("키워드:")[-1].strip()
+            keywords = [k.strip() for k in keyword_line.split(",")[:3]]
+            # Remove keyword line from answer
+            answer = answer.split("키워드:")[0].strip()
+
+    except Exception as e:
+        answer = f"죄송합니다. 오류가 발생했습니다: {e!s}"
+        keywords = []
+
+    # Return HTML fragment
+    return render(
+        request,
+        "chatbot/pages/chat/_ai_response.html",
+        {
+            "answer": answer,
+            "keywords": keywords,
+        }
+    )
+
+
 @require_http_methods(["DELETE"])
 @login_required
 def delete_session(request: HttpRequest, session_id: int) -> HttpResponse:

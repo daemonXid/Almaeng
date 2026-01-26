@@ -7,7 +7,7 @@ from ...interface import get_search_suggestions, save_search_history, search_pro
 
 
 def search_page(request: HttpRequest) -> HttpResponse:
-    """Search page view"""
+    """Search page view - also serves as home page"""
     query = request.GET.get("q", "").strip()
     sort_by = request.GET.get("sort", "price")  # price, rating, name
     filter_platform = request.GET.get("platform", "")  # naver, 11st
@@ -15,12 +15,13 @@ def search_page(request: HttpRequest) -> HttpResponse:
     view_mode = request.GET.get("view", "list")  # list, grid
     per_page = 20
 
+    # No query = show home page with categories
     if not query:
         return render(
             request,
-            "pages/search/search.html",
+            "pages/search/index.html",
             {
-                "page_title": "AI Shopping Assistant | Search",
+                "page_title": "알맹AI - 영양제 최저가",
             },
         )
 
@@ -208,3 +209,67 @@ def track_click(request: HttpRequest) -> HttpResponse:
     request.session["recent_products"] = recent_products[:10]
 
     return redirect(product_data["url"])
+
+
+def explain_supplement(request: HttpRequest) -> HttpResponse:
+    """
+    AI 영양제 설명 (HTMX endpoint)
+
+    키워드를 받아서 Gemini AI로 설명 생성
+    """
+    keyword = request.GET.get("keyword", "").strip()
+
+    if not keyword:
+        return HttpResponse(
+            '<div class="text-center py-8 text-gray-500">키워드를 입력해주세요</div>'
+        )
+
+    # Gemini AI로 설명 생성
+    try:
+        from domains.ai.service.chatbot.interface import generate_text
+
+        prompt = f"""영양제 "{keyword}"에 대해 간단히 설명해주세요.
+
+다음 형식으로 작성:
+1. 주요 효능 (2-3가지)
+2. 권장 섭취 시간
+3. 주의사항 (1-2가지)
+
+친근하고 간결하게 (300자 이내)"""
+
+        explanation = generate_text(
+            prompt=prompt,
+            system_instruction="당신은 영양제 전문가입니다. 정확하고 신뢰할 수 있는 정보를 제공하세요.",
+        )
+
+    except Exception as e:
+        explanation = f"AI 설명을 불러오는 중 오류가 발생했습니다: {e!s}"
+
+    return HttpResponse(f"""
+    <div class="space-y-6">
+        <!-- AI 설명 -->
+        <div>
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-2xl">🤖</span>
+                <h4 class="text-base font-bold text-gray-900 dark:text-white">AI 설명</h4>
+            </div>
+            <div class="prose prose-sm dark:prose-invert max-w-none">
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{explanation}</p>
+            </div>
+        </div>
+
+        <!-- 추가 정보 -->
+        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
+            <p class="text-xs text-yellow-800 dark:text-yellow-200">
+                ⚠️ 본 정보는 AI가 생성한 참고용입니다.
+                섭취 전 전문가와 상담하세요.
+            </p>
+        </div>
+
+        <!-- 검색 버튼 -->
+        <a href="/?q={keyword}"
+            class="block w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-center rounded-xl transition-all active:scale-95">
+            "{keyword}" 상품 검색하기 →
+        </a>
+    </div>
+    """)

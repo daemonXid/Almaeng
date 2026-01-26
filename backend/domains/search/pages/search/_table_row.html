@@ -1,0 +1,82 @@
+{% load humanize %}
+{% load search_tags %}
+
+<!-- Fitshop AI Style Table Row -->
+{% for product in result.products %}
+<div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-md transition-all cursor-pointer group"
+    @click="selectedKeyword = '{{ product.name|truncatewords:3 }}'; sidebarOpen = true">
+    
+    <div class="flex items-center gap-4">
+        <!-- Product Image -->
+        {% if product.image_url %}
+        <img src="{{ product.image_url }}" 
+            alt="{{ product.name }}"
+            class="w-16 h-16 object-cover rounded-lg flex-shrink-0 bg-gray-100">
+        {% else %}
+        <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span class="text-2xl">💊</span>
+        </div>
+        {% endif %}
+        
+        <!-- Product Info -->
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+                {% if product.platform == 'naver' %}
+                <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded">네이버</span>
+                {% elif product.platform == '11st' %}
+                <span class="text-xs px-2 py-0.5 bg-red-100 text-red-700 rounded">11번가</span>
+                {% else %}
+                <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded">쿠팡</span>
+                {% endif %}
+                
+                {% if product.discount_rate %}
+                <span class="text-xs px-2 py-0.5 bg-red-500 text-white rounded font-bold">
+                    {{ product.discount_rate }}%
+                </span>
+                {% endif %}
+            </div>
+            
+            <h3 class="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 mb-2 group-hover:text-brand-600 transition-colors">
+                {{ product.name }}
+            </h3>
+            
+            <div class="flex items-center gap-3">
+                <div class="text-xl font-bold text-brand-600">
+                    {{ product.price|floatformat:0|intcomma }}원
+                </div>
+                {% if product.original_price %}
+                <div class="text-xs text-gray-400 line-through">
+                    {{ product.original_price|floatformat:0|intcomma }}원
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="flex flex-col gap-2 flex-shrink-0">
+            <a href="{{ product.product_url }}" 
+                target="_blank" 
+                rel="noopener"
+                @click.stop
+                class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-lg transition-all active:scale-95">
+                구매 ↗
+            </a>
+            
+            {% with product_id=product.id|stringformat:"s" %}
+            <button @click.stop="$dispatch('add-to-wishlist', { productId: '{{ product.id }}' })"
+                class="px-4 py-2 border border-gray-300 dark:border-gray-600 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 text-xs font-medium rounded-lg transition-all">
+                ❤️
+            </button>
+            {% endwith %}
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% if not result.products %}
+<div class="text-center py-12">
+    <div class="text-5xl mb-4">😢</div>
+    <p class="text-gray-600 dark:text-gray-400">검색 결과가 없습니다</p>
+    <p class="text-sm text-gray-500 mt-2">다른 키워드로 검색해보세요</p>
+</div>
+{% endif %}

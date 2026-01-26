@@ -96,6 +96,18 @@
         [x-cloak] {
             display: none !important;
         }
+        
+        /* Global Loading Indicator */
+        .htmx-request .htmx-indicator,
+        .htmx-request.htmx-indicator {
+            display: flex !important;
+        }
+        
+        /* Button Loading States */
+        button:disabled, a:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
     </style>
     {% block styles %}{% endblock %}
 </head>
@@ -159,6 +171,9 @@
     </main>
 
     {% include "_bottom_nav.html" %}
+    
+    <!-- Global Loading Overlay -->
+    {% include "_loading_overlay.html" %}
     {% endblock %}
 
     {% block scripts %}{% endblock %}

@@ -48,18 +48,27 @@
     x-id="['search-results']">
     <div :class="viewMode === 'grid' ? 'max-w-4xl' : 'max-w-xl'" class="mx-auto px-5 pt-6 transition-all duration-300">
         <!-- Header -->
-        <header class="mb-4">
-            <a href="{% url 'daemon:home' %}"
+        <header class="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 -mx-5 px-5 py-4 mb-4">
+            <a href="/"
                 class="text-brand-600 hover:text-brand-700 flex items-center gap-2 mb-3 text-sm">
                 <span>←</span> 홈으로
             </a>
-            <h1 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <h1 class="text-lg font-bold text-gray-800 dark:text-white">
                 🔍 "{{ result.query }}"
             </h1>
+            
+            <!-- AI Extracted Keywords -->
             {% if result.keywords %}
-            <p class="text-xs text-gray-500 mt-1">
-                키워드: {% for kw in result.keywords %}{{ kw }}{% if not forloop.last %}, {% endif %}{% endfor %}
-            </p>
+            <div class="flex items-center gap-2 mt-3 flex-wrap">
+                <span class="text-xs text-gray-500">🏷️ AI 추출:</span>
+                {% for kw in result.keywords %}
+                <button 
+                    @click="selectedKeyword = '{{ kw }}'; sidebarOpen = true"
+                    class="px-3 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-xs font-medium rounded-full hover:bg-brand-100 dark:hover:bg-brand-900/50 transition-all active:scale-95">
+                    {{ kw }}
+                </button>
+                {% endfor %}
+            </div>
             {% endif %}
         </header>
 
@@ -194,9 +203,10 @@
             </article>
             {% endif %}
 
-            <!-- Other Products - List View -->
-            <div id="product-list-container" x-show="viewMode === 'list'" class="space-y-3">
-                {% include "pages/search/_product_item_list.html" %}
+            <!-- Product Table (Fitshop Style) -->
+            <div id="product-list-container" class="space-y-3"
+                x-data="{ selectedKeyword: null, sidebarOpen: false }">
+                {% include "pages/search/_table_row.html" %}
                 
                 {% if not result.products %}
                 <div class="text-center py-8 text-gray-500">

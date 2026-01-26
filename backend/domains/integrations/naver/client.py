@@ -79,7 +79,7 @@ class NaverClient(BaseCrawler):
             logger = logging.getLogger(__name__)
             logger.info(f"[Naver API] Searching: {keyword}, limit: {limit}")
 
-            async with httpx.AsyncClient(timeout=10.0, proxies={}) as client:
+            async with httpx.AsyncClient(timeout=10.0, trust_env=False) as client:
                 response = await client.get(self.BASE_URL, headers=headers, params=params)
                 logger.info(f"[Naver API] Status: {response.status_code}")
 

@@ -56,7 +56,7 @@ class ElevenStreetClient(BaseCrawler):
         results = []
         try:
             # Disable proxy to avoid connection issues
-            async with httpx.AsyncClient(timeout=10.0, proxies={}) as client:
+            async with httpx.AsyncClient(timeout=10.0, trust_env=False) as client:
                 response = await client.get(self.BASE_URL, params=params)
 
                 if response.status_code == 200:

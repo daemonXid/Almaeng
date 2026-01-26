@@ -6,7 +6,6 @@ from django.views.decorators.http import require_POST
 from ...interface import get_user_wishlist, mark_alert_as_read, toggle_wishlist
 
 
-@login_required
 def index(request: HttpRequest) -> HttpResponse:
     """찜 목록 페이지"""
     from ...interface import get_user_price_alerts
