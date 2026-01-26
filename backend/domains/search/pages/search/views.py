@@ -25,20 +25,24 @@ def search_page(request: HttpRequest) -> HttpResponse:
             },
         )
 
-    # Rate limiting check (simple IP-based)
-    ip_address = request.META.get("REMOTE_ADDR", "")
-    rate_limit_key = f"search_rate_limit:{ip_address}"
-    request_count = cache.get(rate_limit_key, 0)
-    if request_count >= 30:  # Max 30 requests per minute
-        return render(
-            request,
-            "pages/search/search.html",
-            {
-                "page_title": "AI Shopping Assistant | Search",
-                "error": "Too many requests. Please wait a moment and try again.",
-            },
-        )
-    cache.set(rate_limit_key, request_count + 1, 60)  # 1 minute window
+    # Rate limiting check (disabled if Redis unavailable)
+    try:
+        ip_address = request.META.get("REMOTE_ADDR", "")
+        rate_limit_key = f"search_rate_limit:{ip_address}"
+        request_count = cache.get(rate_limit_key, 0)
+        if request_count >= 30:  # Max 30 requests per minute
+            return render(
+                request,
+                "pages/search/search.html",
+                {
+                    "page_title": "AI Shopping Assistant | Search",
+                    "error": "Too many requests. Please wait a moment and try again.",
+                },
+            )
+        cache.set(rate_limit_key, request_count + 1, 60)  # 1 minute window
+    except Exception:
+        # Redis unavailable, skip rate limiting
+        pass
 
     # Execute search (async wrapper)
     import asyncio
