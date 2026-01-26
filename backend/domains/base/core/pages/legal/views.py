@@ -31,3 +31,19 @@ def privacy(request: HttpRequest) -> HttpResponse:
         "core/pages/legal/privacy.html",
         {"page_title": "개인정보처리방침 | ALMAENG"},
     )
+
+
+# 앱인토스 필수 페이지
+def support(request: HttpRequest) -> HttpResponse:
+    """고객센터"""
+    return render(request, "core/pages/support/support.html")
+
+
+def refund_policy(request: HttpRequest) -> HttpResponse:
+    """환불 정책"""
+    return render(request, "core/pages/policy/refund.html")
+
+
+def quality_policy(request: HttpRequest) -> HttpResponse:
+    """가품 방지 정책"""
+    return render(request, "core/pages/policy/quality.html")

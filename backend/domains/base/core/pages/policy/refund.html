@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}환불 정책 - 알맹AI{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-white dark:bg-gray-900 pb-20">
+    <div class="max-w-2xl mx-auto px-4 py-8">
+        <header class="mb-8">
+            <a href="/core/support/" class="text-brand-600 hover:text-brand-700 flex items-center gap-2 mb-4 text-sm">
+                <span>←</span> 고객센터
+            </a>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">환불 정책</h1>
+        </header>
+
+        <div class="prose prose-sm dark:prose-invert max-w-none">
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-6">
+                <h3 class="text-base font-bold text-blue-900 dark:text-blue-200 mb-2">📌 중요 안내</h3>
+                <p class="text-sm text-blue-800 dark:text-blue-300">
+                    알맹AI는 <strong>가격 비교 서비스</strong>이며, 직접 판매하지 않습니다.
+                    실제 구매 및 환불은 각 쇼핑몰의 정책을 따릅니다.
+                </p>
+            </div>
+
+            <h2>1. 서비스 구조</h2>
+            <ul>
+                <li>알맹AI: 영양제 가격 비교 및 AI 상담</li>
+                <li>구매: 쿠팡, 네이버 쇼핑, 11번가</li>
+                <li>결제/배송/환불: 각 쇼핑몰 담당</li>
+            </ul>
+
+            <h2>2. 환불 절차</h2>
+            <ol>
+                <li>구매하신 쇼핑몰 고객센터 문의</li>
+                <li>각 쇼핑몰의 환불 정책에 따라 진행</li>
+                <li>환불 관련 문의는 해당 쇼핑몰에 직접 연락</li>
+            </ol>
+
+            <h3>쇼핑몰별 고객센터</h3>
+            <ul>
+                <li><strong>쿠팡:</strong> 1577-7011</li>
+                <li><strong>네이버 쇼핑:</strong> 1588-3820</li>
+                <li><strong>11번가:</strong> 1544-2136</li>
+            </ul>
+
+            <h2>3. 알맹AI 책임 범위</h2>
+            <p>
+                알맹AI는 상품 정보 제공 및 가격 비교 서비스를 제공하며,
+                실제 거래는 외부 쇼핑몰에서 이루어집니다.
+            </p>
+            <ul>
+                <li>✅ 정확한 가격 정보 제공</li>
+                <li>✅ AI 기반 상품 추천</li>
+                <li>❌ 직접 판매/배송/환불 책임 없음</li>
+            </ul>
+
+            <h2>4. 문의</h2>
+            <p>
+                서비스 이용 중 문제가 있으시면 <a href="mailto:support@almaeng.com" class="text-brand-600">support@almaeng.com</a>으로 연락주세요.
+            </p>
+        </div>
+    </div>
+</main>
+{% endblock %}

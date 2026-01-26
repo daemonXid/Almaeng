@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}고객센터 - 알맹AI{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-white dark:bg-gray-900 pb-20">
+    <div class="max-w-2xl mx-auto px-4 py-8">
+        <header class="mb-8">
+            <a href="/" class="text-brand-600 hover:text-brand-700 flex items-center gap-2 mb-4 text-sm">
+                <span>←</span> 홈으로
+            </a>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">고객센터</h1>
+            <p class="text-gray-600 dark:text-gray-400">문의사항이 있으시면 언제든지 연락주세요</p>
+        </header>
+
+        <!-- Contact Info -->
+        <section class="space-y-6">
+            <div class="card-toss">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <span>📧</span> 이메일 문의
+                </h2>
+                <div class="space-y-2">
+                    <p class="text-sm text-gray-700 dark:text-gray-300">
+                        <strong>이메일:</strong> <a href="mailto:support@almaeng.com" class="text-brand-600 hover:underline">support@almaeng.com</a>
+                    </p>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">
+                        <strong>운영시간:</strong> 평일 09:00 - 18:00 (주말/공휴일 제외)
+                    </p>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">
+                        <strong>답변시간:</strong> 영업일 기준 24시간 이내
+                    </p>
+                </div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="card-toss">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <span>💡</span> 자주 묻는 질문
+                </h2>
+                <div class="space-y-4">
+                    <details class="border-b border-gray-200 dark:border-gray-700 pb-4">
+                        <summary class="text-sm font-semibold text-gray-900 dark:text-white cursor-pointer">
+                            Q. 알맹AI는 어떤 서비스인가요?
+                        </summary>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                            A. 영양제 최저가를 비교하고 AI로 상담받을 수 있는 서비스입니다.
+                        </p>
+                    </details>
+                    <details class="border-b border-gray-200 dark:border-gray-700 pb-4">
+                        <summary class="text-sm font-semibold text-gray-900 dark:text-white cursor-pointer">
+                            Q. 구매는 어떻게 하나요?
+                        </summary>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                            A. 알맹AI에서 상품을 클릭하면 쿠팡/네이버/11번가로 이동하여 구매하실 수 있습니다.
+                        </p>
+                    </details>
+                    <details class="border-b border-gray-200 dark:border-gray-700 pb-4">
+                        <summary class="text-sm font-semibold text-gray-900 dark:text-white cursor-pointer">
+                            Q. 환불은 어떻게 하나요?
+                        </summary>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                            A. 환불은 구매하신 쇼핑몰(쿠팡/네이버/11번가)의 정책을 따릅니다.
+                        </p>
+                    </details>
+                </div>
+            </div>
+
+            <!-- Policies -->
+            <div class="space-y-3">
+                <a href="/core/policy/refund/" class="card-toss block hover:border-brand-400 transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-900 dark:text-white">환불 정책</span>
+                        <span class="text-gray-400">→</span>
+                    </div>
+                </a>
+                <a href="/core/policy/quality/" class="card-toss block hover:border-brand-400 transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-900 dark:text-white">가품 방지 정책</span>
+                        <span class="text-gray-400">→</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

@@ -22,4 +22,8 @@ urlpatterns = [
     path("faq/", legal_views.faq, name="faq"),
     path("terms/", legal_views.terms, name="terms"),
     path("privacy/", legal_views.privacy, name="privacy"),
+    # 앱인토스 필수 페이지
+    path("support/", legal_views.support, name="support"),
+    path("policy/refund/", legal_views.refund_policy, name="refund_policy"),
+    path("policy/quality/", legal_views.quality_policy, name="quality_policy"),
 ]

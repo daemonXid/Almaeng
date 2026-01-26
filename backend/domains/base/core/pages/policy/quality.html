@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}가품 방지 정책 - 알맹AI{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-white dark:bg-gray-900 pb-20">
+    <div class="max-w-2xl mx-auto px-4 py-8">
+        <header class="mb-8">
+            <a href="/core/support/" class="text-brand-600 hover:text-brand-700 flex items-center gap-2 mb-4 text-sm">
+                <span>←</span> 고객센터
+            </a>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">가품 방지 정책</h1>
+        </header>
+
+        <div class="prose prose-sm dark:prose-invert max-w-none">
+            <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 mb-6">
+                <h3 class="text-base font-bold text-green-900 dark:text-green-200 mb-2">✅ 정품 보장</h3>
+                <p class="text-sm text-green-800 dark:text-green-300">
+                    알맹AI는 <strong>공식 API</strong>를 통해 정품 정보만 제공합니다.
+                </p>
+            </div>
+
+            <h2>1. 정품 인증 시스템</h2>
+            <ul>
+                <li>쿠팡 파트너스 공식 API 연동</li>
+                <li>네이버 쇼핑 검색 API 연동</li>
+                <li>11번가 Open API 연동</li>
+                <li>모든 상품은 공식 쇼핑몰에서 직접 판매</li>
+            </ul>
+
+            <h2>2. 신뢰할 수 있는 판매자</h2>
+            <p>
+                알맹AI에 표시되는 모든 상품은 다음 쇼핑몰에서 검증된 판매자가 등록한 정품입니다:
+            </p>
+            <ul>
+                <li><strong>쿠팡:</strong> 로켓배송, 쿠팡 직매입 우선 표시</li>
+                <li><strong>네이버 쇼핑:</strong> 네이버페이 안전거래</li>
+                <li><strong>11번가:</strong> 11번가 인증 판매자</li>
+            </ul>
+
+            <h2>3. 가품 신고</h2>
+            <p>
+                만약 가품이 의심되는 상품을 발견하시면:
+            </p>
+            <ol>
+                <li>구매하신 쇼핑몰 고객센터에 즉시 신고</li>
+                <li>알맹AI (<a href="mailto:support@almaeng.com" class="text-brand-600">support@almaeng.com</a>)에도 알려주세요</li>
+                <li>해당 판매자 정보를 차단 처리하겠습니다</li>
+            </ol>
+
+            <h2>4. 소비자 보호</h2>
+            <p>
+                알맹AI는 다음을 보장합니다:
+            </p>
+            <ul>
+                <li>✅ 공식 API를 통한 정품 정보만 제공</li>
+                <li>✅ 사용자 신고 시 즉시 조치</li>
+                <li>✅ 신뢰할 수 있는 판매자 우선 표시</li>
+                <li>✅ 투명한 가격 정보 제공</li>
+            </ul>
+
+            <h2>5. 면책 조항</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                알맹AI는 가격 비교 및 정보 제공 서비스이며, 
+                실제 판매는 각 쇼핑몰에서 이루어집니다. 
+                상품의 진품 여부는 각 쇼핑몰과 판매자가 책임집니다.
+            </p>
+        </div>
+    </div>
+</main>
+{% endblock %}
