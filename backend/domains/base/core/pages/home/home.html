@@ -1,65 +1,195 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load static i18n %}
 
-{% block title %}AI 쇼핑 도우미 - 자연어 검색부터 결제까지{% endblock %}
+{% block title %}알맹AI - Gemini 기반 AI 쇼핑 도우미{% endblock %}
 
 {% block content %}
-<main class="min-h-screen bg-[#FAFAF9] dark:bg-gray-900 pb-24 font-sans" x-data="{ searchQuery: '' }">
-    <div class="max-w-xl mx-auto px-5 pt-8">
-        <!-- Header & Greeting -->
-        <header class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white leading-tight">
-                {% if user.is_authenticated %}
-                안녕하세요, {{ user.get_short_name|default:user.username }}님! 👋<br>
-                <span class="text-brand-600">뭘 찾고 계세요?</span>
-                {% else %}
-                뭘 사야 할지 모르시나요?<br>
-                <span class="text-brand-600">자유롭게 물어보세요</span> 🛒
-                {% endif %}
-            </h1>
+<main class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pb-24 font-sans">
+    <div class="max-w-4xl mx-auto px-5 pt-12">
+        <!-- Logo & Powered By -->
+        <header class="text-center mb-8">
+            <div class="inline-flex items-center gap-3 mb-4">
+                <img src="{% static 'images/logo-almaeng.svg' %}" alt="알맹AI" class="h-16 w-auto">
+            </div>
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Powered by</span>
+                <span class="text-sm font-bold bg-gradient-to-r from-brand-500 to-brand-600 bg-clip-text text-transparent">
+                    Gemini AI
+                </span>
+                <div class="ai-badge">
+                    ✨ AI
+                </div>
+            </div>
         </header>
 
-        <!-- Search Bar -->
-        <section class="mb-10">
-            <form id="homeSearchForm" action="{% url 'search:search' %}" method="get" class="relative mb-4">
-                <input type="text" name="q" x-model="searchQuery" placeholder="예: 눈 피로에 좋은 영양제 추천해줘"
-                    class="w-full h-16 pl-16 pr-5 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-lg focus:ring-2 focus:ring-brand-400 focus:border-brand-400 text-base transition-all placeholder-gray-400 text-gray-800 dark:text-white"
-                    autocomplete="off" required>
-                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-2xl" aria-hidden="true">🔍</span>
-                <button type="submit"
-                    class="absolute right-5 top-1/2 -translate-y-1/2 px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition-colors">
-                    검색
-                </button>
-            </form>
+        <!-- Mascot & Greeting -->
+        <section class="text-center mb-10">
+            <!-- 캐치 마스코트 (병아리 이미지) -->
+            <div class="mb-6 animate-float">
+                <div class="inline-block p-6 bg-gradient-to-br from-yellow-100 to-orange-100 dark:from-yellow-900/30 dark:to-orange-900/30 rounded-full shadow-lg">
+                    <!-- TODO: 사용자 제공 병아리 이미지로 교체 -->
+                    <span class="text-8xl">🐣</span>
+                </div>
+            </div>
+            
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+                {% if user.is_authenticated %}
+                안녕하세요, {{ user.get_short_name|default:user.username }}님! 👋<br>
+                {% else %}
+                안녕하세요! 👋<br>
+                {% endif %}
+                <span class="bg-gradient-to-r from-brand-500 to-brand-600 bg-clip-text text-transparent">
+                    무엇을 도와드릴까요?
+                </span>
+            </h1>
+            <p class="text-lg text-gray-600 dark:text-gray-400">
+                궁금한 것을 자유롭게 물어보세요. AI가 답변해드립니다.
+            </p>
+        </section>
 
-            <!-- Example Queries -->
-            <div class="mt-4">
-                <p class="text-xs font-bold text-gray-500 mb-3">💡 이런 것도 물어보세요:</p>
-                <div class="flex flex-wrap gap-2">
-                    <button type="button"
-                        @click="searchQuery = '20만원대 무선 이어폰 추천'; $nextTick(() => document.getElementById('homeSearchForm').submit())"
-                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors cursor-pointer">
-                        20만원대 무선 이어폰 추천
-                    </button>
-                    <button type="button"
-                        @click="searchQuery = '허리 아플 때 좋은 의자'; $nextTick(() => document.getElementById('homeSearchForm').submit())"
-                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors cursor-pointer">
-                        허리 아플 때 좋은 의자
-                    </button>
-                    <button type="button"
-                        @click="searchQuery = '캠핑용 휴대용 선풍기'; $nextTick(() => document.getElementById('homeSearchForm').submit())"
-                        class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition-colors cursor-pointer">
-                        캠핑용 휴대용 선풍기
+        <!-- Chat Messages Area (HTMX Streaming) -->
+        <section id="chatMessages" class="mb-6 space-y-4 min-h-[200px]">
+            <!-- 채팅 메시지가 여기에 표시됩니다 -->
+        </section>
+
+        <!-- Search/Question Input -->
+        <section class="mb-8">
+            <form 
+                id="chatForm" 
+                hx-post="{% url 'ai_chatbot:send_new' %}" 
+                hx-target="#chatMessages" 
+                hx-swap="beforeend"
+                hx-on::after-request="this.reset(); document.getElementById('chatInput').focus()"
+                class="relative"
+            >
+                {% csrf_token %}
+                <div class="relative">
+                    <textarea 
+                        id="chatInput"
+                        name="message" 
+                        placeholder="예: 눈 피로에 좋은 영양제 추천해줘"
+                        rows="3"
+                        class="input-toss w-full resize-none pr-16"
+                        required
+                        autocomplete="off"
+                    ></textarea>
+                    <button 
+                        type="submit"
+                        class="absolute right-3 bottom-3 btn-toss px-4 py-2 text-sm"
+                    >
+                        전송
                     </button>
                 </div>
+            </form>
+        </section>
+
+        <!-- Quick Question Buttons -->
+        <section class="mb-10">
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">💡 빠른 질문</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <button 
+                    type="button"
+                    onclick="document.getElementById('chatInput').value = '20만원대 무선 이어폰 추천해줘'; document.getElementById('chatForm').requestSubmit()"
+                    class="chip-toss text-left"
+                >
+                    <span class="text-xl mr-2">🎧</span>
+                    <span class="text-sm">20만원대 무선 이어폰</span>
+                </button>
+                <button 
+                    type="button"
+                    onclick="document.getElementById('chatInput').value = '허리 아플 때 좋은 의자 추천'; document.getElementById('chatForm').requestSubmit()"
+                    class="chip-toss text-left"
+                >
+                    <span class="text-xl mr-2">🪑</span>
+                    <span class="text-sm">허리에 좋은 의자</span>
+                </button>
+                <button 
+                    type="button"
+                    onclick="document.getElementById('chatInput').value = '단백질 보충제 추천해줘'; document.getElementById('chatForm').requestSubmit()"
+                    class="chip-toss text-left"
+                >
+                    <span class="text-xl mr-2">💪</span>
+                    <span class="text-sm">단백질 보충제</span>
+                </button>
+                <button 
+                    type="button"
+                    onclick="document.getElementById('chatInput').value = '캠핑용 휴대용 선풍기 찾아줘'; document.getElementById('chatForm').requestSubmit()"
+                    class="chip-toss text-left"
+                >
+                    <span class="text-xl mr-2">🏕️</span>
+                    <span class="text-sm">캠핑용 선풍기</span>
+                </button>
+                <button 
+                    type="button"
+                    onclick="document.getElementById('chatInput').value = '눈 건강에 좋은 영양제 추천'; document.getElementById('chatForm').requestSubmit()"
+                    class="chip-toss text-left"
+                >
+                    <span class="text-xl mr-2">👁️</span>
+                    <span class="text-sm">눈 건강 영양제</span>
+                </button>
+                <button 
+                    type="button"
+                    onclick="document.getElementById('chatInput').value = '가성비 좋은 블루투스 스피커'; document.getElementById('chatForm').requestSubmit()"
+                    class="chip-toss text-left"
+                >
+                    <span class="text-xl mr-2">🔊</span>
+                    <span class="text-sm">블루투스 스피커</span>
+                </button>
             </div>
         </section>
 
+        <!-- Service Notice (앱인토스 정책 준수) -->
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
+            <p class="text-sm text-blue-900 dark:text-blue-300 mb-2 font-semibold">
+                ℹ️ 서비스 안내
+            </p>
+            <p class="text-xs text-blue-800 dark:text-blue-400 mb-2">
+                본 서비스는 상품을 추천하며, <strong>실제 구매는 쿠팡, 네이버 쇼핑, 11번가 등 외부 쇼핑몰에서 진행</strong>됩니다.
+            </p>
+            <p class="text-xs text-blue-700 dark:text-blue-500">
+                상품 클릭 시 해당 쇼핑몰로 이동하며, 알맹AI는 쿠팡 파트너스 활동을 통해 일정액의 수수료를 제공받을 수 있습니다.
+            </p>
+        </div>
+
+        <!-- AI Disclaimer (인공지능기본법 준수) -->
+        <div class="ai-disclaimer text-center mb-6">
+            <p class="mb-2">
+                ⚠️ 본 서비스는 <strong>생성형 AI(Gemini)</strong> 기반 추천 시스템입니다. 
+                제공되는 정보는 참고용이며, 최종 구매 결정은 사용자 본인이 하셔야 합니다.
+            </p>
+            <p class="text-xs text-gray-400 dark:text-gray-500">
+                인공지능기본법 제15조(인공지능 이용자 등의 권리 등) 준수
+            </p>
+        </div>
+
         <!-- Footer Info -->
-        <footer class="text-center text-xs text-gray-400 py-6">
-            <p>네이버 쇼핑 & 11번가 실시간 가격 연동</p>
-            <p class="mt-1">© 2026 AI 쇼핑 도우미</p>
+        <footer class="text-center text-xs text-gray-500 dark:text-gray-400 py-6 border-t border-gray-200 dark:border-gray-700">
+            <p class="mb-2">
+                <span class="font-semibold">쿠팡 파트너스</span> · 
+                <span class="font-semibold">네이버 쇼핑</span> · 
+                <span class="font-semibold">11번가</span> 실시간 가격 연동
+            </p>
+            <p class="text-gray-400 dark:text-gray-500">
+                © 2026 알맹AI · Powered by Gemini AI
+            </p>
         </footer>
     </div>
 </main>
+
+<script>
+// Auto-scroll to bottom when new messages arrive
+htmx.on('htmx:afterSwap', function(evt) {
+    if (evt.detail.target.id === 'chatMessages') {
+        evt.detail.target.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+});
+
+// Enter to submit (Shift+Enter for new line)
+document.getElementById('chatInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('chatForm').requestSubmit();
+    }
+});
+</script>
 {% endblock %}

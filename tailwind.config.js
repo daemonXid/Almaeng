@@ -11,48 +11,37 @@ export default {
         extend: {
             colors: {
                 // ============================================
-                // 😈 DAEMON-ONE Protocol Colors
+                // 🔵 Toss Design System Colors
                 // ============================================
                 'brand': {
-                    50: '#f5f3ff',
-                    100: '#ede9fe',
-                    200: '#ddd6fe',
-                    300: '#c4b5fd',
-                    400: '#a78bfa',
-                    500: '#8b5cf6',
-                    600: '#7c3aed',
-                    700: '#6d28d9',
-                    800: '#5b21b6',
-                    900: '#4c1d95',
-                    950: '#2e1065',
+                    50: '#EFF6FF',
+                    100: '#DBEAFE',
+                    200: '#BFDBFE',
+                    300: '#93C5FD',
+                    400: '#60A5FA',
+                    500: '#3182F6',  // Toss Primary Blue
+                    600: '#0066FF',  // Toss Secondary Blue
+                    700: '#1D4ED8',
+                    800: '#1E40AF',
+                    900: '#1E3A8A',
+                    950: '#172554',
                 },
-                'daemon': {
-                    50: '#fef2f2',
-                    100: '#fee2e2',
-                    200: '#fecaca',
-                    300: '#fca5a5',
-                    400: '#f87171',
-                    500: '#ef4444',
-                    600: '#dc2626',
-                    700: '#b91c1c',
-                    800: '#991b1b',
-                    900: '#7f1d1d',
-                    950: '#450a0a',
+                'toss': {
+                    blue: '#3182F6',
+                    'blue-dark': '#0066FF',
+                    gray: '#8B95A1',
+                    'gray-light': '#F4F4F4',
+                    black: '#191F28',
+                    white: '#FFFFFF',
                 },
-                // Protocol: Cyclops (Red) - 공격적/경고/스캔
-                'cyclops': '#ff003c',
-                'cyclops-dark': '#0a0a0f',
-                // Protocol: Blueprint (Cyan) - 정밀/재활/수치
-                'tactical': '#06b6d4',
-                // Protocol: Terminal (Green) - 시스템/개발자
-                'terminal': '#22c55e',
-                // Protocol: Hologram (Blue) - 현대적/대시보드
-                'holo': '#3b82f6',
+                // Accent colors
+                'accent-green': '#00C471',
+                'accent-red': '#F04452',
+                'accent-yellow': '#FFD54F',
             },
             fontFamily: {
-                sans: ['Rajdhani', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                mono: ['Share Tech Mono', 'JetBrains Mono', 'Menlo', 'Monaco', 'monospace'],
-                header: ['Orbitron', 'sans-serif'],
+                sans: ['Pretendard', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'monospace'],
             },
             animation: {
                 // Base animations

@@ -1,11 +1,14 @@
-{% load i18n %}
+{% load i18n humanize %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" x-data="{
           theme: localStorage.getItem('theme') || 'light',
-          mobileMenuOpen: false
+          mobileMenuOpen: false,
+          sidebarOpen: false
       }"
-    x-init="$watch('theme', val => { localStorage.setItem('theme', val); document.documentElement.classList.toggle('dark', val === 'dark') })"
-    :class="{ 'dark': theme === 'dark' }">
+    x-init="$watch('theme', val => { localStorage.setItem('theme', val); document.documentElement.classList.toggle('dark', val === 'dark') }); 
+            if (theme === 'light') { document.documentElement.classList.remove('dark'); }"
+    :class="{ 'dark': theme === 'dark' }"
+    class="">`
 
 <head>
     {% include "_metadata.html" %}
@@ -21,25 +24,36 @@
 
     <style>
         :root {
+            /* Toss Design System */
+            --toss-blue: #3182F6;
+            --toss-blue-dark: #0066FF;
             --bg-light: #FAFAF9;
-            --bg-dark: #030712;
-            --surface-light: rgba(255, 255, 255, 0.9);
-            --surface-dark: rgba(17, 24, 39, 0.8);
-            --text-light: #111827;
-            --text-dark: #f9fafb;
-            --accent: #7c3aed;
-            --accent-glow: rgba(124, 58, 237, 0.2);
-            --border-light: rgba(0, 0, 0, 0.08);
+            --bg-dark: #111827;
+            --surface-light: rgba(255, 255, 255, 0.95);
+            --surface-dark: rgba(31, 41, 55, 0.9);
+            --text-light: #191F28;
+            --text-dark: #F9FAFB;
+            --accent: #3182F6;
+            --accent-glow: rgba(49, 130, 246, 0.25);
+            --border-light: rgba(0, 0, 0, 0.06);
             --border-dark: rgba(255, 255, 255, 0.08);
-            --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;
+            --font-main: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
         }
 
-        /* Light Mode */
+        /* Light Mode (Default) */
         body {
             font-family: var(--font-main);
             background: var(--bg-light);
             color: var(--text-light);
             transition: background-color 0.3s, color 0.3s;
+            /* Mobile-First: 19.5:9 aspect ratio */
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+        }
+
+        html {
+            /* iOS Safari viewport fix */
+            height: -webkit-fill-available;
         }
 
         /* Dark Mode */

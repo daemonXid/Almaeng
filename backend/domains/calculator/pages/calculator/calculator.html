@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}바디 계산기 - 알맹AI{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- 헤더 -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-brand-100 dark:bg-brand-900/30 rounded-full mb-4">
+                <span class="text-2xl">💪</span>
+                <span class="text-sm font-semibold text-brand-600 dark:text-brand-400">Body Calculator</span>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-3">
+                바디 계산기
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400 text-lg">
+                과학적인 공식으로 당신의 목표 칼로리와 영양소를 계산해드립니다
+            </p>
+        </div>
+
+        <!-- 계산기 폼 -->
+        <div class="card-toss mb-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- 에러 메시지 -->
+                {% if error %}
+                <div class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-400">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <!-- 기본 정보 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 성별 -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            성별
+                        </label>
+                        <div class="flex gap-3">
+                            <label class="flex-1">
+                                <input type="radio" name="gender" value="male" checked class="peer sr-only">
+                                <div class="chip-toss cursor-pointer text-center peer-checked:bg-brand-500 peer-checked:text-white">
+                                    남성
+                                </div>
+                            </label>
+                            <label class="flex-1">
+                                <input type="radio" name="gender" value="female" class="peer sr-only">
+                                <div class="chip-toss cursor-pointer text-center peer-checked:bg-brand-500 peer-checked:text-white">
+                                    여성
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 나이 -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            나이
+                        </label>
+                        <input type="number" name="age" value="25" min="10" max="100" required
+                               class="input-toss">
+                    </div>
+                </div>
+
+                <!-- 신체 정보 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- 키 -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            키 (cm)
+                        </label>
+                        <input type="number" name="height_cm" value="170" min="100" max="250" step="0.1" required
+                               class="input-toss">
+                    </div>
+
+                    <!-- 몸무게 -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            몸무게 (kg)
+                        </label>
+                        <input type="number" name="weight_kg" value="70" min="30" max="300" step="0.1" required
+                               class="input-toss">
+                    </div>
+
+                    <!-- 체지방률 (선택) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            체지방률 (%, 선택)
+                        </label>
+                        <input type="number" name="body_fat_percent" min="3" max="60" step="0.1"
+                               placeholder="선택사항"
+                               class="input-toss">
+                    </div>
+                </div>
+
+                <!-- 활동량 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                        활동량
+                    </label>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <label>
+                            <input type="radio" name="activity_level" value="sedentary" class="peer sr-only">
+                            <div class="chip-toss cursor-pointer text-center text-xs peer-checked:bg-brand-500 peer-checked:text-white">
+                                거의 안 함
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="activity_level" value="light" class="peer sr-only">
+                            <div class="chip-toss cursor-pointer text-center text-xs peer-checked:bg-brand-500 peer-checked:text-white">
+                                가벼운 운동
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="activity_level" value="moderate" checked class="peer sr-only">
+                            <div class="chip-toss cursor-pointer text-center text-xs peer-checked:bg-brand-500 peer-checked:text-white">
+                                중간 강도
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="activity_level" value="active" class="peer sr-only">
+                            <div class="chip-toss cursor-pointer text-center text-xs peer-checked:bg-brand-500 peer-checked:text-white">
+                                격렬한 운동
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="activity_level" value="very_active" class="peer sr-only">
+                            <div class="chip-toss cursor-pointer text-center text-xs peer-checked:bg-brand-500 peer-checked:text-white">
+                                매우 격렬
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 목표 -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                        목표
+                    </label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <label>
+                            <input type="radio" name="goal" value="cut" class="peer sr-only">
+                            <div class="chip-toss cursor-pointer text-center peer-checked:bg-accent-red peer-checked:text-white">
+                                다이어트
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="goal" value="maintain" checked class="peer sr-only">
+                            <div class="chip-toss cursor-pointer text-center peer-checked:bg-brand-500 peer-checked:text-white">
+                                유지
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="goal" value="lean" class="peer sr-only">
+                            <div class="chip-toss cursor-pointer text-center peer-checked:bg-accent-green peer-checked:text-white">
+                                린매스업
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="goal" value="bulk" class="peer sr-only">
+                            <div class="chip-toss cursor-pointer text-center peer-checked:bg-accent-yellow peer-checked:text-white">
+                                벌크업
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 계산 버튼 -->
+                <button type="submit" class="btn-toss w-full py-4 text-lg">
+                    💪 계산하기
+                </button>
+            </form>
+        </div>
+
+        <!-- 결과 표시 -->
+        {% if result %}
+        <div class="space-y-6">
+            <!-- 목표 칼로리 (메인) -->
+            <div class="card-toss bg-gradient-to-br from-brand-500 to-brand-600 text-white">
+                <div class="text-center">
+                    <div class="text-sm font-medium opacity-90 mb-2">
+                        {{ result.goal_label }} 목표
+                        {% if result.goal_adjustment_percent != 0 %}
+                        ({{ result.goal_adjustment_percent|stringformat:"+d" }}%)
+                        {% endif %}
+                    </div>
+                    <div class="text-5xl font-bold mb-2">
+                        {{ result.target_calories|floatformat:0 }}
+                    </div>
+                    <div class="text-lg opacity-90">
+                        kcal / 일
+                    </div>
+                </div>
+            </div>
+
+            <!-- 기초 정보 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card-toss">
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">기초 대사량 (BMR)</div>
+                    <div class="text-3xl font-bold text-gray-900 dark:text-white">
+                        {{ result.bmr|floatformat:0 }} <span class="text-lg text-gray-500">kcal</span>
+                    </div>
+                </div>
+                <div class="card-toss">
+                    <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">총 소비 칼로리 (TDEE)</div>
+                    <div class="text-3xl font-bold text-gray-900 dark:text-white">
+                        {{ result.tdee|floatformat:0 }} <span class="text-lg text-gray-500">kcal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 매크로 영양소 -->
+            <div class="card-toss">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                    권장 영양소 (매크로)
+                </h3>
+                <div class="grid grid-cols-3 gap-4">
+                    <!-- 단백질 -->
+                    <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                        <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">단백질</div>
+                        <div class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                            {{ result.protein_g }}
+                        </div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">g / 일</div>
+                    </div>
+                    <!-- 탄수화물 -->
+                    <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+                        <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">탄수화물</div>
+                        <div class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+                            {{ result.carbs_g }}
+                        </div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">g / 일</div>
+                    </div>
+                    <!-- 지방 -->
+                    <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                        <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">지방</div>
+                        <div class="text-3xl font-bold text-green-600 dark:text-green-400">
+                            {{ result.fat_g }}
+                        </div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">g / 일</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 안내 문구 -->
+            <div class="ai-disclaimer text-center">
+                ⚠️ 본 계산 결과는 참고용이며, 개인의 건강 상태에 따라 다를 수 있습니다.
+                전문가와 상담 후 식단을 조정하세요.
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

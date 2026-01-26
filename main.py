@@ -49,8 +49,8 @@ def run_server():
     workers = int(os.getenv("WORKERS", "0")) or None  # 0 = auto
     reload = os.getenv("DEBUG", "true").lower() == "true"
 
-    print(f"😈 Starting ALMAENG with {server}...")
-    print(f"   📍 http://{host}:{port}")
+    print(f"[ALMAENG] Starting with {server}...")
+    print(f"   URL: http://{host}:{port}")
 
     if server == "granian":
         try:

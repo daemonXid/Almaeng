@@ -1,12 +1,13 @@
 {% extends "account/_auth_base.html" %}
+{% load static %}
 
-{% block title %}Log In | DAEMON-ONE{% endblock %}
+{% block title %}로그인 | 알맹AI{% endblock %}
 
 {% block auth_content %}
 <div class="auth-header">
-    <div class="auth-logo">D</div>
-    <h1 class="auth-title">Welcome Back</h1>
-    <p class="auth-subtitle">Sign in to access your account</p>
+    <img src="{% static 'images/logo-almaeng.svg' %}" alt="알맹AI" class="h-16 w-auto mx-auto mb-4">
+    <h1 class="auth-title">알맹AI에 오신 것을 환영합니다</h1>
+    <p class="auth-subtitle">Toss로 간편하게 로그인하세요</p>
 </div>
 
 {% if messages %}
@@ -33,80 +34,29 @@
 </div>
 {% endif %}
 
-<form method="POST" action="{% url 'account_login' %}">
-    {% csrf_token %}
-
-    <div class="form-group">
-        <label class="form-label">Email or Username</label>
-        <input type="text" name="login" class="form-input" placeholder="you@example.com" required autofocus>
+<!-- Toss Login Only -->
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    <!-- Toss Login Button -->
+    <a href="/accounts/toss/login/" hx-disable class="btn-toss w-full py-4 text-center text-lg font-bold"
+        style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; text-decoration: none;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="24" height="24" rx="6" fill="white"/>
+            <path d="M7 8h10M7 12h10M7 16h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Toss로 시작하기
+    </a>
+    
+    <!-- Info Text -->
+    <div class="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+        <p class="mb-2">✨ Toss 계정으로 간편하게 로그인하세요</p>
+        <p class="text-xs text-gray-400">
+            로그인 없이도 대부분의 기능을 사용할 수 있습니다.<br>
+            찜하기와 프로필 기능은 로그인이 필요합니다.
+        </p>
     </div>
-
-    <div class="form-group">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label class="form-label" style="margin-bottom: 0;">Password</label>
-            <a href="{% url 'account_reset_password' %}" class="form-link">Forgot password?</a>
-        </div>
-        <input type="password" name="password" class="form-input" placeholder="••••••••" required
-            style="margin-top: 0.5rem;">
-    </div>
-
-    {% if redirect_field_value %}
-    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
-    {% endif %}
-
-    <button type="submit" class="btn-primary">Sign In</button>
-</form>
-
-<!-- Social Login -->
-<div class="social-divider" style="display: flex; align-items: center; margin: 1.5rem 0; gap: 1rem;">
-    <hr style="flex: 1; border: none; border-top: 1px solid var(--border-color, #e5e7eb);">
-    <span style="color: #9ca3af; font-size: 0.875rem;">or continue with</span>
-    <hr style="flex: 1; border: none; border-top: 1px solid var(--border-color, #e5e7eb);">
-</div>
-
-<div style="display: flex; flex-direction: column; gap: 0.75rem;">
-    <!-- Google -->
-    <a href="/accounts/google/login/" hx-disable class="btn-social"
-        style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; padding: 0.75rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: white; color: #374151; font-weight: 500; text-decoration: none; transition: all 0.2s;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                fill="#4285F4" />
-            <path
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                fill="#34A853" />
-            <path
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                fill="#FBBC05" />
-            <path
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                fill="#EA4335" />
-        </svg>
-        Continue with Google
-    </a>
-
-    <!-- Kakao -->
-    <a href="/accounts/kakao/login/" hx-disable class="btn-social"
-        style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; padding: 0.75rem 1rem; border: none; border-radius: 0.5rem; background: #FEE500; color: #000000; font-weight: 500; text-decoration: none; transition: all 0.2s;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd"
-                d="M12 3C6.48 3 2 6.58 2 10.94c0 2.76 1.84 5.18 4.6 6.57-.2.75-.73 2.72-.84 3.14-.13.53.19.52.41.38.17-.11 2.74-1.86 3.85-2.61.64.09 1.29.14 1.98.14 5.52 0 10-3.58 10-7.94S17.52 3 12 3z"
-                fill="#000000" />
-        </svg>
-        Continue with Kakao
-    </a>
-
-    <!-- Naver -->
-    <a href="/accounts/naver/login/" hx-disable class="btn-social"
-        style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; padding: 0.75rem 1rem; border: none; border-radius: 0.5rem; background: #03C75A; color: #ffffff; font-weight: 500; text-decoration: none; transition: all 0.2s;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16.27 12.99L7.44 3H3v18h4.73V11.01L16.56 21H21V3h-4.73v9.99z" fill="#ffffff" />
-        </svg>
-        Continue with Naver
-    </a>
 </div>
 
 <div class="auth-footer">
-    Don't have an account? <a href="{% url 'account_signup' %}">Create one</a>
+    <a href="/" class="text-brand-600 hover:text-brand-700 font-medium">← 로그인 없이 둘러보기</a>
 </div>
 {% endblock %}

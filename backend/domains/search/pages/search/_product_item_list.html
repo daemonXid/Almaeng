@@ -35,8 +35,8 @@
             <div class="flex gap-2">
                 <a href="{% url 'search:track_click' %}?id={{ product.id }}&name={{ product.name|urlencode }}&price={{ product.price }}&image={{ product.image_url|urlencode }}&url={{ product.product_url|urlencode }}"
                     target="_blank" rel="noopener"
-                    class="flex-1 py-2 text-center text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
-                    상품 보기
+                    class="flex-1 py-2 text-center text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors flex items-center justify-center gap-1">
+                    상품 보기 <span class="text-[10px]">↗</span>
                 </a>
                 {% with product_id=product.id|stringformat:"s" %}
                 {% include "wishlist/pages/index/_wishlist_button.html" with product=product is_in_wishlist=product_wishlist_map|get_item:product_id %}

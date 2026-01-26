@@ -1,10 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
 
-from ...interface import get_search_suggestions, get_user_search_history, save_search_history, search_products
-from ...logic.schemas import CompareResult
+from ...interface import get_search_suggestions, save_search_history, search_products
 
 
 def search_page(request: HttpRequest) -> HttpResponse:
@@ -51,11 +50,12 @@ def search_page(request: HttpRequest) -> HttpResponse:
 
     try:
         result = loop.run_until_complete(search_products(query))
-    except Exception as e:
+    except Exception:
         import logging
+
         logger = logging.getLogger(__name__)
         logger.exception(f"Search failed for query: {query}")
-        
+
         from ...logic.schemas import CompareResult
 
         return render(
@@ -94,9 +94,7 @@ def search_page(request: HttpRequest) -> HttpResponse:
     if sort_by == "price":
         filtered_products = sorted(filtered_products, key=lambda x: x.price)
     elif sort_by == "rating":
-        filtered_products = sorted(
-            filtered_products, key=lambda x: x.rating if x.rating else 0, reverse=True
-        )
+        filtered_products = sorted(filtered_products, key=lambda x: x.rating if x.rating else 0, reverse=True)
     elif sort_by == "name":
         filtered_products = sorted(filtered_products, key=lambda x: x.name.lower())
 
@@ -164,7 +162,7 @@ def search_page(request: HttpRequest) -> HttpResponse:
     }
 
     # HTMX request: return only product list fragment
-    if hasattr(request, 'htmx') and request.htmx and page > 1:
+    if hasattr(request, "htmx") and request.htmx and page > 1:
         if view_mode == "grid":
             return render(request, "pages/search/_product_item_grid.html", context)
         else:

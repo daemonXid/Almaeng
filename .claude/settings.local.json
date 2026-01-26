@@ -16,7 +16,15 @@
       "Bash(do [ ! -f \"$d/interface.py\" ])",
       "Bash(echo:*)",
       "Bash(tree:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(just migrate:*)",
+      "Bash(just format:*)",
+      "Bash(just lint:*)",
+      "Bash(just test:*)",
+      "Bash(just reset:*)",
+      "Bash(just setup:*)",
+      "Bash(just dev:*)",
+      "Bash(bun run build:*)"
     ]
   }
 }

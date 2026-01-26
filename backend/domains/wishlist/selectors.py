@@ -12,6 +12,4 @@ def is_product_in_wishlist(*, user_id: int, product_id: str, platform: str) -> b
     """
     특정 상품이 찜 목록에 있는지 확인합니다.
     """
-    return WishlistItem.objects.filter(
-        user_id=user_id, product_id=product_id, platform=platform
-    ).exists()
+    return WishlistItem.objects.filter(user_id=user_id, product_id=product_id, platform=platform).exists()

@@ -9,8 +9,10 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
-from domains.ai.service.chatbot.gemini_service import ask_supplement_question
 from domains.ai.service.chatbot.models import ChatMessage, ChatSession
+
+# ✅ DAEMON Rule: Import from interface.py only
+from ...interface import ask_question
 
 
 def chat_page(request: HttpRequest, session_id: int | None = None) -> HttpResponse:
@@ -62,7 +64,11 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
 
     # 3. Get AI Response
     try:
-        response = ask_supplement_question(content)
+        # ✅ DAEMON Pattern: Use interface function
+        response = ask_question(
+            question=content,
+            system_instruction="당신은 알맹AI의 쇼핑 도우미입니다. 친근하게 상품을 추천해주세요.",
+        )
         answer = response.answer
         sources = response.sources or []
     except Exception as e:

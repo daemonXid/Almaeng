@@ -39,9 +39,10 @@ def check_price_drops(user_id: int) -> list[PriceAlert]:
     Returns:
         list[PriceAlert]: List of new price alerts created
     """
-    from domains.integrations.naver.interface import search_naver_products
-    from domains.integrations.elevenst.interface import search_elevenst_products
     import asyncio
+
+    from domains.integrations.elevenst.interface import search_elevenst_products
+    from domains.integrations.naver.interface import search_naver_products
 
     wishlist_items = WishlistItem.objects.filter(user_id=user_id)
     alerts: list[PriceAlert] = []

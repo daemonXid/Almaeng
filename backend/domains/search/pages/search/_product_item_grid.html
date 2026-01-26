@@ -51,8 +51,8 @@
         <div class="flex flex-col gap-1.5 mt-auto">
             <a href="{% url 'search:track_click' %}?id={{ product.id }}&name={{ product.name|urlencode }}&price={{ product.price }}&image={{ product.image_url|urlencode }}&url={{ product.product_url|urlencode }}"
                 target="_blank" rel="noopener"
-                class="w-full py-1.5 text-center text-[10px] font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                상품 보기
+                class="w-full py-1.5 text-center text-[10px] font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center justify-center gap-1">
+                상품 보기 <span class="text-[8px]">↗</span>
             </a>
             <a href="{% url 'billing:checkout' %}?product_id={{ product.id }}&platform={{ product.platform }}&name={{ product.name|urlencode }}&price={{ product.price }}&url={{ product.product_url|urlencode }}&image={{ product.image_url|urlencode }}"
                 class="w-full py-1.5 text-center text-[10px] font-bold text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors">

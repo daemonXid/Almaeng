@@ -33,6 +33,10 @@ else:
 
 logfire.instrument_django()
 
+# --- Core Django Settings ---
+SECRET_KEY = env("SECRET_KEY", default="django-insecure-almaeng-local-dev-key")
+DEBUG = env("DEBUG")
+
 # --- Sentry Error Tracking ---
 SENTRY_DSN = env("SENTRY_DSN")
 if SENTRY_DSN and not DEBUG:
@@ -56,10 +60,6 @@ if SENTRY_DSN and not DEBUG:
         send_default_pii=False,  # Don't send user data
         environment="production" if not DEBUG else "development",
     )
-
-# --- Core Django Settings ---
-SECRET_KEY = env("SECRET_KEY", default="django-insecure-almaeng-local-dev-key")
-DEBUG = env("DEBUG")
 # --- Production Security ---
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
@@ -183,9 +183,8 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
-    "allauth.socialaccount.providers.kakao",
-    "allauth.socialaccount.providers.naver",
+    # Toss OpenID Connect (간편 로그인)
+    "allauth.socialaccount.providers.openid_connect",
     "compressor",
     "storages",
 ]
@@ -227,7 +226,7 @@ TEMPLATES = [
             # PRD v2 신규 도메인
             BASE_DIR / "backend" / "domains" / "search",
             BASE_DIR / "backend" / "domains" / "billing",
-            BASE_DIR / "backend" / "domains" / "compare",
+            BASE_DIR / "backend" / "domains" / "calculator",
             BASE_DIR / "backend" / "domains" / "integrations",
         ],
         "APP_DIRS": False,  # Loader 활용 예정 (django-components 등)
@@ -322,28 +321,19 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # 🌐 Social Login (Google, Kakao, Naver)
 # ============================================
 SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "APP": {
-            "client_id": env("GOOGLE_CLIENT_ID", default=""),
-            "secret": env("GOOGLE_CLIENT_SECRET", default=""),
-            "key": "",
-        },
-        "SCOPE": ["profile", "email"],
-        "AUTH_PARAMS": {"access_type": "online"},
-    },
-    "kakao": {
-        "APP": {
-            "client_id": env("KAKAO_CLIENT_ID", default=""),
-            "secret": env("KAKAO_CLIENT_SECRET", default=""),
-            "key": "",
-        },
-    },
-    "naver": {
-        "APP": {
-            "client_id": env("NAVER_CLIENT_ID", default=""),
-            "secret": env("NAVER_CLIENT_SECRET", default=""),
-            "key": "",
-        },
+    "openid_connect": {
+        "APPS": [
+            {
+                "provider_id": "toss",
+                "name": "Toss",
+                "client_id": env("TOSS_OPENID_CLIENT_ID", default=""),
+                "secret": env("TOSS_OPENID_CLIENT_SECRET", default=""),
+                "settings": {
+                    "server_url": "https://oauth2.toss.im/.well-known/openid-configuration",
+                },
+            }
+        ],
+        "OAUTH_PKCE_ENABLED": True,
     },
 }
 
@@ -460,5 +450,5 @@ AXES_RESET_ON_SUCCESS = True
 # 💳 Toss Payments
 # ============================================
 
-TOSS_CLIENT_KEY = env("TOSS_CLIENT_KEY", default="test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq")
-TOSS_SECRET_KEY = env("TOSS_SECRET_KEY", default="test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R")
+TOSS_CLIENT_KEY = env("TOSS_CLIENT_KEY", default="")
+TOSS_SECRET_KEY = env("TOSS_SECRET_KEY", default="")

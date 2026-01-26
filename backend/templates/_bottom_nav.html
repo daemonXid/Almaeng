@@ -24,11 +24,11 @@
             <span class="text-[10px]">찜</span>
         </a>
 
-        <!-- Compare -->
-        <a href="{% url 'compare:compare' %}"
-            class="flex flex-col items-center justify-center gap-1 {% if 'compare' in request.path %}text-brand-600 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
-            <span class="text-xl">⚖️</span>
-            <span class="text-[10px]">비교</span>
+        <!-- Calculator -->
+        <a href="{% url 'calculator:index' %}"
+            class="flex flex-col items-center justify-center gap-1 {% if 'calculator' in request.path %}text-brand-600 dark:text-white font-bold{% else %}text-gray-400 dark:text-gray-500{% endif %}">
+            <span class="text-xl">💪</span>
+            <span class="text-[10px]">계산기</span>
         </a>
 
         <!-- My Page -->

@@ -1,0 +1,20 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 알맹AI 로고 (Toss Blue) -->
+  <defs>
+    <linearGradient id="tossGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3182F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066FF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 아이콘 부분: 심플한 AI 칩 -->
+  <rect x="8" y="15" width="30" height="30" rx="8" fill="url(#tossGradient)" />
+  <circle cx="16" cy="25" r="2.5" fill="white" opacity="0.9" />
+  <circle cx="30" cy="25" r="2.5" fill="white" opacity="0.9" />
+  <path d="M 16 33 Q 23 36 30 33" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9" />
+  
+  <!-- 텍스트: 알맹AI -->
+  <text x="48" y="40" font-family="Pretendard, Inter, sans-serif" font-size="28" font-weight="700" fill="#191F28">
+    알맹<tspan fill="url(#tossGradient)">AI</tspan>
+  </text>
+</svg>

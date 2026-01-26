@@ -1,31 +1,30 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
 from ...interface import get_user_wishlist, mark_alert_as_read, toggle_wishlist
-from ...selectors import is_product_in_wishlist
 
 
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
     """찜 목록 페이지"""
     from ...interface import get_user_price_alerts
-    
+
     sort_by = request.GET.get("sort", "created")  # created, price, name
     wishlist_items = list(get_user_wishlist(user_id=request.user.id))
-    
+
     # Apply sorting
     if sort_by == "price":
         wishlist_items = sorted(wishlist_items, key=lambda x: x.price)
     elif sort_by == "name":
         wishlist_items = sorted(wishlist_items, key=lambda x: x.name.lower())
     # created is default (already sorted by -created_at in get_user_wishlist)
-    
+
     # Get price alerts for wishlist items (only unread for display)
     price_alerts = get_user_price_alerts(request.user.id, unread_only=True)
     alert_map = {alert.wishlist_item.id: alert for alert in price_alerts if alert.wishlist_item.id}
-    
+
     return render(
         request,
         "wishlist/pages/index/index.html",
@@ -52,7 +51,7 @@ def toggle(request: HttpRequest) -> HttpResponse:
         return HttpResponse("Invalid Request", status=400)
 
     # 토글 실행
-    is_added, message = toggle_wishlist(
+    is_added, _message = toggle_wishlist(
         user_id=request.user.id,
         product_id=product_id,
         platform=platform,

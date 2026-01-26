@@ -3,19 +3,40 @@
 @tailwind utilities;
 
 /* ============================================
- * 😈 DAEMON-ONE Design System
+ * 🔵 Toss Design System (알맹AI)
  * ============================================ */
 
 @layer base {
     :root {
-        --bg-dark: #0a0a15;
-        --bg-dark-alt: #1a1a2e;
-        --accent-purple: #8b5cf6;
-        --accent-purple-light: #a78bfa;
-        --accent-pink: #ec4899;
-        --text-primary: #f8fafc;
-        --text-secondary: #94a3b8;
-        --text-muted: #64748b;
+        /* Toss Colors */
+        --toss-blue: #3182F6;
+        --toss-blue-dark: #0066FF;
+        --toss-blue-light: #EFF6FF;
+        --toss-gray: #8B95A1;
+        --toss-gray-light: #F4F4F4;
+        --toss-black: #191F28;
+        --toss-white: #FFFFFF;
+
+        /* Semantic Colors */
+        --bg-light: #FAFAF9;
+        --bg-dark: #111827;
+        --bg-dark-alt: #1F2937;
+        --accent-primary: #3182F6;
+        --accent-secondary: #0066FF;
+        --text-primary: #191F28;
+        --text-secondary: #6B7280;
+        --text-muted: #9CA3AF;
+
+        /* Neon Glow */
+        --neon-glow: rgba(49, 130, 246, 0.4);
+        --neon-glow-strong: rgba(49, 130, 246, 0.6);
+    }
+
+    .dark {
+        --bg-light: #111827;
+        --text-primary: #F9FAFB;
+        --text-secondary: #D1D5DB;
+        --text-muted: #9CA3AF;
     }
 
     * {
@@ -34,6 +55,126 @@
 }
 
 @layer components {
+
+    /* ============================================
+     * 🔵 Toss-style Components
+     * ============================================ */
+
+    /* Toss Primary Button (Neon Glow) */
+    .btn-toss {
+        @apply px-6 py-3 rounded-xl font-bold text-white transition-all duration-300;
+        background: linear-gradient(135deg, var(--toss-blue), var(--toss-blue-dark));
+        box-shadow: 0 4px 14px rgba(49, 130, 246, 0.25);
+    }
+
+    .btn-toss:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px var(--neon-glow),
+                    0 0 40px rgba(49, 130, 246, 0.2),
+                    0 8px 25px rgba(49, 130, 246, 0.3);
+    }
+
+    .btn-toss:active {
+        transform: translateY(0);
+    }
+
+    /* Toss Secondary Button (Outline with Neon) */
+    .btn-toss-outline {
+        @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300;
+        background: transparent;
+        border: 2px solid var(--toss-blue);
+        color: var(--toss-blue);
+    }
+
+    .btn-toss-outline:hover {
+        background: rgba(49, 130, 246, 0.1);
+        box-shadow: 0 0 15px var(--neon-glow),
+                    inset 0 0 15px rgba(49, 130, 246, 0.1);
+    }
+
+    /* Toss Ghost Button */
+    .btn-toss-ghost {
+        @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+        background: transparent;
+        color: var(--toss-blue);
+    }
+
+    .btn-toss-ghost:hover {
+        background: rgba(49, 130, 246, 0.1);
+    }
+
+    /* Neon Border Card */
+    .card-toss {
+        @apply bg-white dark:bg-gray-800 rounded-2xl p-6 transition-all duration-300;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .card-toss:hover {
+        border-color: rgba(49, 130, 246, 0.3);
+        box-shadow: 0 0 20px rgba(49, 130, 246, 0.1),
+                    0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .dark .card-toss {
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .dark .card-toss:hover {
+        border-color: rgba(49, 130, 246, 0.4);
+        box-shadow: 0 0 25px rgba(49, 130, 246, 0.15);
+    }
+
+    /* Neon Input */
+    .input-toss {
+        @apply w-full px-4 py-3 rounded-xl text-gray-900 dark:text-white transition-all duration-200;
+        background: var(--toss-gray-light);
+        border: 2px solid transparent;
+    }
+
+    .dark .input-toss {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .input-toss:focus {
+        @apply outline-none;
+        border-color: var(--toss-blue);
+        box-shadow: 0 0 0 4px rgba(49, 130, 246, 0.15);
+    }
+
+    /* AI Disclaimer Badge (인공지능기본법 준수) */
+    .ai-disclaimer {
+        @apply text-xs text-gray-500 dark:text-gray-400 py-2 px-3 rounded-lg;
+        background: rgba(0, 0, 0, 0.03);
+    }
+
+    .dark .ai-disclaimer {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .ai-badge {
+        @apply inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full;
+        background: linear-gradient(135deg, rgba(49, 130, 246, 0.1), rgba(0, 102, 255, 0.1));
+        color: var(--toss-blue);
+        border: 1px solid rgba(49, 130, 246, 0.2);
+    }
+
+    /* Quick Action Chips */
+    .chip-toss {
+        @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200;
+        background: var(--toss-gray-light);
+        color: var(--toss-black);
+    }
+
+    .dark .chip-toss {
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+    }
+
+    .chip-toss:hover {
+        background: rgba(49, 130, 246, 0.1);
+        color: var(--toss-blue);
+    }
 
     /* ===== Navigation Bar ===== */
     .main-nav {

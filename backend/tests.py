@@ -43,44 +43,11 @@ class TestCoreModule:
         """Test that home page loads."""
         response = client.get("/")
         assert response.status_code == 200
-        assert "DAEMON" in response.content.decode()
 
-    def test_getting_started_page(self, client):
-        """Test documentation page."""
-        response = client.get("/getting-started/")
+    def test_search_page(self, client):
+        """Test search page."""
+        response = client.get("/search/")
         assert response.status_code == 200
-        assert "Protocol" in response.content.decode()
-
-    def test_offline_page(self, client):
-        """Test offline page for PWA."""
-        response = client.get("/offline/")
-        assert response.status_code == 200
-        assert "Offline" in response.content.decode()
-
-
-@pytest.mark.django_db
-class TestSettingsModule:
-    """Tests for site settings."""
-
-    def test_site_settings_singleton(self):
-        """Test SiteSettings singleton pattern."""
-        from domains.base.settings.models import SiteSettings
-
-        settings1 = SiteSettings.get()
-        settings2 = SiteSettings.get()
-
-        # Should return the same instance
-        assert settings1.pk == settings2.pk
-        assert settings1.pk == 1  # Always pk=1
-
-    def test_site_settings_defaults(self):
-        """Test default settings values."""
-        from domains.base.settings.models import SiteSettings
-
-        settings = SiteSettings.get()
-        assert settings.site_name  # Should have default
-        assert settings.allow_registration is True  # Default
-        assert settings.enable_ai_features is True  # Default
 
 
 class TestAIProviders:

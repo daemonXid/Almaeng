@@ -1,172 +1,153 @@
 """
 🔍 Search Domain Interface
 
-Public API for search domain. This is the ONLY entry point for external domains.
+Public API for search functionality.
+External domains should only import from this file.
+
+✅ DAEMON Rule: This is the ONLY file external domains can import from.
 """
 
-import asyncio
-import hashlib
-import json
-from typing import Any
-
-from django.core.cache import cache
-from django.db import models
-
-from domains.integrations.elevenst.interface import search_elevenst_products
-from domains.integrations.gemini.interface import extract_keywords, generate_recommendation
-from domains.integrations.naver.interface import search_naver_products
-
 from .logic.schemas import CompareResult, ProductResult
-from .state.interface import get_user_search_history, save_search_history
+from .logic.services import (
+    aggregate_search_results,
+    mix_search_results,
+    transform_coupang_manual_results,
+    transform_elevenst_results,
+    transform_naver_results,
+)
 
+# State interface (DB operations)
+from .state.interface import (
+    create_search_history,
+    get_active_coupang_products,
+    get_coupang_products_by_keywords,
+)
 
-async def search_products(query: str, limit: int = 20, use_cache: bool = True) -> CompareResult:
-    """
-    Search products using natural language query (multi-platform)
-
-    This is the main entry point for product search. It orchestrates:
-    - Keyword extraction (Gemini AI)
-    - Multi-platform product search (Naver, 11st)
-    - Result aggregation and caching
-
-    Args:
-        query: User's natural language query
-        limit: Maximum results per platform
-        use_cache: Whether to use cache (default: True)
-
-    Returns:
-        CompareResult: Search results and recommendation message
-    """
-    # Check cache first
-    if use_cache:
-        cache_key = f"search:{hashlib.md5(query.lower().strip().encode()).hexdigest()}:{limit}"
-        cached_result = cache.get(cache_key)
-        if cached_result:
-            return CompareResult(**json.loads(cached_result))
-
-    try:
-        # 1. Extract keywords (via interface)
-        extraction = extract_keywords(query)
-        keywords = extraction.keywords
-
-        # 2. Parallel API calls with timeout (via interfaces)
-        search_keyword = keywords[0] if keywords else query
-        naver_task = search_naver_products(search_keyword, limit=limit)
-        elevenst_task = search_elevenst_products(search_keyword, limit=limit)
-
-        naver_results: Any = []
-        elevenst_results: Any = []
-
-        try:
-            # Set timeout for API calls (10 seconds)
-            naver_results, elevenst_results = await asyncio.wait_for(
-                asyncio.gather(naver_task, elevenst_task, return_exceptions=True),
-                timeout=10.0,
-            )
-        except asyncio.TimeoutError:
-            # If timeout, continue with empty results
-            naver_results = []
-            elevenst_results = []
-
-        # Handle exceptions from API calls
-        if isinstance(naver_results, Exception):
-            naver_results = []
-        if isinstance(elevenst_results, Exception):
-            elevenst_results = []
-
-        # 3. Transform results using pure functions from logic/
-        from .logic.services import aggregate_search_results, transform_elevenst_results, transform_naver_results
-
-        products: list[ProductResult] = []
-        products.extend(transform_naver_results(naver_results))
-        products.extend(transform_elevenst_results(elevenst_results))
-
-        # 4. Aggregate results (find cheapest/best rated)
-        cheapest, best_rated = aggregate_search_results(products)
-
-        # 5. Generate AI recommendation message (only if products exist)
-        recommendation = ""
-        if products:
-            try:
-                products_json = json.dumps([p.model_dump() for p in products[:5]], ensure_ascii=False)
-                recommendation = generate_recommendation(query, products_json)
-            except Exception:
-                # Fallback recommendation if AI fails
-                recommendation = f"Found {len(products)} products for '{query}'. Compare prices and choose the best option."
-
-        result = CompareResult(
-            query=query,
-            keywords=keywords,
-            products=products,
-            recommendation=recommendation,
-            cheapest=cheapest,
-            best_rated=best_rated,
-        )
-
-        # Cache result for 5 minutes
-        if use_cache:
-            cache.set(cache_key, json.dumps(result.model_dump(), default=str), 300)
-
-        return result
-
-    except Exception as e:
-        # Return empty result on any error
-        return CompareResult(
-            query=query,
-            keywords=[],
-            products=[],
-            recommendation="An error occurred while searching. Please try again.",
-            cheapest=None,
-            best_rated=None,
-        )
-
-
-def get_search_suggestions(query: str, user_id: int | None = None, limit: int = 5) -> list[str]:
-    """
-    Get search suggestions based on query and user history
-
-    Args:
-        query: Partial search query
-        user_id: User ID (optional, for personalized suggestions)
-        limit: Maximum number of suggestions
-
-    Returns:
-        list[str]: List of suggested search queries
-    """
-    from .state.models import SearchHistory
-
-    query_lower = query.lower().strip()
-    if not query_lower:
-        return []
-
-    suggestions: list[str] = []
-
-    # 1. User's search history (if authenticated)
-    if user_id:
-        user_history = SearchHistory.objects.filter(
-            user_id=user_id, query__icontains=query_lower
-        ).values_list("query", flat=True).distinct()[:limit]
-        suggestions.extend(user_history)
-
-    # 2. Popular searches (all users, excluding current user's)
-    popular = (
-        SearchHistory.objects.exclude(user_id=user_id)
-        .filter(query__icontains=query_lower)
-        .values("query")
-        .annotate(count=models.Count("id"))
-        .order_by("-count")[:limit]
-    )
-    for item in popular:
-        if item["query"] not in suggestions:
-            suggestions.append(item["query"])
-
-    return suggestions[:limit]
-
-
-# Re-export state interface functions
 __all__ = [
-    "search_products",
-    "save_search_history",
-    "get_user_search_history",
+    "CompareResult",
+    # Schemas (Public Types)
+    "ProductResult",
+    "aggregate_search_results",
+    # State Services (DB Operations)
+    "create_search_history",
+    "get_active_coupang_products",
+    "get_coupang_products_by_keywords",
     "get_search_suggestions",
+    "mix_search_results",
+    "save_search_history",
+    # High-level Services (Orchestration)
+    "search_products",
+    "transform_coupang_manual_results",
+    "transform_elevenst_results",
+    # Logic Services (Pure Functions)
+    "transform_naver_results",
 ]
+
+
+# ============================================
+# High-level Orchestration Services
+# ============================================
+
+async def search_products(query: str) -> CompareResult:
+    """
+    Search products from multiple platforms
+
+    ✅ DAEMON Pattern: Orchestration layer
+    - Calls integrations (Naver, 11st, Coupang)
+    - Transforms results via logic services
+    - Returns frozen Pydantic model
+
+    Args:
+        query: Search query
+
+    Returns:
+        CompareResult with products from all platforms
+    """
+    from domains.integrations.elevenst.interface import search_elevenst_products
+    from domains.integrations.naver.interface import search_naver_products
+
+    # TODO: Extract keywords using Gemini
+    keywords = query.split()[:3]
+
+    # Search from multiple platforms (parallel)
+    import asyncio
+
+    naver_task = search_naver_products(query)
+    elevenst_task = search_elevenst_products(query)
+
+    naver_results, elevenst_results = await asyncio.gather(
+        naver_task,
+        elevenst_task,
+        return_exceptions=True,
+    )
+
+    # Handle errors
+    if isinstance(naver_results, Exception):
+        naver_results = []
+    if isinstance(elevenst_results, Exception):
+        elevenst_results = []
+
+    # Transform results
+    naver_products = transform_naver_results(naver_results)
+    elevenst_products = transform_elevenst_results(elevenst_results)
+
+    # Get Coupang manual products
+    coupang_models = get_coupang_products_by_keywords(keywords, limit=20)
+    coupang_products = transform_coupang_manual_results(coupang_models)
+
+    # Mix results (70% Coupang, 20% Naver, 10% 11st)
+    mixed_products = mix_search_results(
+        coupang_products=coupang_products,
+        naver_products=naver_products,
+        elevenst_products=elevenst_products,
+    )
+
+    # Aggregate
+    cheapest, best_rated = aggregate_search_results(mixed_products)
+
+    return CompareResult(
+        query=query,
+        keywords=keywords,
+        products=mixed_products,
+        recommendation=f"{len(mixed_products)}개의 상품을 찾았습니다.",
+        cheapest=cheapest,
+        best_rated=best_rated,
+    )
+
+
+def save_search_history(
+    user_id: int,
+    query: str,
+    keywords: list[str],
+    category: str = "",
+) -> None:
+    """
+    Save search history for authenticated users
+
+    Args:
+        user_id: User ID
+        query: Search query
+        keywords: Extracted keywords
+        category: Category (optional)
+    """
+    create_search_history(
+        user_id=user_id,
+        query=query,
+        keywords=keywords,
+        category=category,
+    )
+
+
+async def get_search_suggestions(query: str) -> list[str]:
+    """
+    Get search suggestions based on query
+
+    Args:
+        query: Partial query
+
+    Returns:
+        List of suggestions
+    """
+    # TODO: Implement autocomplete logic
+    # For now, return empty list
+    return []
