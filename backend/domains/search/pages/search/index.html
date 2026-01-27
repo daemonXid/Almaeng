@@ -54,11 +54,48 @@
 
     <!-- Main Content -->
     <div class="max-w-4xl mx-auto px-4 py-6">
-        <!-- Category Chips (Healthcare Focus) -->
+        <!-- 건강 목적별 카테고리 -->
         <section class="mb-6">
             <div class="flex items-center gap-2 mb-3">
-                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">💊</span>
-                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">인기 카테고리</span>
+                <span class="text-sm font-semibold text-gray-700">🎯</span>
+                <span class="text-sm font-semibold text-gray-700">건강 목적별 추천</span>
+            </div>
+            <div class="space-y-3 mb-6">
+                <button @click="searchQuery = '장 건강 프로바이오틱스'; $nextTick(() => document.querySelector('form').submit())"
+                    class="w-full text-left px-4 py-3 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl hover:border-green-400 hover:shadow-lg transition-all">
+                    <span class="text-sm font-bold text-gray-800">🦠 장 건강에는?</span>
+                    <span class="text-xs text-gray-600 block mt-1">프로바이오틱스, 유산균</span>
+                </button>
+                <button @click="searchQuery = '간 건강 밀크씨슬'; $nextTick(() => document.querySelector('form').submit())"
+                    class="w-full text-left px-4 py-3 bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-xl hover:border-amber-400 hover:shadow-lg transition-all">
+                    <span class="text-sm font-bold text-gray-800">🌱 간 건강에는?</span>
+                    <span class="text-xs text-gray-600 block mt-1">밀크씨슬, 헛개나무</span>
+                </button>
+                <button @click="searchQuery = '눈 건강 루테인'; $nextTick(() => document.querySelector('form').submit())"
+                    class="w-full text-left px-4 py-3 bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-lg transition-all">
+                    <span class="text-sm font-bold text-gray-800">👁️ 눈 건강에는?</span>
+                    <span class="text-xs text-gray-600 block mt-1">루테인, 빌베리, 아스타잔틴</span>
+                </button>
+                <button @click="searchQuery = '근육 증대 단백질'; $nextTick(() => document.querySelector('form').submit())"
+                    class="w-full text-left px-4 py-3 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-xl hover:border-red-400 hover:shadow-lg transition-all">
+                    <span class="text-sm font-bold text-gray-800">💪 근육 증대에는?</span>
+                    <span class="text-xs text-gray-600 block mt-1">단백질, BCAA, 크레아틴</span>
+                </button>
+                <button @click="searchQuery = '당뇨병 혈당 관리'; $nextTick(() => document.querySelector('form').submit())"
+                    class="w-full text-left px-4 py-3 bg-gradient-to-r from-purple-50 to-violet-50 border-2 border-purple-200 rounded-xl hover:border-purple-400 hover:shadow-lg transition-all">
+                    <span class="text-sm font-bold text-gray-800">🩸 당뇨병에는?</span>
+                    <span class="text-xs text-gray-600 block mt-1">크롬, 알파리포산, 비타민D</span>
+                </button>
+                <button @click="searchQuery = '고지혈증 오메가3'; $nextTick(() => document.querySelector('form').submit())"
+                    class="w-full text-left px-4 py-3 bg-gradient-to-r from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 hover:shadow-lg transition-all">
+                    <span class="text-sm font-bold text-gray-800">💙 고지혈증에는?</span>
+                    <span class="text-xs text-gray-600 block mt-1">오메가3, 홍국, 코엔자임Q10</span>
+                </button>
+            </div>
+            
+            <div class="flex items-center gap-2 mb-3">
+                <span class="text-sm font-semibold text-gray-700">💊</span>
+                <span class="text-sm font-semibold text-gray-700">인기 영양제</span>
             </div>
             <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
                 <button @click="searchQuery = '비타민D'; $nextTick(() => document.querySelector('form').submit())"
