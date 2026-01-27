@@ -40,6 +40,15 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
     if not content:
         return HttpResponse("")
 
+    # Gemini로 키워드 추출
+    from domains.integrations.gemini.interface import extract_keywords
+    
+    try:
+        keyword_result = extract_keywords(content)
+        keywords = keyword_result.keywords if keyword_result.keywords else []
+    except Exception:
+        keywords = []
+    
     # Get AI Response
     try:
         response = ask_question(
@@ -55,12 +64,18 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
     # 세션에 저장
     messages = request.session.get("chat_messages", [])
     messages.append({"role": "user", "content": content})
-    messages.append({"role": "assistant", "content": answer, "sources": sources})
+    messages.append({"role": "assistant", "content": answer, "sources": sources, "keywords": keywords})
     request.session["chat_messages"] = messages[-20:]  # 최근 20개만 유지
+    request.session.modified = True
 
     # Render message bubbles
     return render(
-        request, "_message_fragment.html", {"user_message": content, "ai_message": answer, "sources": sources}
+        request, "_message_fragment.html", {
+            "user_message": content, 
+            "ai_message": answer, 
+            "sources": sources,
+            "keywords": keywords
+        }
     )
 
 

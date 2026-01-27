@@ -24,6 +24,22 @@
                 {{ ai_message|linebreaksbr }}
             </div>
 
+            {% if keywords %}
+            <div class="mt-4 pt-4 border-t border-gray-100">
+                <p class="text-xs font-bold text-purple-700 uppercase tracking-wider mb-3 flex items-center gap-1">
+                    <span>🤖</span> AI가 추출한 키워드 (클릭하면 상품 검색)
+                </p>
+                <div class="flex flex-wrap gap-2">
+                    {% for kw in keywords %}
+                    <a href="/?q={{ kw }}"
+                        class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all active:scale-95 shadow-md no-underline">
+                        🔍 {{ kw }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
             {% if sources %}
             <div class="mt-4 pt-4 border-t border-gray-100">
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1">
@@ -31,7 +47,7 @@
                 </p>
                 <div class="flex flex-wrap gap-2">
                     {% for source in sources %}
-                    <a href="{% url 'search:results' %}?q={{ source.name }}" target="_blank"
+                    <a href="/?q={{ source.name }}"
                         class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 border border-gray-200 text-gray-700 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-600 transition-colors no-underline">
                         🛒 {{ source.name }}
                     </a>

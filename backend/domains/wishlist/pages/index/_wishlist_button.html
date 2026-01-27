@@ -6,7 +6,8 @@
         "image_url": "{{ product.image_url }}",
         "product_url": "{{ product.product_url }}"
     }' hx-swap="outerHTML"
-    class="p-2 rounded-full transition-colors {% if is_in_wishlist %}text-red-500 bg-red-50 dark:bg-red-900/20{% else %}text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-red-50 hover:text-red-400{% endif %}"
-    aria-label="찜하기">
+    class="p-2 rounded-full transition-colors {% if is_in_wishlist %}text-red-500 bg-red-50{% else %}text-gray-400 bg-gray-100 hover:bg-red-50 hover:text-red-400{% endif %}"
+    aria-label="찜하기"
+    title="{% if is_in_wishlist %}찜 해제{% else %}찜하기{% endif %}">
     {% if is_in_wishlist %}❤️{% else %}🤍{% endif %}
 </button>

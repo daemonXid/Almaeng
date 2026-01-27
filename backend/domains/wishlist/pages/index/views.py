@@ -67,6 +67,7 @@ def toggle(request: HttpRequest) -> HttpResponse:
         is_added = True
     
     request.session["wishlist"] = wishlist
+    request.session.modified = True  # 세션 변경 강제 저장
 
     # 변경된 버튼 상태 반환
     return render(
