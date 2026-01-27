@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from ...interface import get_search_suggestions, save_search_history, search_products
 
 
-def search_page(request: HttpRequest) -> HttpResponse:
+async def search_page(request: HttpRequest) -> HttpResponse:
     """Search page view - also serves as home page"""
     query = request.GET.get("q", "").strip()
     sort_by = request.GET.get("sort", "price")  # price, rating, name
@@ -43,17 +43,9 @@ def search_page(request: HttpRequest) -> HttpResponse:
         # Redis unavailable, skip rate limiting
         pass
 
-    # Execute search (async wrapper)
-    import asyncio
-
+    # Execute search (pure async)
     try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
-    try:
-        result = loop.run_until_complete(search_products(query))
+        result = await search_products(query)
     except Exception:
         import logging
 
