@@ -34,14 +34,34 @@ def chat_page(request: HttpRequest, session_id: int | None = None) -> HttpRespon
 @require_http_methods(["POST"])
 def send_message(request: HttpRequest, session_id: int | None = None) -> HttpResponse:
     """
-    Handle message submission (HTMX, 세션 기반)
+    Handle message submission (HTMX, 대화형 상담)
+    
+    ✅ Multi-turn 대화:
+    - 이전 대화 컨텍스트 유지
+    - 추가 질문에 맥락있게 답변
     """
     content = request.POST.get("message", "").strip()
     if not content:
         return HttpResponse("")
 
+    # 사용자 프로필 가져오기 (개인화 추천)
+    user_age = request.POST.get("user_age", "")
+    user_gender = request.POST.get("user_gender", "")
+    
+    # 프로필 컨텍스트 생성
+    profile_context = ""
+    if user_age or user_gender:
+        profile_context = "\n\n[사용자 정보: "
+        if user_age:
+            profile_context += f"{user_age}세, "
+        if user_gender == "male":
+            profile_context += "남성"
+        elif user_gender == "female":
+            profile_context += "여성"
+        profile_context += "]"
+
     # 영양제 질문인지 확인
-    nutrition_keywords = ["영양제", "비타민", "미네랄", "보충제", "건강", "피로", "면역", "오메가", "프로바이오틱스", "유산균", "칼슘", "철분", "아연", "마그네슘", "단백질", "콜라겐", "루테인", "홍삼", "BCAA", "글루타민"]
+    nutrition_keywords = ["영양제", "비타민", "미네랄", "보충제", "건강", "피로", "면역", "오메가", "프로바이오틱스", "유산균", "칼슘", "철분", "아연", "마그네슘", "단백질", "콜라겐", "루테인", "홍삼", "BCAA", "글루타민", "관절", "눈", "간", "장", "혈당", "콜레스테롤"]
     is_nutrition_question = any(kw in content for kw in nutrition_keywords)
     
     if not is_nutrition_question:
@@ -50,6 +70,18 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
         keywords = []
         all_keywords = []
     else:
+        # 이전 대화 컨텍스트 가져오기 (Multi-turn)
+        messages = request.session.get("chat_messages", [])
+        conversation_context = ""
+        if messages:
+            # 최근 3개 대화만 컨텍스트로 사용
+            recent_messages = messages[-6:]  # user + assistant 쌍 3개
+            context_parts = []
+            for msg in recent_messages:
+                role = "사용자" if msg["role"] == "user" else "AI"
+                context_parts.append(f"{role}: {msg['content'][:100]}")
+            conversation_context = "\n".join(context_parts)
+        
         # Gemini로 키워드 추출
         from domains.integrations.gemini.interface import extract_keywords
         
@@ -59,29 +91,34 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
         except Exception:
             keywords = []
         
-        # Get AI Response
+        # Get AI Response (대화 컨텍스트 포함)
         try:
+            full_prompt = content
+            if conversation_context:
+                full_prompt = f"[이전 대화]\n{conversation_context}\n\n[현재 질문]\n{content}"
+            if profile_context:
+                full_prompt += profile_context
+            
             response = ask_question(
-                question=content,
+                question=full_prompt,
                 system_instruction="""당신은 알맹AI의 영양제 전문 상담 AI입니다.
 
 **역할**:
 - 영양제와 건강보조식품에 대해서만 답변
 - 5060 세대도 쉽게 이해할 수 있도록 친근하고 간단하게 설명
 - 전문 용어는 쉬운 말로 풀어서 설명
+- 이전 대화를 기억하고 맥락있게 답변
 
 **답변 형식**:
 1. 질문에 대한 간단한 설명 (2-3문장)
 2. 추천 영양제 (구체적인 성분명)
 3. 마지막 줄에 반드시: "키워드: 성분1, 성분2, 성분3, ..." (최대 12개)
 
-**예시**:
-질문: "피로할 때 좋은 영양제는?"
-답변: "피로 회복에는 에너지 대사를 돕는 비타민B군이 가장 효과적입니다. 마그네슘은 근육 이완과 스트레스 완화에 도움을 줍니다.
-
-추천 영양제: 비타민B 컴플렉스, 마그네슘, 코엔자임Q10
-
-키워드: 비타민B 컴플렉스, 마그네슘, 코엔자임Q10, 피로회복, 에너지, 비타민B1, 비타민B6, 비타민B12, 타우린, 아르기닌, 홍삼, 밀크씨슬"
+**대화 예시**:
+사용자: "피로할 때 좋은 영양제는?"
+AI: "비타민B 컴플렉스를 추천드립니다..."
+사용자: "그럼 언제 먹는게 좋아요?" (추가 질문)
+AI: "비타민B는 아침 식사 후에 드시는 것이 가장 좋습니다..." (맥락 유지)
 """,
             )
             answer = response.answer

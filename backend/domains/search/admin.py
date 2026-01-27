@@ -20,11 +20,18 @@ class SearchHistoryAdmin(admin.ModelAdmin):
 
 @admin.register(CoupangManualProduct)
 class CoupangManualProductAdmin(admin.ModelAdmin):
-    """쿠팡 수동 상품 Admin"""
+    """
+    쿠팡 수동 상품 Admin
+    
+    사용법:
+    1. 쿠팡 파트너스에서 상품 링크 생성
+    2. Admin에서 상품 정보 입력
+    3. 저장하면 즉시 검색 결과에 반영
+    """
 
     list_display = [
         "name",
-        "price",
+        "price_display",
         "category",
         "is_active",
         "created_at",
@@ -45,36 +52,39 @@ class CoupangManualProductAdmin(admin.ModelAdmin):
     ]
     fieldsets = (
         (
-            "기본 정보",
+            "✅ 기본 정보",
             {
                 "fields": (
                     "product_id",
                     "name",
                     "price",
                     "category",
-                )
+                ),
+                "description": "쿠팡 상품 ID와 이름, 가격을 입력하세요."
             },
         ),
         (
-            "이미지 & 링크",
+            "🔗 이미지 & 파트너스 링크",
             {
                 "fields": (
                     "image_url",
                     "affiliate_url",
-                )
+                ),
+                "description": "쿠팡 파트너스에서 생성한 제휴 링크를 입력하세요."
             },
         ),
         (
-            "검색 설정",
+            "🔍 검색 설정",
             {
                 "fields": (
                     "keywords",
                     "is_active",
-                )
+                ),
+                "description": "검색에 사용될 키워드를 JSON 배열로 입력하세요. 예: [\"비타민D\", \"칼슘\"]"
             },
         ),
         (
-            "메타 정보",
+            "📅 메타 정보",
             {
                 "fields": (
                     "created_at",
@@ -86,6 +96,24 @@ class CoupangManualProductAdmin(admin.ModelAdmin):
     )
     date_hierarchy = "created_at"
     list_per_page = 50
+    actions = ["activate_products", "deactivate_products"]
+
+    def price_display(self, obj):
+        """가격 표시"""
+        return f"₩{obj.price:,}"
+    price_display.short_description = "가격"
+
+    def activate_products(self, request, queryset):
+        """상품 활성화"""
+        count = queryset.update(is_active=True)
+        self.message_user(request, f"{count}개 상품을 활성화했습니다.")
+    activate_products.short_description = "선택된 상품 활성화"
+
+    def deactivate_products(self, request, queryset):
+        """상품 비활성화"""
+        count = queryset.update(is_active=False)
+        self.message_user(request, f"{count}개 상품을 비활성화했습니다.")
+    deactivate_products.short_description = "선택된 상품 비활성화"
 
     def get_queryset(self, request):
         """Optimize queryset"""

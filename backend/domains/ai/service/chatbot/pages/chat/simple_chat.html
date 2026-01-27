@@ -8,8 +8,25 @@
     x-data="{ 
         message: '',
         messages: [],
-        loading: false
-    }">
+        loading: false,
+        userProfile: JSON.parse(localStorage.getItem('userProfile') || '{\"age\":\"\",\"gender\":\"\",\"concerns\":[]}')
+    }"
+    x-init="
+        // 첫 방문 시 간단한 프로필 수집
+        if (!userProfile.age && messages.length === 0) {
+            setTimeout(() => {
+                if (confirm('더 정확한 추천을 위해 간단한 정보를 입력하시겠어요? (선택사항)')) {
+                    const age = prompt('나이를 입력해주세요 (예: 35)');
+                    const gender = confirm('성별을 선택해주세요\\n확인=남성, 취소=여성') ? 'male' : 'female';
+                    if (age) {
+                        userProfile.age = age;
+                        userProfile.gender = gender;
+                        localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                    }
+                }
+            }, 1000);
+        }
+    ">
     
     <!-- Header -->
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
@@ -33,6 +50,10 @@
             @htmx:after-request="message = ''; loading = false; $el.querySelector('textarea').focus(); document.getElementById('messages').scrollTo({top: document.getElementById('messages').scrollHeight, behavior: 'smooth'})"
             class="max-w-4xl mx-auto">
             {% csrf_token %}
+            <!-- 사용자 프로필 hidden 필드 -->
+            <input type="hidden" name="user_age" :value="userProfile.age">
+            <input type="hidden" name="user_gender" :value="userProfile.gender">
+            
             <div class="flex gap-2">
                 <textarea 
                     name="message"
