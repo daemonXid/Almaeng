@@ -1,7 +1,7 @@
 {% load i18n %}
 <!-- Left Sidebar -->
 <aside
-    class="fixed top-0 left-0 h-full z-50 hidden lg:flex flex-col transition-all duration-300 group overscroll-contain bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-sm"
+    class="fixed top-0 left-0 h-full z-50 hidden lg:flex flex-col transition-all duration-300 group overscroll-contain bg-white border-r border-gray-200 shadow-sm"
     :class="sidebarOpen ? 'w-64' : 'w-20 lg:translate-x-0'" @click="sidebarOpen = true"
     @click.outside="sidebarOpen = false">
 
@@ -13,7 +13,7 @@
                 🛒
             </div>
             <span
-                class="font-extrabold text-xl tracking-tight transition-opacity duration-300 text-gray-900 dark:text-white"
+                class="font-extrabold text-xl tracking-tight transition-opacity duration-300 text-gray-900"
                 :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
                 AI 쇼핑 도우미
             </span>
@@ -31,7 +31,7 @@
 
         <!-- Home -->
         <a href="/"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if request.path == '/' %}bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if request.path == '/' %}bg-brand-50 text-brand-600 font-bold shadow-sm{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
             title="{% trans '홈' %}">
             <span class="text-xl shrink-0 text-center w-6">🏠</span>
             <span class="font-medium transition-opacity duration-300 transform origin-left"
@@ -42,7 +42,7 @@
 
         <!-- Search -->
         <a href="{% url 'search:search' %}"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'search' in request.path %}bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'search' in request.path %}bg-brand-50 text-brand-600 font-bold shadow-sm{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
             title="{% trans '상품 검색' %}">
             <span class="text-xl shrink-0 text-center w-6">🔍</span>
             <span class="font-medium transition-opacity duration-300 transform origin-left"
@@ -53,7 +53,7 @@
 
         <!-- Wishlist -->
         <a href="{% url 'wishlist:index' %}"
-            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'wishlist' in request.path %}bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-bold shadow-sm{% else %}text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800{% endif %}"
+            class="flex items-center gap-4 px-3.5 py-3 rounded-2xl transition-all whitespace-nowrap {% if 'wishlist' in request.path %}bg-brand-50 text-brand-600 font-bold shadow-sm{% else %}text-gray-700 hover:bg-gray-100{% endif %}"
             title="{% trans '찜 목록' %}">
             <span class="text-xl shrink-0 text-center w-6">❤️</span>
             <span class="font-medium transition-opacity duration-300 transform origin-left"
@@ -64,26 +64,13 @@
 
     </nav>
 
-    <!-- Footer Area (User & Theme) -->
-    <div class="p-4 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+    <!-- Footer Area -->
+    <div class="p-4 border-t border-gray-200 bg-white">
         <!-- Toss 앱 내에서는 로그인 불필요 -->
         {% comment %}
         로그인 기능은 앱인토스 출시 후 비활성화
         Toss 앱 내에서는 이미 로그인된 상태
+        다크모드는 라이트모드 전용으로 변경
         {% endcomment %}
-
-        <!-- Theme Toggle -->
-        <button @click.stop="theme = theme === 'dark' ? 'light' : 'dark'"
-            class="w-full flex items-center gap-3 px-2 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            title="{% trans '테마 변경' %}">
-            <div class="shrink-0 w-6 flex justify-center">
-                <span x-show="theme === 'light'" class="text-lg">☀️</span>
-                <span x-show="theme === 'dark'" class="text-lg">🌙</span>
-            </div>
-            <span class="transition-opacity duration-300 whitespace-nowrap"
-                :class="sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 hidden'">
-                {% trans "테마 설정" %}
-            </span>
-        </button>
     </div>
 </aside>

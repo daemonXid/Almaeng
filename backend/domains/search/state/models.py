@@ -93,3 +93,68 @@ class CoupangManualProduct(models.Model):
 
     def __str__(self) -> str:
         return f"{self.name} ({self.price:,}원)"
+
+
+class ProductCache(models.Model):
+    """
+    API 검색 결과 캐시 (네이버, 11번가)
+    
+    ✅ 전략:
+    - API 호출 결과를 DB에 저장
+    - 24시간 동안 재사용 (가격은 하루에 한 번만 업데이트)
+    - 중복 API 호출 방지 → 속도 향상, 비용 절감
+    
+    ✅ DAEMON Pattern:
+    - 도메인 내부 캐시 (외부에서 직접 접근 불가)
+    - interface.py를 통해서만 사용
+    """
+    
+    platform = models.CharField(
+        max_length=20,
+        db_index=True,
+        verbose_name="플랫폼",
+        help_text="naver, 11st",
+    )
+    product_id = models.CharField(
+        max_length=200,
+        db_index=True,
+        verbose_name="상품 ID",
+    )
+    product_name = models.CharField(
+        max_length=500,
+        verbose_name="상품명",
+    )
+    price = models.IntegerField(verbose_name="가격")
+    original_price = models.IntegerField(null=True, blank=True, verbose_name="원가")
+    discount_percent = models.IntegerField(null=True, blank=True, verbose_name="할인율")
+    image_url = models.URLField(max_length=1000, verbose_name="이미지 URL")
+    product_url = models.URLField(max_length=1000, verbose_name="상품 URL")
+    mall_name = models.CharField(max_length=100, blank=True, verbose_name="판매처")
+    rating = models.FloatField(null=True, blank=True, verbose_name="평점")
+    review_count = models.IntegerField(default=0, verbose_name="리뷰 수")
+    
+    # 캐시 메타데이터
+    search_keyword = models.CharField(
+        max_length=200,
+        db_index=True,
+        verbose_name="검색 키워드",
+        help_text="이 상품을 찾은 검색어",
+    )
+    cached_at = models.DateTimeField(
+        auto_now=True,
+        db_index=True,
+        verbose_name="캐시 시간",
+    )
+    
+    class Meta:
+        verbose_name = "상품 캐시"
+        verbose_name_plural = "상품 캐시 목록"
+        ordering = ["-cached_at"]
+        unique_together = ("platform", "product_id")
+        indexes = [
+            models.Index(fields=["search_keyword", "-cached_at"]),
+            models.Index(fields=["platform", "-cached_at"]),
+        ]
+    
+    def __str__(self) -> str:
+        return f"[{self.platform}] {self.product_name[:30]}"

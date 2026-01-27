@@ -4,11 +4,11 @@ package = false
 [project]
 name = "almaeng"
 version = "6.0.0"
-description = "AI 쇼핑 도우미 - 자연어 검색 기반 가격 비교 서비스"
+description = "AI 쇼핑 도우미 - 자연어로 검색하면 최저가를 찾아주는 서비스"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "xid", email = "xid@daemon.dev" }]
-keywords = ["django", "htmx", "ai", "gemini", "shopping", "price-comparison", "11st", "naver"]
+keywords = ["django", "htmx", "ai", "gemini", "shopping", "price-comparison", "11st", "naver", "coupang"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Framework :: Django :: 5.0",
@@ -22,101 +22,47 @@ requires-python = ">=3.12,<3.13"
 
 dependencies = [
     # ============================================
-    # 1. Core Framework & API
+    # 1. Core Framework
     # ============================================
     "django>=5.1,<6.0",
-    "django-ninja>=1.0",
-    "django-ninja-extra>=0.30.8",
+    "django-ninja-extra>=0.30.8",  # API Framework
     # ============================================
-    # 2. Frontend & UI (Hypermedia-Driven)
+    # 2. Frontend (Hypermedia-Driven)
     # ============================================
     "django-unfold",            # Modern Admin
     "django-components",        # Server-side Components
-    "django-template-partials", # HTML Fragments
     "django-htmx",              # HTMX Integration
     "django-browser-reload",    # Hot Reload (DX)
-    "django-filter",            # API Filtering
     # ============================================
-    # 3. Data & Models
+    # 3. Database
     # ============================================
     "psycopg[binary]",          # PostgreSQL Driver
-    "pgvector",                 # AI Vector DB
-    "django-ulid",              # Sortable UUID (ULID)
     "django-lifecycle",         # Model Lifecycle Hooks
-    "django-safedelete",        # Soft Delete
-    "django-polymorphic",       # Model Inheritance
-    "django-taggit",            # Tagging System
-    "django-jsonform",          # JSON Form UI
-    "django-auto-prefetch",     # Anti N+1 Queries
-    "django-pgtrigger",         # PostgreSQL Triggers
-    "django-concurrency",       # Optimistic Locking
-    "django-schema-graph",      # DB Schema Visualization
     # ============================================
-    # 4. Async, Tasks & Performance
+    # 4. Async & Tasks (Phase 2)
     # ============================================
-    "taskiq[redis]",            # Async Task Queue (Celery alternative)
-    "tenacity",                 # Retry Logic (API resilience)
-    "django-cacheops",          # Auto Cache Invalidation
-    "whitenoise",               # Static File Serving
-    "structlog",                # Structured JSON Logging
-    "sentry-sdk",               # Error Tracking & Monitoring
-    "django-health-check",      # Health Check Endpoints
-    "django-log-request-id",    # Request Tracing
-    "redis",                    # Redis Client
+    # "taskiq",                   # Async Task Queue
+    # "taskiq-redis>=1.2.1",      # Redis broker
+    # 가격 모니터링은 Phase 2로 연기
     # ============================================
-    # 5. Security & Authentication
+    # 5. AI (Google Gemini)
     # ============================================
-    "django-allauth[socialaccount]",  # OAuth & Social Login
-    "django-allauth-ui",              # Allauth UI Templates
-    "django-guardian",                # Object-Level Permissions
-    "django-axes",                    # Brute-Force Protection
-    "django-cors-headers",            # CORS Headers
-    "django-honeypot",                # Anti-Spam Honeypot
+    "google-genai>=1.56.0",     # Gemini API
+    "pydantic>=2.0,<3.0",       # Schema Validation
+    "pydantic-ai>=1.22.0",      # Pydantic AI
     # ============================================
-    # 6. Business Features
+    # 6. Shopping APIs
     # ============================================
-    # "dj-stripe",               # Stripe (use Portone for Korea)
-    "django-constance[database]", # Live Config
-    "django-meta",              # SEO Meta Tags
-    "django-rosetta",           # Translation UI
-    "django-simple-history",    # Model Versioning
-    "django-import-export",     # Excel Import/Export
-    "django-versatileimagefield", # Image Processing
-    "django-watson",            # Full-Text Search
-    "django-waffle",            # Feature Flags
-    "django-anymail",           # Email Service
-    "django-cleanup",           # Auto File Cleanup
-    "django-dbbackup",          # Database Backup
+    "httpx>=0.27.0",            # Async HTTP Client
     # ============================================
-    # 7. AI (Google Gemini Only)
-    # ============================================
-    "google-genai",             # Gemini API (new unified SDK)
-    "pydantic>=2.0",            # Schema Validation (AI structured output)
-    # ============================================
-    # 8. Shopping APIs (PRD v2)
-    # ============================================
-    "httpx>=0.27.0",            # Async HTTP Client (11st, Naver APIs)
-    # ============================================
-    # 9. Config & RBAC
-    # ============================================
-    "pyyaml",                   # Policy-as-Code RBAC
-    # ============================================
-    # 10. Server & Infrastructure
+    # 7. Infrastructure
     # ============================================
     "django-environ",           # Environment Config
     "django-compressor",        # Asset Compression
-    "django-storages",          # Cloud Storage
-    "uvicorn[standard]",        # ASGI Server (Development)
-    "granian>=2.6.0",           # Rust ASGI Server (Production)
-    "logfire[django]>=4.16.0",
-    "pydantic-ai>=1.22.0",
-    "instructor>=1.13.0",
-    "outlines>=1.2.9",
-    "pydantic-settings>=2.12.0",
-    "django-redis>=5.0.0",
-    "playwright>=1.57.0",
-    "selectolax>=0.4.6",
-    "taskiq-redis>=1.2.1",
+    "django-redis>=5.0.0",      # Redis Cache
+    "whitenoise",               # Static Files
+    "uvicorn[standard]",        # ASGI Server (Dev)
+    "granian>=2.6.0",           # ASGI Server (Prod)
 ]
 
 [project.optional-dependencies]
@@ -134,32 +80,16 @@ Repository = "https://github.com/daemonXid/almaeng"
 
 [dependency-groups]
 dev = [
-    # --- Testing ---
+    # --- Testing (Essential) ---
     "pytest",                   # Test Framework
     "pytest-django",            # Django Integration
-    "pytest-cov",               # Coverage
-    "pytest-mock",              # Mocking
     "pytest-asyncio",           # Async Tests
-    "hypothesis",               # Property-based Testing
-    "model-bakery",             # Test Data Factory
-    "Pillow",                   # Image Processing (tests)
-    "respx",                    # HTTP Mocking
-    # --- Debugging & Profiling ---
-    "kolo",                     # Visual Profiler
+    # --- Debugging (Essential) ---
     "django-debug-toolbar",     # Debug Toolbar
-    "django-silk",              # Query Profiling
     "django-extensions",        # Shell Plus
-    "django-tui",               # Terminal UI
-    "django-typer",             # Typed CLI Commands
     "ipython",                  # Enhanced Shell
-    # --- Code Quality ---
+    # --- Code Quality (Essential) ---
     "ruff",                     # Linter + Formatter
-    "pre-commit",               # Git Hooks
-    "mypy",                     # Static Type Checker
-    "django-stubs",             # Django Type Stubs
-    "typeguard",                # Runtime Type Checking
-    # --- Documentation ---
-    "mkdocs-material",          # Documentation Site
 ]
 
 

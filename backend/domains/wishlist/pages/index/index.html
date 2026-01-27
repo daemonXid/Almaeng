@@ -6,26 +6,38 @@
 {% block title %}찜 목록 | ALMAENG{% endblock %}
 
 {% block content %}
-<main class="min-h-screen bg-[#FAFAF9] dark:bg-gray-900 pb-24 font-sans">
+<main class="min-h-screen bg-[#FAFAF9] pb-24 font-sans">
     <div class="max-w-xl mx-auto px-5 pt-8">
         <!-- Header -->
         <header class="mb-6">
             <div class="flex items-center justify-between mb-3">
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 class="text-2xl font-bold text-gray-900">
                     찜 목록 ❤️
                 </h1>
                 <span class="text-sm font-medium text-gray-500">
                     {{ wishlist_items|length }}개
                 </span>
             </div>
+            
+            <!-- AI Price Monitoring Badge -->
+            <div class="bg-gradient-to-r from-brand-50 to-indigo-50 border border-brand-200 rounded-xl p-3 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">🤖</span>
+                    <div class="flex-1">
+                        <p class="text-xs font-bold text-brand-800">AI 가격 모니터링 중</p>
+                        <p class="text-xs text-gray-600">매일 오전 6시 자동 체크, 5% 이상 하락 시 알림</p>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Sort Options -->
             <div class="flex items-center gap-2">
                 <select 
                     @change="window.location.href = '{% url 'wishlist:index' %}?sort=' + $event.target.value"
-                    class="text-xs px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-brand-400">
-                    <option value="created" {% if sort_by == "created" %}selected{% endif %}>최근 추가순</option>
-                    <option value="price" {% if sort_by == "price" %}selected{% endif %}>가격순</option>
-                    <option value="name" {% if sort_by == "name" %}selected{% endif %}>이름순</option>
+                    class="text-xs px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-700 focus:ring-2 focus:ring-brand-400">
+                    <option value="created" {% if sort_by == "created" %}selected{% endif %}>📅 최근 추가순</option>
+                    <option value="price" {% if sort_by == "price" %}selected{% endif %}>💰 가격순</option>
+                    <option value="name" {% if sort_by == "name" %}selected{% endif %}>🔤 이름순</option>
                 </select>
             </div>
         </header>
@@ -34,16 +46,17 @@
         {% if not wishlist_items %}
         <div class="flex flex-col items-center justify-center py-20 text-center">
             <div
-                class="w-20 h-20 bg-brand-50 dark:bg-brand-900/20 rounded-full flex items-center justify-center text-4xl mb-6">
+                class="w-20 h-20 bg-brand-50 rounded-full flex items-center justify-center text-4xl mb-6">
                 💔
             </div>
-            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-2">
+            <h2 class="text-lg font-bold text-gray-800 mb-2">
                 아직 찜한 상품이 없어요
             </h2>
             <p class="text-sm text-gray-500 mb-8">
-                마음에 드는 상품을 찾아보세요!
+                마음에 드는 상품을 찾아보세요!<br>
+                AI가 자동으로 가격을 모니터링해드립니다.
             </p>
-            <a href="{% url 'daemon:home' %}"
+            <a href="/"
                 class="px-8 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl transition-colors shadow-sm">
                 상품 검색하러 가기
             </a>
@@ -53,7 +66,7 @@
         <div class="space-y-4">
             {% for item in wishlist_items %}
             <article
-                class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-4 flex gap-4 relative group shadow-sm">
+                class="bg-white border border-gray-100 rounded-2xl p-4 flex gap-4 relative group shadow-sm hover:shadow-md transition-shadow">
                 <div class="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
                     {% if item.image_url %}
                     <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-full h-full object-cover">
@@ -63,7 +76,7 @@
                 </div>
                 <div class="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
-                        <h2 class="text-sm font-bold text-gray-900 dark:text-white line-clamp-2 mb-1">
+                        <h2 class="text-sm font-bold text-gray-900 line-clamp-2 mb-1">
                             {{ item.name }}
                         </h2>
                         <p class="text-xs text-gray-500">{{ item.platform|upper }}</p>
@@ -72,11 +85,11 @@
                         {% if alert_map|get_item:item.id %}
                         {% with alert=alert_map|get_item:item.id %}
                         <div class="mb-1">
-                            <span class="text-xs px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full font-medium">
-                                {{ alert.price_drop_percent|floatformat:0 }}% 할인
+                            <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">
+                                💰 {{ alert.price_drop_percent|floatformat:0 }}% 할인!
                             </span>
                         </div>
-                        <p class="text-lg font-bold text-green-600 dark:text-green-400">
+                        <p class="text-lg font-bold text-green-600">
                             {{ alert.current_price|intcomma }}원
                         </p>
                         <p class="text-xs text-gray-400 line-through">
@@ -87,6 +100,9 @@
                         <p class="text-lg font-bold text-brand-600">
                             {{ item.price|intcomma }}원
                         </p>
+                        <p class="text-xs text-gray-500 mt-1">
+                            🤖 AI가 가격 변동을 추적 중
+                        </p>
                         {% endif %}
                     </div>
                 </div>
@@ -95,7 +111,7 @@
                     {% include "wishlist/pages/index/_wishlist_button.html" with product=item is_in_wishlist=True %}
 
                     <a href="{{ item.product_url }}" target="_blank" rel="noopener"
-                        class="text-xs text-brand-600 font-bold hover:underline">
+                        class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl transition-colors">
                         구매하기 →
                     </a>
                 </div>

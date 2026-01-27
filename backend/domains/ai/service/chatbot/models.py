@@ -45,7 +45,7 @@ class ChatMessage(models.Model):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     content = models.TextField(verbose_name=_("메시지 내용"))
     sources = models.JSONField(
-        default=list, blank=True, verbose_name=_("참조 출처 (제품/문서)"), help_text=_("검색된 MFDS 정보 등 JSON 저장")
+        default=list, blank=True, verbose_name=_("참조 출처 (제품/문서)"), help_text=_("검색된 상품 정보 등 JSON 저장")
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

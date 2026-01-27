@@ -2,7 +2,6 @@ import sys
 from pathlib import Path
 
 import environ
-import logfire
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -10,8 +9,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # --- Environment Variables ---
 env = environ.Env(
     DEBUG=(bool, True),
-    LOGFIRE_TOKEN=(str, None),
-    SENTRY_DSN=(str, None),
 )
 
 # Load .env file if it exists
@@ -23,43 +20,9 @@ if env_file.exists():
 sys.path.append(str(BASE_DIR / "backend"))
 sys.path.append(str(BASE_DIR / "backend" / "domains"))
 
-# --- Logfire Observability ---
-LOGFIRE_TOKEN = env("LOGFIRE_TOKEN")
-if LOGFIRE_TOKEN:
-    logfire.configure(token=LOGFIRE_TOKEN)
-else:
-    # In development, don't crash if not authenticated
-    logfire.configure(send_to_logfire=False)
-
-logfire.instrument_django()
-
 # --- Core Django Settings ---
 SECRET_KEY = env("SECRET_KEY", default="django-insecure-almaeng-local-dev-key")
 DEBUG = env("DEBUG")
-
-# --- Sentry Error Tracking ---
-SENTRY_DSN = env("SENTRY_DSN")
-if SENTRY_DSN and not DEBUG:
-    import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.logging import LoggingIntegration
-
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        integrations=[
-            DjangoIntegration(
-                transaction_style="url",
-                middleware_spans=True,
-                signals_spans=True,
-                cache_spans=True,
-            ),
-            LoggingIntegration(level=None, event_level=None),
-        ],
-        traces_sample_rate=0.1,  # 10% of transactions
-        profiles_sample_rate=0.1,  # 10% of transactions
-        send_default_pii=False,  # Don't send user data
-        environment="production" if not DEBUG else "development",
-    )
 # --- Production Security ---
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
@@ -86,23 +49,14 @@ POSTGRES_PORT = env("POSTGRES_PORT", default="5432")
 REDIS_PORT = env("REDIS_PORT", default="6379")
 
 # --- AI Configuration ---
-# Google Gemini Only
 GEMINI_API_KEY = env("GEMINI_API_KEY", default="")
 
-# --- External API Keys ---
-# Naver Developers (Login & Search)
+# --- Shopping API Keys ---
 NAVER_CLIENT_ID = env("NAVER_CLIENT_ID", default="")
 NAVER_CLIENT_SECRET = env("NAVER_CLIENT_SECRET", default="")
-
-# 11번가 Open API
 ELEVENST_API_KEY = env("ELEVENST_API_KEY", default="")
-
-# Coupang Partners
 COUPANG_ACCESS_KEY = env("COUPANG_ACCESS_KEY", default="")
 COUPANG_SECRET_KEY = env("COUPANG_SECRET_KEY", default="")
-
-# MFDS (식약처 공공데이터)
-MFDS_API_KEY = env("MFDS_API_KEY", default="")
 
 
 # =============================================================================
@@ -163,30 +117,20 @@ if DEBUG:
 
 INSTALLED_APPS = [
     # --- Django Built-ins ---
-    "unfold",  # Unfold Admin (Must be before admin)
+    "unfold",  # Unfold Admin
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.sites",  # For Allauth
     "django.contrib.humanize",
     # --- Domains (Auto-Discovered) ---
-    # Must be BEFORE third-party apps for template overrides (e.g. allauth)
     *PROJECT_APPS,
     # --- Third Party ---
-    "pgvector",  # Vector similarity search
-    "ninja_extra",
     "django_components",
     "django_htmx",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    # Toss OpenID Connect (간편 로그인)
-    "allauth.socialaccount.providers.openid_connect",
     "compressor",
-    "storages",
 ]
 
 # Add dev-only apps if DEBUG is True
@@ -206,7 +150,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",  # HTMX
-    "allauth.account.middleware.AccountMiddleware",  # Allauth
 ]
 
 if DEBUG:
@@ -293,65 +236,11 @@ NINJA_EXTRA = {
     "PAGINATION_CLASS": "ninja_extra.pagination.PageNumberPagination",
 }
 
-SITE_ID = 1  # For Allauth
-
 # ============================================
-# 🔐 Django Allauth Settings
+# 🔐 Authentication (Django Default)
 # ============================================
-
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
-]
-
-# Login/Logout redirects
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
-LOGIN_URL = "/accounts/login/"
-
-# Email settings (Allauth v0.60+ format)
-ACCOUNT_LOGIN_METHODS = {"email"}
-ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
-ACCOUNT_EMAIL_VERIFICATION = "optional"  # "mandatory" for production
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
-
-# For development, print emails to console
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
-# ============================================
-# 🌐 Social Login (Google, Kakao, Naver)
-# ============================================
-SOCIALACCOUNT_PROVIDERS = {
-    "openid_connect": {
-        "APPS": [
-            {
-                "provider_id": "toss",
-                "name": "Toss",
-                "client_id": env("TOSS_OPENID_CLIENT_ID", default=""),
-                "secret": env("TOSS_OPENID_CLIENT_SECRET", default=""),
-                "settings": {
-                    "server_url": "https://oauth2.toss.im/.well-known/openid-configuration",
-                },
-            }
-        ],
-        "OAUTH_PKCE_ENABLED": True,
-    },
-}
-
-# Auto-signup: 소셜 로그인 시 자동 가입
-SOCIALACCOUNT_AUTO_SIGNUP = True
-
-# 소셜 로그인 중간 페이지 제거 (바로 OAuth provider로 리다이렉트)
-SOCIALACCOUNT_LOGIN_ON_GET = True  # GET 요청으로 바로 로그인 시작
-SOCIALACCOUNT_QUERY_EMAIL = True
-SOCIALACCOUNT_EMAIL_REQUIRED = False
-SOCIALACCOUNT_EMAIL_VERIFICATION = "none"  # 소셜 로그인은 이메일 인증 불필요
-
-# 👤 Identity
-AUTH_USER_MODEL = "daemon_auth.User"
+# 앱인토스 출시 시 Toss 앱 내에서 이미 로그인된 상태
+# 현재는 Django 기본 User 모델 사용 (Admin 접근용)
 
 # 📦 Storages & Compression
 STORAGES = {
@@ -394,65 +283,20 @@ LOCALE_PATHS = [
 ]
 
 # ============================================
-# 📝 Logging Configuration
+# 📝 Logging (Simple)
 # ============================================
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        },
-        "json": {
-            "()": "structlog.stdlib.ProcessorFormatter",
-            "processor": "structlog.dev.ConsoleRenderer",
-        },
-    },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "verbose" if DEBUG else "json",
         },
     },
     "root": {
         "handlers": ["console"],
-        "level": "INFO" if not DEBUG else "DEBUG",
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "django.request": {
-            "handlers": ["console"],
-            "level": "ERROR",
-            "propagate": False,
-        },
-        "domains": {
-            "handlers": ["console"],
-            "level": "DEBUG" if DEBUG else "INFO",
-            "propagate": False,
-        },
+        "level": "DEBUG" if DEBUG else "INFO",
     },
 }
 
-# ============================================
-# 🔒 Security Settings (django-axes)
-# ============================================
-
-AXES_ENABLED = not DEBUG
-AXES_FAILURE_LIMIT = 5
-AXES_COOLOFF_TIME = 1  # 1 hour
-AXES_LOCKOUT_CALLABLE = "axes.lockout.database_lockout"
-AXES_LOCKOUT_TEMPLATE = "account/lockout.html"
-AXES_RESET_ON_SUCCESS = True
-
-# ============================================
-# 💳 Toss Payments
-# ============================================
-
-TOSS_CLIENT_KEY = env("TOSS_CLIENT_KEY", default="")
-TOSS_SECRET_KEY = env("TOSS_SECRET_KEY", default="")

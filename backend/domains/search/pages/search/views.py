@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
@@ -103,44 +102,14 @@ def search_page(request: HttpRequest) -> HttpResponse:
     elif sort_by == "name":
         filtered_products = sorted(filtered_products, key=lambda x: x.name.lower())
 
-    # Update result with filtered/sorted products
-    result.products = filtered_products
-    if filtered_products:
-        result.cheapest = min(filtered_products, key=lambda x: x.price)
+    # Find cheapest from filtered products
+    cheapest = min(filtered_products, key=lambda x: x.price) if filtered_products else None
 
-    # Save search history (authenticated users)
-    if request.user.is_authenticated and result.products:
-        try:
-            save_search_history(
-                user_id=request.user.id,
-                query=query,
-                keywords=result.keywords,
-                category=result.products[0].platform if result.products else "",
-            )
-        except Exception:
-            # Don't fail if history save fails
-            pass
-
-    # Get wishlist IDs (authenticated users)
+    # 로그인 기능 제거 (앱인토스에서는 불필요)
     wishlist_ids = set()
-    if request.user.is_authenticated:
-        try:
-            from domains.wishlist.interface import get_user_wishlist
-
-            wishlist_ids = {str(item.product_id) for item in get_user_wishlist(request.user.id)}
-        except Exception:
-            # Don't fail if wishlist fetch fails
-            pass
-
-    # Pre-calculate wishlist status for each product (for template use)
     product_wishlist_map = {}
-    if result.products:
-        for product in result.products:
-            product_wishlist_map[str(product.id)] = str(product.id) in wishlist_ids
-    if result.cheapest and str(result.cheapest.id) not in product_wishlist_map:
-        product_wishlist_map[str(result.cheapest.id)] = str(result.cheapest.id) in wishlist_ids
 
-    # Pagination (before updating result.products)
+    # Pagination
     total_products = len(filtered_products)
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
@@ -148,12 +117,21 @@ def search_page(request: HttpRequest) -> HttpResponse:
     has_next = end_idx < total_products
     has_prev = page > 1
 
-    # Update result with paginated products
-    result.products = paginated_products
-
+    # Create new CompareResult with paginated products (frozen model)
+    from ...logic.schemas import CompareResult
+    
+    paginated_result = CompareResult(
+        query=result.query,
+        keywords=result.keywords,
+        products=paginated_products,
+        recommendation=result.recommendation,
+        cheapest=cheapest,
+        best_rated=result.best_rated,
+    )
+    
     context = {
         "page_title": f'"{query}" Search Results',
-        "result": result,
+        "result": paginated_result,
         "wishlist_ids": wishlist_ids,
         "product_wishlist_map": product_wishlist_map,
         "sort_by": sort_by,
@@ -182,37 +160,16 @@ def autocomplete(request: HttpRequest) -> HttpResponse:
     if not query or len(query) < 2:
         return render(request, "pages/search/_autocomplete.html", {"suggestions": [], "query": ""})
 
-    user_id = request.user.id if request.user.is_authenticated else None
-    suggestions = get_search_suggestions(query, user_id=user_id, limit=5)
-
+    suggestions = get_search_suggestions(query, user_id=None, limit=5)
     return render(request, "pages/search/_autocomplete.html", {"suggestions": suggestions, "query": query})
 
 
-@login_required
 def track_click(request: HttpRequest) -> HttpResponse:
-    """Save product to recent views and redirect"""
-    product_data = {
-        "id": request.GET.get("id"),
-        "name": request.GET.get("name"),
-        "price": request.GET.get("price"),
-        "image": request.GET.get("image"),
-        "url": request.GET.get("url"),
-    }
-
-    if not product_data["url"]:
-        return redirect("daemon:home")
-
-    # Get recent products from session
-    recent_products = request.session.get("recent_products", [])
-
-    # Remove duplicates (move to front if exists)
-    recent_products = [p for p in recent_products if p.get("id") != product_data["id"]]
-    recent_products.insert(0, product_data)
-
-    # Keep maximum 10 items
-    request.session["recent_products"] = recent_products[:10]
-
-    return redirect(product_data["url"])
+    """Redirect to product URL"""
+    product_url = request.GET.get("url", "")
+    if not product_url:
+        return redirect("/")
+    return redirect(product_url)
 
 
 def explain_supplement(request: HttpRequest) -> HttpResponse:

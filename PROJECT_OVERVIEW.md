@@ -7,13 +7,37 @@
 
 ## 🎯 프로젝트 개요
 
-**알맹AI**는 Gemini AI 기반 최저가 쇼핑 비교 서비스입니다.
+**알맹AI**는 Gemini AI 기반 범용 쇼핑 최저가 비교 서비스입니다.
+
+### 문제 정의 (The Pain Point)
+> **"그냥 사고 싶을 뿐인데, 왜 이렇게 복잡해?"**
+
+일반인에게 온라인 쇼핑은 **'즐거움'이 아니라 '숙제'**가 되어버렸습니다.
+- **검색의 어려움**: 정확한 키워드를 모르면 원하는 상품을 찾기 어려움
+- **인지 부하 (Cognitive Load)**: 쇼핑몰별 검색 → 가격 비교 → 리뷰 확인 (평균 30분 이상)
+- **정보 과부하**: 너무 많은 선택지, 어떤 게 진짜 최저가인지 모름
+
+### 솔루션 (The Solution): "리서치에서 결제까지 0-Step"
+
+**As-Is (전통적 방식)**: 5단계, 평균 30분 이상
+1. 증상 검색
+2. 성분 공부
+3. 제품 리서치
+4. 쇼핑몰별 가격 비교
+5. 결제
+
+**To-Be (Almaeng)**: 2단계, 3분 이내
+1. AI 상담 (자연어)
+2. 최저가 확인 → 결제
+
+> **"AI 비서가 성분을 해석하고, 아키텍처가 최저가를 수집합니다. 당신은 '알맹이'만 챙기세요."**
 
 ### 핵심 기능
-1. **AI 쇼핑 상담** - Gemini AI 기반 자연어 상품 추천
-2. **가격 비교** - 쿠팡, 네이버, 11번가 실시간 연동
-3. **바디 계산기** - BMR/TDEE 계산 및 영양소 추천
-4. **찜하기** - 가격 알림 기능
+1. **AI 의도 추출 (Intention Extraction)** - Gemini가 모호한 질문을 구조화된 데이터로 변환
+   - Input: "겨울에 따뜻한 이어폰"
+   - Output: `{"keywords": ["무선 이어폰", "방한", "겨울용"]}`
+2. **병렬 가격 비교 (Async Integration)** - 네이버, 11번가 동시 검색 (로딩 지연 없음)
+3. **찜하기** - 세션 기반 위시리스트 (로그인 불필요)
 
 ### 비즈니스 모델
 - 쿠팡 파트너스 수수료
@@ -29,15 +53,6 @@
 
 ```
 backend/domains/
-├── calculator/              # 바디 계산기 도메인
-│   ├── interface.py         # 🔑 Public API (외부 노출)
-│   ├── logic/               # Stateless (순수 함수)
-│   │   ├── schemas.py       # Pydantic (frozen=True)
-│   │   └── services.py      # Pure functions
-│   └── pages/calculator/    # Views + Templates (colocated)
-│       ├── views.py
-│       └── calculator.html
-│
 ├── search/                  # 검색 도메인
 │   ├── interface.py         # 🔑 Public API
 │   ├── state/               # Stateful (DB Owner)
@@ -49,6 +64,23 @@ backend/domains/
 │   │   └── services.py      # Transform, Aggregate
 │   ├── pages/search/        # Views + Templates
 │   └── admin.py             # Admin UI
+│
+├── compare/                 # 상품 비교 도메인
+│   ├── logic/               # Stateless (순수 함수)
+│   │   └── services.py      # 비교 로직
+│   └── pages/compare/       # Views + Templates
+│       ├── views.py
+│       └── compare.html
+│
+├── billing/                 # 결제 도메인
+│   ├── interface.py         # 🔑 Public API
+│   ├── state/               # Stateful (DB Owner)
+│   │   ├── models.py        # Order, Payment Models
+│   │   └── interface.py     # DB operations
+│   ├── logic/               # Stateless (순수 함수)
+│   │   ├── schemas.py       # Pydantic (frozen=True)
+│   │   └── services.py      # 결제 로직
+│   └── pages/checkout/      # Views + Templates
 │
 └── ai/service/chatbot/      # AI 서비스 (독립)
     ├── interface.py         # 🔑 Public API
@@ -186,12 +218,47 @@ class SearchHistory(models.Model):
 - `.ai-badge` - AI 표시 배지
 
 ### 테마
-- **Light Mode** - 기본값
-- **Dark Mode** - 사용자 선택
+- **Light Mode Only** - Toss 디자인 시스템
 
 ---
 
 ## 🤖 Gemini AI 독립 서비스
+
+### DAEMON STACK과의 연결고리 (Technical Bridge)
+
+**기능은 심플하지만, 왜 이 구조가 강력한가?**
+
+#### 1. Gemini API의 역할 (Intention Extraction)
+유저의 모호한 질문을 **구조화된 데이터(JSON)**로 변환합니다.
+
+```python
+# Input (자연어)
+"요즘 너무 피곤해"
+
+# Output (구조화된 데이터)
+{
+    "keywords": ["비타민B 컴플렉스", "밀크씨슬"],
+    "target": "male",
+    "age_group": 30
+}
+```
+
+#### 2. DAEMON Interface의 역할 (Seamless Integration)
+Gemini가 추출한 키워드를 `interface.py`가 받아서 **네이버/11번가/쿠팡 API로 동시에 병렬(Async) 처리**합니다.
+
+```python
+# domains/search/interface.py
+async def search_products(query: str) -> CompareResult:
+    # Gemini가 추출한 키워드로 검색
+    naver_task = search_naver_products(query)
+    elevenst_task = search_elevenst_products(query)
+    coupang_task = search_coupang_products(query)
+    
+    # 병렬 처리 (로딩 지연 없음)
+    results = await asyncio.gather(naver_task, elevenst_task, coupang_task)
+```
+
+**결과**: 유저는 로딩 지연 없이 **3개 쇼핑몰의 결과를 동시에** 보게 됩니다.
 
 ### 구조
 ```python
@@ -215,6 +282,7 @@ response = ask_question(
 - 🚫 도메인 의존성 없음
 - ♻️ 컨텍스트는 호출자가 제공
 - ⚡ Singleton (메모리 효율)
+- 🚀 병렬 처리 (Async) - 3개 쇼핑몰 동시 검색
 
 ---
 
@@ -316,12 +384,13 @@ GitHub → GitHub Actions (Build) → GHCR
 
 ## 📁 프로젝트 통계
 
-- **총 도메인**: 13개
+- **총 도메인**: 6개 (YAGNI 원칙 - 극단적 단순화)
 - **interface.py**: 5개
-- **Pydantic Schemas**: 8개
-- **Pure Functions**: 15개
-- **Django Models**: 10개
-- **API Integrations**: 3개 (Naver, 11st, Coupang)
+- **Pydantic Schemas**: 2개
+- **Pure Functions**: 6개
+- **Django Models**: 3개
+- **API Integrations**: 3개 (Gemini, Naver, 11st)
+- **인증 시스템**: 없음 (세션 기반)
 
 ---
 

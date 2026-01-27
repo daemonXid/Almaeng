@@ -1,4 +1,4 @@
-from .models import PriceAlert, WishlistItem
+from .models import PriceAlert, PriceHistory, WishlistItem
 from .selectors import get_wishlist_by_user
 from .services import toggle_wishlist_item
 
@@ -87,6 +87,12 @@ def check_price_drops(user_id: int) -> list[PriceAlert]:
                         # Update wishlist item price
                         item.price = current_price
                         item.save(update_fields=["price"])
+            
+            # Record price history (regardless of drop)
+            PriceHistory.objects.create(
+                wishlist_item=item,
+                price=current_price,
+            )
 
         except Exception:
             # Skip items that fail to check
@@ -130,3 +136,25 @@ def mark_alert_as_read(alert_id: int, user_id: int) -> bool:
         return True
     except PriceAlert.DoesNotExist:
         return False
+
+
+def get_price_history(wishlist_item_id: int, days: int = 30) -> list[PriceHistory]:
+    """
+    Get price history for a wishlist item
+    
+    Args:
+        wishlist_item_id: WishlistItem ID
+        days: Number of days to look back (default: 30)
+    
+    Returns:
+        list[PriceHistory]: Price history records
+    """
+    from datetime import datetime, timedelta
+    
+    cutoff_date = datetime.now() - timedelta(days=days)
+    return list(
+        PriceHistory.objects.filter(
+            wishlist_item_id=wishlist_item_id,
+            checked_at__gte=cutoff_date,
+        ).order_by("checked_at")
+    )

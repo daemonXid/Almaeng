@@ -47,3 +47,30 @@ class PriceAlert(models.Model):
 
     def __str__(self):
         return f"Price Alert: {self.wishlist_item.name} ({self.price_drop_percent:.1f}% drop)"
+
+
+class PriceHistory(models.Model):
+    """
+    가격 변동 히스토리 모델.
+    찜한 상품의 가격 변동을 추적합니다.
+    
+    ✅ DAEMON Pattern: 
+    - No ForeignKey to User (user_id만 저장)
+    - WishlistItem과만 관계 (같은 도메인 내)
+    """
+
+    wishlist_item = models.ForeignKey(WishlistItem, on_delete=models.CASCADE, related_name="price_history")
+    price = models.IntegerField(verbose_name="Price")
+    checked_at = models.DateTimeField(auto_now_add=True, verbose_name="Checked At")
+
+    class Meta:
+        db_table = "price_history"
+        verbose_name = "Price History"
+        verbose_name_plural = "Price Histories"
+        ordering = ["-checked_at"]
+        indexes = [
+            models.Index(fields=["wishlist_item", "-checked_at"]),
+        ]
+
+    def __str__(self):
+        return f"{self.wishlist_item.name}: ₩{self.price:,} ({self.checked_at.strftime('%Y-%m-%d')})"

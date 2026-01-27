@@ -42,31 +42,30 @@
 {% endblock %}
 
 {% block content %}
-<main class="min-h-screen bg-[#FAFAF9] dark:bg-gray-900 pb-24 font-sans" 
+<main class="min-h-screen bg-[#FAFAF9] pb-24 font-sans" 
     x-data="{ viewMode: localStorage.getItem('searchViewMode') || 'list' }" 
     x-init="$watch('viewMode', val => localStorage.setItem('searchViewMode', val))"
     x-id="['search-results']">
     <div :class="viewMode === 'grid' ? 'max-w-4xl' : 'max-w-xl'" class="mx-auto px-5 pt-6 transition-all duration-300">
         <!-- Header -->
-        <header class="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 -mx-5 px-5 py-4 mb-4">
+        <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-200 -mx-5 px-5 py-4 mb-4">
             <a href="/"
                 class="text-brand-600 hover:text-brand-700 flex items-center gap-2 mb-3 text-sm">
                 <span>←</span> 홈으로
             </a>
-            <h1 class="text-lg font-bold text-gray-800 dark:text-white">
+            <h1 class="text-lg font-bold text-gray-800">
                 🔍 "{{ result.query }}"
             </h1>
             
             <!-- AI Extracted Keywords -->
             {% if result.keywords %}
             <div class="flex items-center gap-2 mt-3 flex-wrap">
-                <span class="text-xs text-gray-500">🏷️ AI 추출:</span>
+                <span class="text-xs text-gray-500">🤖 AI 추출:</span>
                 {% for kw in result.keywords %}
-                <button 
-                    @click="selectedKeyword = '{{ kw }}'; sidebarOpen = true"
-                    class="px-3 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-xs font-medium rounded-full hover:bg-brand-100 dark:hover:bg-brand-900/50 transition-all active:scale-95">
+                <a href="/?q={{ kw }}"
+                    class="px-3 py-1.5 bg-brand-50 text-brand-700 text-xs font-medium rounded-full hover:bg-brand-100 transition-all active:scale-95">
                     {{ kw }}
-                </button>
+                </a>
                 {% endfor %}
             </div>
             {% endif %}
@@ -76,12 +75,12 @@
         {% if result.recommendation %}
         <section class="mb-6">
             <div
-                class="bg-gradient-to-r from-brand-50 to-indigo-50 dark:from-brand-900/30 dark:to-indigo-900/30 border border-brand-200 dark:border-brand-700 rounded-2xl p-4">
+                class="bg-gradient-to-r from-brand-50 to-indigo-50 border border-brand-200 rounded-2xl p-4">
                 <div class="flex items-start gap-3">
                     <span class="text-2xl">🤖</span>
                     <div>
-                        <p class="text-sm font-medium text-brand-800 dark:text-brand-200 mb-1">AI 추천</p>
-                        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                        <p class="text-sm font-medium text-brand-800 mb-1">AI 추천</p>
+                        <p class="text-sm text-gray-700 leading-relaxed">
                             {{ result.recommendation }}
                         </p>
                     </div>
@@ -103,31 +102,32 @@
                     <!-- Sort Filter -->
                     <select 
                         @change="window.location.href = '{% url 'search:search' %}?q={{ result.query|urlencode }}&sort=' + $event.target.value + '{% if filter_platform %}&platform={{ filter_platform }}{% endif %}'"
-                        class="text-xs px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-brand-400">
-                        <option value="price" {% if sort_by == "price" %}selected{% endif %}>가격순</option>
-                        <option value="rating" {% if sort_by == "rating" %}selected{% endif %}>평점순</option>
-                        <option value="name" {% if sort_by == "name" %}selected{% endif %}>이름순</option>
+                        class="text-xs px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-700 focus:ring-2 focus:ring-brand-400">
+                        <option value="price" {% if sort_by == "price" %}selected{% endif %}>💰 가격순</option>
+                        <option value="rating" {% if sort_by == "rating" %}selected{% endif %}>⭐ 평점순</option>
+                        <option value="name" {% if sort_by == "name" %}selected{% endif %}>🔤 이름순</option>
                     </select>
                     
                     <!-- Platform Filter -->
                     <select
                         @change="window.location.href = '{% url 'search:search' %}?q={{ result.query|urlencode }}&sort={{ sort_by }}&platform=' + ($event.target.value ? $event.target.value : '')"
-                        class="text-xs px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-brand-400">
-                        <option value="">전체 플랫폼</option>
+                        class="text-xs px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-700 focus:ring-2 focus:ring-brand-400">
+                        <option value="">🛒 전체 플랫폼</option>
                         <option value="naver" {% if filter_platform == "naver" %}selected{% endif %}>네이버</option>
                         <option value="11st" {% if filter_platform == "11st" %}selected{% endif %}>11번가</option>
+                        <option value="coupang" {% if filter_platform == "coupang" %}selected{% endif %}>쿠팡</option>
                     </select>
                     
                     <!-- View Toggle -->
-                    <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1 ml-auto">
+                    <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1 ml-auto">
                         <button @click="viewMode = 'list'; localStorage.setItem('searchViewMode', 'list')" 
-                            :class="viewMode === 'list' ? 'bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm' : 'text-gray-500 dark:text-gray-400'"
+                            :class="viewMode === 'list' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500'"
                             class="px-2 py-1 rounded text-xs font-medium transition-all"
                             title="리스트 보기">
                             📋
                         </button>
                         <button @click="viewMode = 'grid'; localStorage.setItem('searchViewMode', 'grid')"
-                            :class="viewMode === 'grid' ? 'bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-sm' : 'text-gray-500 dark:text-gray-400'"
+                            :class="viewMode === 'grid' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500'"
                             class="px-2 py-1 rounded text-xs font-medium transition-all"
                             title="그리드 보기">
                             ▦
@@ -137,7 +137,7 @@
             </div>
 
             {% if error %}
-            <div class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl mb-4">
+            <div class="p-4 bg-red-50 border border-red-200 rounded-xl mb-4">
                 <div class="flex items-start gap-3">
                     <span class="text-xl">⚠️</span>
                     <div>

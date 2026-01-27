@@ -5,18 +5,18 @@
 {% for product in result.products %}
 {% if not result.cheapest or product.id != result.cheapest.id %}
 <article
-    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+    class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
     <div class="flex gap-3">
         {% if product.image_url %}
         <img src="{{ product.image_url }}" alt="{{ product.name }}"
             class="w-20 h-20 object-cover rounded-lg bg-gray-100 flex-shrink-0">
         {% endif %}
         <div class="flex-1 min-w-0">
-            <h3 class="text-sm font-medium text-gray-800 dark:text-white line-clamp-2 mb-1">
+            <h3 class="text-sm font-medium text-gray-800 line-clamp-2 mb-1">
                 {{ product.name }}
             </h3>
             <div class="flex items-baseline gap-2 mb-1">
-                <p class="text-base font-bold text-gray-800 dark:text-white">
+                <p class="text-base font-bold text-gray-800">
                     ₩{{ product.price|floatformat:0|intcomma }}
                 </p>
                 {% if product.original_price and product.discount_rate %}
@@ -25,7 +25,7 @@
                 {% endif %}
             </div>
             <div class="flex items-center gap-2 mb-2">
-                <span class="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-gray-600 dark:text-gray-400">
+                <span class="text-xs px-2 py-0.5 bg-gray-100 rounded text-gray-600">
                     {{ product.platform|upper }}
                 </span>
                 {% if product.rating %}

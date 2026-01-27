@@ -1,3 +1,0 @@
-"""
-💳 Toss Payments Webhook Pages
-"""

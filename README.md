@@ -1,21 +1,19 @@
 # ALMAENG 🛒
 
-> **AI Shopping Assistant - Natural Language Search Based Price Comparison Service**
+> **AI 쇼핑 도우미 - 자연어로 검색하면 최저가를 찾아주는 서비스**
 >
-> Search for products using natural language, AI extracts keywords,
-> and finds real-time lowest prices from 11st + Naver Shopping
+> "피로 회복에 좋은 거 추천해줘" → AI가 키워드 추출 → 쿠팡/네이버/11번가 최저가 비교
 
 ---
 
-## 🎯 Core Features (PRD v2)
+## 🎯 Core Features
 
 | Feature | Description |
 |:---|:---|
-| 🔍 **Natural Language Search** | "피로 회복에 좋은 영양제 추천해줘" → AI extracts search keywords |
-| 🤖 **Gemini AI** | Keyword extraction using google-genai SDK (gemini-2.0-flash) |
-| 💰 **Price Comparison** | Real-time lowest price comparison from 11st + Naver Shopping |
-| ⚖️ **Product Comparison** | Compare up to 4 products specifications |
-| 💳 **Toss Pay** | One-click payment (Toss Payments V2 Widget) |
+| 🔍 **Natural Language Search** | "겨울에 따뜻한 이어폰" → AI가 키워드 추출 |
+| 🤖 **Gemini AI** | 자연어 → 검색 키워드 변환 (gemini-2.0-flash) |
+| 💰 **Price Comparison** | 네이버, 11번가 실시간 최저가 비교 |
+| ❤️ **Wishlist** | 세션 기반 찜 (로그인 불필요) |
 
 ---
 
@@ -26,7 +24,7 @@
 | **Backend** | Python 3.12+, Django Ninja, Pydantic |
 | **Frontend** | HTMX + Alpine.js + Tailwind CSS (Mobile First) |
 | **AI** | Google Gemini 2.0 Flash (google-genai SDK) |
-| **Shopping APIs** | 11번가 Open API, 네이버 쇼핑 검색 API |
+| **Shopping APIs** | 쿠팡 파트너스, 11번가 Open API, 네이버 쇼핑 검색 API |
 | **Payments** | Toss Payments V2 Widget SDK |
 | **i18n** | 🇰🇷 Korean |
 
@@ -56,6 +54,7 @@ backend/domains/
 │
 ├── integrations/           # 🔌 External API Clients
 │   ├── gemini/             # Google Gemini AI
+│   ├── coupang/            # Coupang Partners API
 │   ├── naver/              # Naver Shopping API
 │   ├── elevenst/           # 11st Open API
 │   └── tosspayments/       # Toss Payments
@@ -81,45 +80,39 @@ just dev
 
 ---
 
-## 🔗 Key URLs (PRD v2)
+## 🔗 Key URLs
 
 | Path | Description |
 |:---|:---|
-| `/` | Home (Redirects to search page) |
-| `/search/` | 🔍 Natural Language Search |
-| `/search/?q=피로회복 영양제` | Search Results |
-| `/compare/` | ⚖️ Product Comparison |
-| `/checkout/` | 💳 Payment |
-| `/checkout/success/` | Payment Success |
-| `/checkout/fail/` | Payment Failed |
+| `/` | 🔍 Search Page (Home) |
+| `/?q=비타민` | Search Results |
+| `/wishlist/` | ❤️ Wishlist |
+| `/chat/` | 🤖 AI Chatbot |
+| `/admin/` | 🔧 Admin Panel |
 
 ---
 
 ## 🔧 Environment Variables
 
 ```env
-# AI (google-genai SDK)
+# AI
 GEMINI_API_KEY=your-gemini-api-key
 
-# 11번가 Open API
-ELEVENST_API_KEY=your-11st-api-key
-
-# 네이버 쇼핑 API
+# Shopping APIs
 NAVER_CLIENT_ID=your-naver-client-id
 NAVER_CLIENT_SECRET=your-naver-client-secret
-
-# Toss Payments
-TOSS_CLIENT_KEY=test_ck_xxx
-TOSS_SECRET_KEY=test_sk_xxx
+ELEVENST_API_KEY=your-11st-api-key
+COUPANG_ACCESS_KEY=your-coupang-access-key
+COUPANG_SECRET_KEY=your-coupang-secret-key
 ```
 
 ---
 
 ## 🎨 UI Features
 
-- 📱 **Mobile First** - Responsive design
+- 📱 **Mobile First** - Responsive design (19.5:9)
 - ⚡ **HTMX** - Fast interactions with SPA-like feel
-- 🌙 **Dark/Light Mode** - Theme toggle
+- 🎨 **Light Mode Only** - Toss Design System
 
 ---
 
@@ -161,19 +154,19 @@ just logs-remote   # Guide to Coolify log dashboard
 
 ---
 
-## 📦 Active Domains (PRD v2)
+## 📦 Active Domains (Minimal)
 
-- **search** - 🔍 Natural Language Search
-- **compare** - ⚖️ Product Comparison
-- **billing** - 💳 Payment
+- **search** - 🔍 Natural Language Search (Core)
+- **wishlist** - ❤️ Session-based Wishlist
+- **ai/service/chatbot** - 🤖 AI Chatbot
 - **integrations** - 🔌 External APIs
   - gemini (AI)
+  - coupang (Manual DB)
   - naver (Shopping API)
   - elevenst (11st API)
-  - tosspayments (Payment)
-- **base > core** - Home
-- **base > accounts** - Authentication
+- **base > core** - Policies
 - **base > health** - Health Check
+- **features > seo** - SEO
 
 ---
 

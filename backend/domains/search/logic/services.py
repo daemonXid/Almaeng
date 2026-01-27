@@ -15,7 +15,7 @@ def transform_naver_results(naver_results: list) -> list[ProductResult]:
     Transform Naver API results to ProductResult schema
 
     Args:
-        naver_results: Raw Naver API results
+        naver_results: Raw Naver API results (CrawlResult objects)
 
     Returns:
         list[ProductResult]: Transformed product results
@@ -24,6 +24,7 @@ def transform_naver_results(naver_results: list) -> list[ProductResult]:
     if isinstance(naver_results, list):
         for item in naver_results:
             try:
+                # CrawlResult 필드명 매핑
                 products.append(
                     ProductResult(
                         id=f"naver_{item.product_name}",
@@ -33,11 +34,16 @@ def transform_naver_results(naver_results: list) -> list[ProductResult]:
                         original_price=int(item.original_price) if item.original_price else None,
                         discount_rate=item.discount_percent,
                         image_url=item.image_url,
-                        product_url=item.url,
-                        mall_name=item.mall_name,
+                        product_url=item.url,  # CrawlResult.url
+                        mall_name=item.mall_name if item.mall_name else "네이버",
+                        rating=float(item.rating) if item.rating else None,
+                        review_count=item.review_count if item.review_count else 0,
                     )
                 )
-            except (AttributeError, ValueError, TypeError):
+            except (AttributeError, ValueError, TypeError) as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.debug(f"Failed to transform Naver result: {e}")
                 continue
     return products
 
@@ -47,7 +53,7 @@ def transform_elevenst_results(elevenst_results: list) -> list[ProductResult]:
     Transform 11st API results to ProductResult schema
 
     Args:
-        elevenst_results: Raw 11st API results
+        elevenst_results: Raw 11st API results (CrawlResult objects)
 
     Returns:
         list[ProductResult]: Transformed product results
@@ -56,6 +62,7 @@ def transform_elevenst_results(elevenst_results: list) -> list[ProductResult]:
     if isinstance(elevenst_results, list):
         for item in elevenst_results:
             try:
+                # CrawlResult 필드명 매핑
                 products.append(
                     ProductResult(
                         id=f"11st_{item.product_name}",
@@ -65,11 +72,16 @@ def transform_elevenst_results(elevenst_results: list) -> list[ProductResult]:
                         original_price=int(item.original_price) if item.original_price else None,
                         discount_rate=item.discount_percent,
                         image_url=item.image_url,
-                        product_url=item.url,
-                        mall_name=item.mall_name,
+                        product_url=item.url,  # CrawlResult.url
+                        mall_name=item.mall_name if item.mall_name else "11번가",
+                        rating=float(item.rating) if item.rating else None,
+                        review_count=item.review_count if item.review_count else 0,
                     )
                 )
-            except (AttributeError, ValueError, TypeError):
+            except (AttributeError, ValueError, TypeError) as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.debug(f"Failed to transform 11st result: {e}")
                 continue
     return products
 

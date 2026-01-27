@@ -15,7 +15,7 @@ class MetaTag(LifecycleModel):
     path = models.CharField(max_length=255, unique=True, help_text="URL Path (e.g. /about)")
     title = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to="seo/", blank=True, null=True, help_text="OG Image")
+    image = models.URLField(max_length=500, blank=True, help_text="OG Image URL")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

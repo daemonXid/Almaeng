@@ -24,10 +24,10 @@ def jsonld_website(context):
         "name": "ALMAENG",
         "alternateName": "알맹",
         "url": base_url,
-        "description": "AI 기반 영양제 가격 비교 및 추천 서비스",
+        "description": "AI 기반 쇼핑 가격 비교 및 추천 서비스",
         "potentialAction": {
             "@type": "SearchAction",
-            "target": {"@type": "EntryPoint", "urlTemplate": f"{base_url}supplements/?q={{search_term_string}}"},
+            "target": {"@type": "EntryPoint", "urlTemplate": f"{base_url}search/?q={{search_term_string}}"},
             "query-input": "required name=search_term_string",
         },
     }
@@ -55,7 +55,7 @@ def jsonld_organization(context):
 
 @register.simple_tag(takes_context=True)
 def jsonld_product(context, product):
-    """Product 스키마 (영양제 상세 페이지용)"""
+    """Product 스키마 (상품 상세 페이지용)"""
     request = context.get("request")
     base_url = request.build_absolute_uri("/") if request else "https://almaeng.daemonx.cc"
 
@@ -63,10 +63,10 @@ def jsonld_product(context, product):
         "@context": "https://schema.org",
         "@type": "Product",
         "name": getattr(product, "product_name", getattr(product, "name", "Unknown")),
-        "description": getattr(product, "functionality", "")[:200] if hasattr(product, "functionality") else "",
+        "description": getattr(product, "description", "")[:200] if hasattr(product, "description") else "",
         "brand": {"@type": "Brand", "name": getattr(product, "company_name", getattr(product, "brand", "Unknown"))},
-        "category": "Health Supplements",
-        "url": f"{base_url}supplements/{product.id}/",
+        "category": "Shopping",
+        "url": f"{base_url}search/{product.id}/",
     }
 
     # 가격 정보가 있으면 추가
@@ -87,7 +87,7 @@ def jsonld_breadcrumb(context, items):
     """BreadcrumbList 스키마
 
     Usage: {% jsonld_breadcrumb breadcrumbs %}
-    breadcrumbs = [{"name": "홈", "url": "/"}, {"name": "영양제", "url": "/supplements/"}]
+    breadcrumbs = [{"name": "홈", "url": "/"}, {"name": "검색", "url": "/search/"}]
     """
     request = context.get("request")
     base_url = request.build_absolute_uri("/") if request else "https://almaeng.daemonx.cc"

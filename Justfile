@@ -7,21 +7,20 @@ export UV_LINK_MODE := "copy"
 APP_PORT := env_var_or_default("APP_PORT", "8000")
 
 # --- 🚀 Main Commands ---
-# Initialize a new project (Rename all references)
-init name:
-    uv run python scripts/init_project.py {{name}}
+# Create superuser for admin access
+superuser:
+    @echo 👤 Creating Django superuser...
+    uv run python scripts/create_superuser.py
 
-# Sync project identity and document active domains
-sync:
-    @echo 😈 Syncing project metadata...
-    uv run python scripts/sync_project.py
-    @echo 📦 Updating dependencies...
-    uv sync
-    bun install
-    @echo 🧹 Cleaning up code...
-    -just lint
-    -just format
-    @echo ✅ Project synced and dependencies updated!
+# Create new domain
+create-domain name:
+    @echo 📦 Creating new domain: {{name}}
+    uv run python scripts/create_domain.py {{name}}
+
+# Test Gemini API connection
+test-gemini:
+    @echo 🤖 Testing Gemini API...
+    uv run python scripts/test_gemini.py
 
 # Install all dependencies (Native: uv + bun | Docker: infra)
 setup:
@@ -172,15 +171,6 @@ logs:
 migrate:
     uv run python backend/manage.py makemigrations
     uv run python backend/manage.py migrate
-
-# Create superuser (uses .env credentials)
-superuser:
-    @echo "📦 Creating superuser from .env..."
-    uv run python backend/manage.py createsuperuser --noinput || echo "⚠️  Superuser may already exist"
-
-# Create superuser interactively
-superuser-interactive:
-    uv run python backend/manage.py createsuperuser
 
 # Django shell (shell_plus)
 shell:

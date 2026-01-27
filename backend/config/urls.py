@@ -25,32 +25,22 @@ api = NinjaExtraAPI(
 )
 
 urlpatterns = [
-    # 🔍 SEO - robots.txt, sitemap.xml (must be at root level)
+    # 🔍 SEO - robots.txt, sitemap.xml
     path("", include("domains.features.seo.urls")),
-    # 🔍 Search - Home & Main Page (검색이 홈페이지)
+    # 🔍 Search - Home & Main Page
     path("", include("domains.search.urls")),
-    # 🏠 Core domain - Base pages
+    # 🏠 Core - Policies
     path("core/", include("domains.base.core.urls")),
-    # 🤖 AI Chatbot - Gemini 챗봇
+    # 🤖 AI Chatbot
     path("chat/", include("domains.ai.service.chatbot.urls")),
-    # 🏥 Health checks - Kubernetes/Docker/LB probes
+    # 🏥 Health Check
     path("health/", include("domains.base.health.urls")),
-    # 💳 Billing - 결제
-    path("billing/", include("domains.billing.urls")),
-    # ❤️ Wishlist - 찜 목록
+    # ❤️ Wishlist
     path("wishlist/", include("domains.wishlist.urls")),
-    # 💳 Toss Payments Webhook
-    path("toss/webhook/", include("domains.integrations.tosspayments.urls")),
-    # 🔔 Notifications
-    path("notifications/", include("domains.base.notifications.urls")),
     # Admin
     path("admin/", admin.site.urls),
-    # External API (Ninja)
+    # External API
     path("api/", api.urls),
-    # 👤 Custom auth views (profile, etc.)
-    path("accounts/", include("domains.base.accounts.urls")),
-    # Authentication (Allauth)
-    path("accounts/", include("allauth.urls")),
 ]
 
 
