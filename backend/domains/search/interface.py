@@ -78,13 +78,20 @@ async def search_products(query: str) -> CompareResult:
     search_term = keywords[0] if keywords else query
 
     # Check cache first (24시간)
-    from datetime import datetime, timedelta
+    from datetime import timedelta
+    from django.utils import timezone
     
     # ✅ DAEMON: state/interface.py를 통한 DB 접근
     from .state.interface import get_cached_products
     
-    cache_cutoff = datetime.now() - timedelta(hours=24)
-    cached_products = await sync_to_async(get_cached_products)(search_term, cache_cutoff)
+    cache_cutoff = timezone.now() - timedelta(hours=24)
+    
+    # Try to get cached products (graceful fallback if table doesn't exist)
+    try:
+        cached_products = await sync_to_async(get_cached_products)(search_term, cache_cutoff)
+    except Exception:
+        # Cache table doesn't exist or other DB error - skip cache
+        cached_products = []
     
     # Search from multiple platforms (parallel) - 캐시 없을 때만
     import asyncio
@@ -119,28 +126,36 @@ async def search_products(query: str) -> CompareResult:
         naver_products = transform_naver_results(naver_results)
         elevenst_products = transform_elevenst_results(elevenst_results)
         
-        # Save to cache (async-safe)
+        # Save to cache (async-safe) - 테이블이 없으면 스킵
         async def save_to_cache(products, platform_name):
-            for p in products[:10]:  # 상위 10개만 캐시
-                try:
-                    await sync_to_async(ProductCache.objects.update_or_create)(
-                        platform=platform_name,
-                        product_id=p.id,
-                        defaults={
-                            "product_name": p.name,
-                            "price": p.price,
-                            "original_price": p.original_price,
-                            "discount_percent": p.discount_rate,
-                            "image_url": p.image_url,
-                            "product_url": p.product_url,
-                            "mall_name": p.mall_name,
-                            "rating": p.rating,
-                            "review_count": p.review_count,
-                            "search_keyword": search_term,
-                        }
-                    )
-                except Exception:
-                    pass
+            """캐시 저장 (실패해도 검색은 계속 진행)"""
+            try:
+                from .state.models import ProductCache
+                
+                for p in products[:10]:  # 상위 10개만 캐시
+                    try:
+                        await sync_to_async(ProductCache.objects.update_or_create)(
+                            platform=platform_name,
+                            product_id=p.id,
+                            defaults={
+                                "product_name": p.name,
+                                "price": p.price,
+                                "original_price": p.original_price,
+                                "discount_percent": p.discount_rate,
+                                "image_url": p.image_url,
+                                "product_url": p.product_url,
+                                "mall_name": p.mall_name,
+                                "rating": p.rating,
+                                "review_count": p.review_count,
+                                "search_keyword": search_term,
+                            }
+                        )
+                    except Exception:
+                        # 개별 상품 저장 실패는 무시
+                        pass
+            except Exception:
+                # ProductCache 테이블이 없거나 다른 DB 에러 - 스킵
+                pass
         
         # 백그라운드로 캐시 저장 (에러 무시)
         try:
@@ -150,6 +165,7 @@ async def search_products(query: str) -> CompareResult:
                 return_exceptions=True
             )
         except Exception:
+            # 캐시 저장 실패해도 검색은 계속 진행
             pass
 
     # Get Coupang manual products (DB 조회를 async-safe하게)
