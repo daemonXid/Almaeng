@@ -4,23 +4,62 @@
 {% block title %}AI 영양제 상담 - 알맹AI{% endblock %}
 
 {% block content %}
-<main class="min-h-screen bg-white dark:bg-gray-900 pb-20" 
+<main class="min-h-screen bg-white pb-20" 
     x-data="{ 
         message: '',
         messages: [],
-        loading: false
-    }">
+        loading: false,
+        showProfile: false,
+        userProfile: JSON.parse(localStorage.getItem('userProfile') || '{\"gender\":\"\",\"age\":\"\",\"weight\":\"\"}')
+    }"
+    x-init="$watch('userProfile', val => localStorage.setItem('userProfile', JSON.stringify(val)))"
+>
     
     <!-- Header -->
-    <header class="sticky top-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
         <div class="max-w-4xl mx-auto px-4 py-4">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-md">
-                    <span class="text-2xl">🤖</span>
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                    <img src="/static/images/catch_mascot.png" alt="캐치" class="w-12 h-12 rounded-2xl shadow-md">
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">캐치와 영양제 상담</h1>
+                        <p class="text-xs text-gray-600">토스의 캐치가 도와드려요!</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">AI 영양제 상담</h1>
-                    <p class="text-xs text-gray-600 dark:text-gray-400">Powered by Gemini</p>
+                <button @click="showProfile = !showProfile" 
+                    class="px-3 py-1.5 bg-brand-50 text-brand-700 text-xs font-medium rounded-lg hover:bg-brand-100 transition-colors">
+                    👤 내 정보
+                </button>
+            </div>
+            
+            <!-- 사용자 정보 입력 (펼침/접힘) -->
+            <div x-show="showProfile" x-cloak x-transition class="bg-gradient-to-r from-brand-50 to-purple-50 border border-brand-200 rounded-xl p-4 mt-3">
+                <p class="text-xs font-bold text-brand-800 mb-3">💊 맞춤 추천을 위한 정보 (선택사항)</p>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="text-xs text-gray-600 block mb-1">성별</label>
+                        <select x-model="userProfile.gender" 
+                            @change="localStorage.setItem('userProfile', JSON.stringify(userProfile))"
+                            class="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg">
+                            <option value="">선택</option>
+                            <option value="male">남성</option>
+                            <option value="female">여성</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-600 block mb-1">나이</label>
+                        <input type="number" x-model="userProfile.age" 
+                            @input="localStorage.setItem('userProfile', JSON.stringify(userProfile))"
+                            placeholder="30" min="1" max="120"
+                            class="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-600 block mb-1">몸무게(kg)</label>
+                        <input type="number" x-model="userProfile.weight" 
+                            @input="localStorage.setItem('userProfile', JSON.stringify(userProfile))"
+                            placeholder="70" min="1" max="300"
+                            class="w-full px-2 py-1.5 text-xs border border-gray-200 rounded-lg">
+                    </div>
                 </div>
             </div>
         </div>
@@ -61,7 +100,7 @@
     </div>
 
     <!-- Input Area (Fixed Bottom) -->
-    <div class="fixed bottom-20 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-t border-gray-200 dark:border-gray-800 p-4">
+    <div class="fixed bottom-20 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 p-4">
         <form id="chatForm" 
             hx-post="/chat/send/" 
             hx-target="#messages" 
@@ -69,13 +108,18 @@
             @htmx:after-request="message = ''; loading = false; $el.querySelector('textarea').focus(); document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight"
             class="max-w-4xl mx-auto">
             {% csrf_token %}
+            <!-- 사용자 정보를 hidden 필드로 전송 -->
+            <input type="hidden" name="user_gender" :value="userProfile.gender">
+            <input type="hidden" name="user_age" :value="userProfile.age">
+            <input type="hidden" name="user_weight" :value="userProfile.weight">
+            
             <div class="flex gap-2">
                 <textarea 
                     name="message"
                     x-model="message"
                     placeholder="예: 피로할 때 좋은 영양제 추천해줘"
                     rows="1"
-                    class="flex-1 px-4 py-3 rounded-2xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 focus:ring-4 focus:ring-brand-400/30 focus:border-brand-500 resize-none"
+                    class="flex-1 px-4 py-3 rounded-2xl bg-gray-50 border-2 border-gray-200 focus:ring-4 focus:ring-brand-400/30 focus:border-brand-500 resize-none"
                     style="font-size: 16px; max-height: 120px;"
                     @keydown.enter.prevent="if (!$event.shiftKey) { $event.target.form.requestSubmit() }"
                     required></textarea>
