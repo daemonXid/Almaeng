@@ -4,7 +4,7 @@
 <!-- Product Grid Items (Grid View) -->
 {% for product in result.products %}
 {% if not result.cheapest or product.id != result.cheapest.id %}
-<article class="bg-white border border-gray-200 rounded-xl p-3 relative group flex flex-col shadow-sm hover:shadow-lg transition-all cursor-pointer"
+<article class="bg-gradient-to-br from-white to-purple-50/30 border-2 border-purple-200 rounded-xl p-3 relative group flex flex-col shadow-sm hover:shadow-xl hover:border-purple-400 transition-all cursor-pointer neon-border"
     onclick="window.open('{% url 'search:track_click' %}?id={{ product.id }}&name={{ product.name|urlencode }}&price={{ product.price }}&image={{ product.image_url|urlencode }}&url={{ product.product_url|urlencode }}', '_blank')">
     
     <!-- 찜 버튼 (오른쪽 상단) -->
