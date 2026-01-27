@@ -7,11 +7,6 @@ Selectors are responsible for:
 - Filtering and aggregation
 - NO side effects (pure reads)
 
-Usage:
-    from domains.daemon.selectors import get_user_by_id
-
-    user = get_user_by_id(user_id=123)
-
 Note:
     - Use selectors for ALL read operations
     - Keep queries optimized (avoid N+1)
