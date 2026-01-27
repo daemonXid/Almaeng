@@ -84,33 +84,62 @@
     <div class="max-w-4xl mx-auto px-4 py-6">
         <div id="messages" class="space-y-4 mb-6">
             <!-- Welcome Message -->
-            <div class="bg-gradient-to-br from-brand-50 to-purple-50 dark:from-brand-900/20 dark:to-purple-900/20 border border-brand-200 dark:border-brand-700 rounded-2xl p-6">
-                <div class="flex items-start gap-3">
+            <article class="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl p-6 neon-border">
+                <header class="flex items-start gap-3 mb-4">
                     <span class="text-3xl">💊</span>
                     <div>
-                        <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">
+                        <h3 class="text-base font-bold text-gray-900 mb-2">
                             안녕하세요! AI 영양제 상담사입니다
                         </h3>
-                        <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">
-                            궁금한 영양제에 대해 물어보세요. 효능과 함께 관련 상품도 추천해드려요!
+                        <p class="text-sm text-gray-700">
+                            증상을 선택하거나 직접 질문해주세요. 맞춤 영양제를 추천해드려요!
                         </p>
-                        <div class="flex flex-wrap gap-2">
-                            <button @click="message = '피로할 때 좋은 영양제 추천해줘'; $nextTick(() => document.getElementById('chatForm').requestSubmit())"
-                                class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm hover:bg-brand-50 hover:border-brand-300 transition-all">
-                                💪 피로 회복
-                            </button>
-                            <button @click="message = '눈 건강에 좋은 영양제는?'; $nextTick(() => document.getElementById('chatForm').requestSubmit())"
-                                class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm hover:bg-brand-50 hover:border-brand-300 transition-all">
-                                👁️ 눈 건강
-                            </button>
-                            <button @click="message = '장 건강 프로바이오틱스'; $nextTick(() => document.getElementById('chatForm').requestSubmit())"
-                                class="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm hover:bg-brand-50 hover:border-brand-300 transition-all">
-                                🦠 장 건강
-                            </button>
-                        </div>
                     </div>
-                </div>
-            </div>
+                </header>
+                
+                <!-- 증상 체크리스트 (Semantic HTML) -->
+                <section class="symptom-checklist" x-data="{ symptoms: [] }">
+                    <h4 class="text-sm font-bold text-gray-800 mb-3">🎯 증상 선택 (여러 개 가능)</h4>
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <button @click="symptoms.includes('피로') ? symptoms = symptoms.filter(s => s !== '피로') : symptoms.push('피로')"
+                            :class="symptoms.includes('피로') ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'"
+                            class="px-3 py-2 border-2 rounded-lg text-sm font-medium hover:shadow-md transition-all">
+                            💪 피로/무기력
+                        </button>
+                        <button @click="symptoms.includes('눈건강') ? symptoms = symptoms.filter(s => s !== '눈건강') : symptoms.push('눈건강')"
+                            :class="symptoms.includes('눈건강') ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'"
+                            class="px-3 py-2 border-2 rounded-lg text-sm font-medium hover:shadow-md transition-all">
+                            👁️ 눈 피로
+                        </button>
+                        <button @click="symptoms.includes('장건강') ? symptoms = symptoms.filter(s => s !== '장건강') : symptoms.push('장건강')"
+                            :class="symptoms.includes('장건강') ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'"
+                            class="px-3 py-2 border-2 rounded-lg text-sm font-medium hover:shadow-md transition-all">
+                            🦠 소화불량
+                        </button>
+                        <button @click="symptoms.includes('관절') ? symptoms = symptoms.filter(s => s !== '관절') : symptoms.push('관절')"
+                            :class="symptoms.includes('관절') ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'"
+                            class="px-3 py-2 border-2 rounded-lg text-sm font-medium hover:shadow-md transition-all">
+                            🦴 관절 통증
+                        </button>
+                        <button @click="symptoms.includes('불면') ? symptoms = symptoms.filter(s => s !== '불면') : symptoms.push('불면')"
+                            :class="symptoms.includes('불면') ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'"
+                            class="px-3 py-2 border-2 rounded-lg text-sm font-medium hover:shadow-md transition-all">
+                            😴 불면증
+                        </button>
+                        <button @click="symptoms.includes('면역') ? symptoms = symptoms.filter(s => s !== '면역') : symptoms.push('면역')"
+                            :class="symptoms.includes('면역') ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200'"
+                            class="px-3 py-2 border-2 rounded-lg text-sm font-medium hover:shadow-md transition-all">
+                            🛡️ 면역력
+                        </button>
+                    </div>
+                    <button @click="if (symptoms.length > 0) { message = symptoms.join(', ') + '에 좋은 영양제 추천해줘'; symptoms = []; $nextTick(() => document.getElementById('chatForm').requestSubmit()) }"
+                        :disabled="symptoms.length === 0"
+                        class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span x-show="symptoms.length === 0">증상을 선택해주세요</span>
+                        <span x-show="symptoms.length > 0" x-text="'선택한 증상으로 상담하기 (' + symptoms.length + '개)'"></span>
+                    </button>
+                </section>
+            </article>
         </div>
     </div>
 
