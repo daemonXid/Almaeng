@@ -59,30 +59,39 @@
             
             <!-- AI Extracted Keywords -->
             {% if result.keywords %}
-            <div class="flex items-center gap-2 mt-3 flex-wrap">
-                <span class="text-xs text-gray-500">🤖 AI 추출:</span>
-                {% for kw in result.keywords %}
-                <a href="/?q={{ kw }}"
-                    class="px-3 py-1.5 bg-brand-50 text-brand-700 text-xs font-medium rounded-full hover:bg-brand-100 transition-all active:scale-95">
-                    {{ kw }}
-                </a>
-                {% endfor %}
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-3 mt-3">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-xs font-bold text-purple-700">🤖 AI가 추출한 키워드</span>
+                    <span class="text-xs text-gray-500">클릭하면 재검색</span>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    {% for kw in result.keywords %}
+                    <a href="/?q={{ kw }}"
+                        class="px-4 py-2 bg-white border-2 border-purple-300 text-purple-700 text-sm font-bold rounded-full hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-all active:scale-95 shadow-sm">
+                        🔍 {{ kw }}
+                    </a>
+                    {% endfor %}
+                </div>
             </div>
             {% endif %}
         </header>
 
         <!-- AI Recommendation -->
-        {% if result.recommendation %}
+        {% if result.recommendation and result.products %}
         <section class="mb-6">
-            <div
-                class="bg-gradient-to-r from-brand-50 to-indigo-50 border border-brand-200 rounded-2xl p-4">
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-4">
                 <div class="flex items-start gap-3">
-                    <span class="text-2xl">🤖</span>
-                    <div>
-                        <p class="text-sm font-medium text-brand-800 mb-1">AI 추천</p>
+                    <span class="text-2xl">✨</span>
+                    <div class="flex-1">
+                        <p class="text-sm font-bold text-emerald-800 mb-1">검색 결과</p>
                         <p class="text-sm text-gray-700 leading-relaxed">
                             {{ result.recommendation }}
                         </p>
+                        {% if result.cheapest %}
+                        <p class="text-xs text-emerald-600 font-medium mt-2">
+                            💰 최저가: {{ result.cheapest.price|floatformat:0|intcomma }}원 ({{ result.cheapest.platform|upper }})
+                        </p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
