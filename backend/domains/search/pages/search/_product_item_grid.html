@@ -5,7 +5,7 @@
 {% for product in result.products %}
 {% if not result.cheapest or product.id != result.cheapest.id %}
 <article
-    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 relative group flex flex-col shadow-sm hover:shadow-md transition-shadow">
+    class="bg-white border border-gray-200 rounded-xl p-3 relative group flex flex-col shadow-sm hover:shadow-md transition-shadow">
     <div class="absolute top-2 right-2 z-10">
         {% with product_id=product.id|stringformat:"s" %}
         {% include "wishlist/pages/index/_wishlist_button.html" with product=product is_in_wishlist=product_wishlist_map|get_item:product_id %}
@@ -23,18 +23,18 @@
     <!-- Product Info -->
     <div class="flex-1 flex flex-col">
         <div class="flex items-center gap-1 mb-1.5">
-            <span class="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded">
+            <span class="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">
                 {{ product.platform|upper }}
             </span>
             {% if product.rating %}
             <span class="text-[10px] text-yellow-500">⭐ {{ product.rating }}</span>
             {% endif %}
         </div>
-        <h3 class="text-xs font-medium text-gray-800 dark:text-white line-clamp-2 mb-1.5 flex-1">
+        <h3 class="text-xs font-medium text-gray-800 line-clamp-2 mb-1.5 flex-1">
             {{ product.name }}
         </h3>
         <div class="mb-1">
-            <p class="text-sm font-bold text-gray-800 dark:text-white">
+            <p class="text-sm font-bold text-gray-800">
                 ₩{{ product.price|floatformat:0|intcomma }}
             </p>
             {% if product.original_price and product.discount_rate %}

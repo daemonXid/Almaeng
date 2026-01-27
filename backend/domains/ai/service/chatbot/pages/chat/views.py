@@ -53,18 +53,35 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
     try:
         response = ask_question(
             question=content,
-            system_instruction="당신은 알맹AI의 쇼핑 도우미입니다. 친근하게 상품을 추천해주세요.",
+            system_instruction="당신은 알맹AI의 쇼핑 도우미입니다. 친근하게 상품을 추천해주세요. 답변 끝에 관련 검색 키워드 3개를 추출하여 '키워드: A, B, C' 형식으로 제공하세요.",
         )
         answer = response.answer
         sources = response.sources or []
+        
+        # AI 답변에서도 키워드 추출
+        ai_keywords = []
+        if "키워드:" in answer or "검색어:" in answer:
+            # 키워드 라인 찾기
+            for delimiter in ["키워드:", "검색어:"]:
+                if delimiter in answer:
+                    keyword_line = answer.split(delimiter)[-1].strip()
+                    ai_keywords = [k.strip() for k in keyword_line.split(",")[:3]]
+                    # 키워드 라인 제거
+                    answer = answer.split(delimiter)[0].strip()
+                    break
+        
+        # Gemini 추출 키워드와 AI 답변 키워드 합치기
+        all_keywords = list(dict.fromkeys(keywords + ai_keywords))[:5]  # 중복 제거, 최대 5개
+        
     except Exception as e:
         answer = f"죄송합니다. 오류가 발생했습니다: {e}"
         sources = []
+        all_keywords = keywords
 
     # 세션에 저장
     messages = request.session.get("chat_messages", [])
     messages.append({"role": "user", "content": content})
-    messages.append({"role": "assistant", "content": answer, "sources": sources, "keywords": keywords})
+    messages.append({"role": "assistant", "content": answer, "sources": sources, "keywords": all_keywords})
     request.session["chat_messages"] = messages[-20:]  # 최근 20개만 유지
     request.session.modified = True
 
@@ -74,7 +91,7 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
             "user_message": content, 
             "ai_message": answer, 
             "sources": sources,
-            "keywords": keywords
+            "keywords": all_keywords
         }
     )
 
