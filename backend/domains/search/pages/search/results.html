@@ -222,7 +222,7 @@
             </div>
 
             <!-- Other Products - Grid View -->
-            <div id="product-grid-container" x-show="viewMode === 'grid'" class="grid grid-cols-2 gap-3">
+            <div id="product-grid-container" x-show="viewMode === 'grid'" x-cloak class="grid grid-cols-2 gap-3">
                 {% include "pages/search/_product_item_grid.html" %}
                 
                 {% if not result.products %}

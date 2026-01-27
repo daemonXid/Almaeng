@@ -77,27 +77,83 @@ async def search_products(query: str) -> CompareResult:
     # Use first keyword as main search term
     search_term = keywords[0] if keywords else query
 
-    # Search from multiple platforms (parallel)
+    # Check cache first (24시간)
+    from datetime import datetime, timedelta
+    from .state.models import ProductCache
+    
+    cache_cutoff = datetime.now() - timedelta(hours=24)
+    cached_products = await sync_to_async(list)(
+        ProductCache.objects.filter(
+            search_keyword=search_term,
+            cached_at__gte=cache_cutoff
+        )[:20]
+    )
+    
+    # Search from multiple platforms (parallel) - 캐시 없을 때만
     import asyncio
 
-    naver_task = search_naver_products(search_term)
-    elevenst_task = search_elevenst_products(search_term)
+    if cached_products:
+        # 캐시 사용
+        naver_products = []
+        elevenst_products = []
+        for cache in cached_products:
+            if cache.platform == "naver":
+                naver_products.append(cache)
+            elif cache.platform == "11st":
+                elevenst_products.append(cache)
+    else:
+        # API 호출
+        naver_task = search_naver_products(search_term)
+        elevenst_task = search_elevenst_products(search_term)
 
-    naver_results, elevenst_results = await asyncio.gather(
-        naver_task,
-        elevenst_task,
-        return_exceptions=True,
-    )
+        naver_results, elevenst_results = await asyncio.gather(
+            naver_task,
+            elevenst_task,
+            return_exceptions=True,
+        )
 
-    # Handle errors
-    if isinstance(naver_results, Exception):
-        naver_results = []
-    if isinstance(elevenst_results, Exception):
-        elevenst_results = []
+        # Handle errors
+        if isinstance(naver_results, Exception):
+            naver_results = []
+        if isinstance(elevenst_results, Exception):
+            elevenst_results = []
 
-    # Transform results
-    naver_products = transform_naver_results(naver_results)
-    elevenst_products = transform_elevenst_results(elevenst_results)
+        # Transform results
+        naver_products = transform_naver_results(naver_results)
+        elevenst_products = transform_elevenst_results(elevenst_results)
+        
+        # Save to cache (async-safe)
+        async def save_to_cache(products, platform_name):
+            for p in products[:10]:  # 상위 10개만 캐시
+                try:
+                    await sync_to_async(ProductCache.objects.update_or_create)(
+                        platform=platform_name,
+                        product_id=p.id,
+                        defaults={
+                            "product_name": p.name,
+                            "price": p.price,
+                            "original_price": p.original_price,
+                            "discount_percent": p.discount_rate,
+                            "image_url": p.image_url,
+                            "product_url": p.product_url,
+                            "mall_name": p.mall_name,
+                            "rating": p.rating,
+                            "review_count": p.review_count,
+                            "search_keyword": search_term,
+                        }
+                    )
+                except Exception:
+                    pass
+        
+        # 백그라운드로 캐시 저장 (에러 무시)
+        try:
+            await asyncio.gather(
+                save_to_cache(naver_products, "naver"),
+                save_to_cache(elevenst_products, "11st"),
+                return_exceptions=True
+            )
+        except Exception:
+            pass
 
     # Get Coupang manual products (DB 조회를 async-safe하게)
     try:
