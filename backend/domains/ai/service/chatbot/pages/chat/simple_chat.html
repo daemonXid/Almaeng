@@ -42,19 +42,19 @@
     </header>
 
     <!-- Input Area (상단으로 이동) -->
-    <div class="bg-white border-b border-gray-200 p-4">
+    <div class="bg-white border-b border-gray-200 p-4" x-data="{ showInput: true }">
         <form id="chatForm" 
             hx-post="/chat/send/" 
             hx-target="#messages" 
             hx-swap="beforeend"
-            @htmx:after-request="message = ''; loading = false; $el.querySelector('textarea').focus(); document.getElementById('messages').scrollTo({top: document.getElementById('messages').scrollHeight, behavior: 'smooth'})"
+            @htmx:after-request="message = ''; loading = false; showInput = true; $el.querySelector('textarea').focus(); document.getElementById('messages').scrollTo({top: document.getElementById('messages').scrollHeight, behavior: 'smooth'})"
             class="max-w-4xl mx-auto">
             {% csrf_token %}
             <!-- 사용자 프로필 hidden 필드 -->
             <input type="hidden" name="user_age" :value="userProfile.age">
             <input type="hidden" name="user_gender" :value="userProfile.gender">
             
-            <div class="flex gap-2">
+            <div class="flex gap-2" x-show="showInput">
                 <textarea 
                     name="message"
                     x-model="message"
@@ -66,7 +66,7 @@
                     required></textarea>
                 <button type="submit"
                     :disabled="loading || !message.trim()"
-                    @click="loading = true"
+                    @click="loading = true; showInput = false"
                     class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-2xl transition-all shadow-md">
                     <span x-show="!loading">전송</span>
                     <span x-show="loading">
@@ -132,11 +132,13 @@
                             🛡️ 면역력
                         </button>
                     </div>
-                    <button @click="if (symptoms.length > 0) { message = symptoms.join(', ') + '에 좋은 영양제 추천해줘'; symptoms = []; $nextTick(() => document.getElementById('chatForm').requestSubmit()) }"
+                    <button @click="if (symptoms.length > 0) { message = symptoms.join(', ') + '에 좋은 영양제 추천해줘'; loading = true; $nextTick(() => { document.getElementById('chatForm').requestSubmit(); symptoms = [] }) }"
                         :disabled="symptoms.length === 0"
-                        class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span x-show="symptoms.length === 0">증상을 선택해주세요</span>
-                        <span x-show="symptoms.length > 0" x-text="'선택한 증상으로 상담하기 (' + symptoms.length + '개)'"></span>
+                        class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
+                        <span x-show="symptoms.length === 0">💡 증상을 선택하면 AI가 추천해드려요</span>
+                        <span x-show="symptoms.length > 0">
+                            <span x-text="'✨ ' + symptoms.join(', ') + ' 증상 상담하기'"></span>
+                        </span>
                     </button>
                 </section>
             </article>
