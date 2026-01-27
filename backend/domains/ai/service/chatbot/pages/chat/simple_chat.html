@@ -31,11 +31,17 @@
     <!-- Header -->
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
         <div class="max-w-4xl mx-auto px-4 py-4">
-            <div class="flex items-center gap-3">
-                <img src="/static/images/logo.png" alt="알맹AI" class="w-12 h-12 rounded-2xl shadow-md">
-                <div>
-                    <h1 class="text-xl font-bold text-gray-900">AI 영양제 상담</h1>
-                    <p class="text-xs text-gray-600">알맹AI가 도와드려요!</p>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="/static/images/logo.png" alt="알맹AI" class="w-12 h-12 rounded-2xl shadow-md">
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">AI 영양제 상담</h1>
+                        <p class="text-xs text-gray-600">알맹AI가 도와드려요!</p>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-500 text-right">
+                    <p class="font-medium">✨ Powered by</p>
+                    <p class="font-bold text-blue-600">Gemini AI</p>
                 </div>
             </div>
         </div>
@@ -85,14 +91,21 @@
         <div id="messages" class="space-y-4 mb-6">
             <!-- Welcome Message -->
             <article class="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl p-6 neon-border">
-                <header class="flex items-start gap-3 mb-4">
-                    <span class="text-3xl">💊</span>
-                    <div>
-                        <h3 class="text-base font-bold text-gray-900 mb-2">
-                            안녕하세요! AI 영양제 상담사입니다
-                        </h3>
-                        <p class="text-sm text-gray-700">
-                            증상을 선택하거나 직접 질문해주세요. 맞춤 영양제를 추천해드려요!
+                <header class="mb-4">
+                    <div class="flex items-start gap-3 mb-3">
+                        <span class="text-3xl">💊</span>
+                        <div>
+                            <h3 class="text-base font-bold text-gray-900 mb-2">
+                                안녕하세요! AI 영양제 상담사입니다
+                            </h3>
+                            <p class="text-sm text-gray-700">
+                                증상을 선택하거나 직접 질문해주세요. 맞춤 영양제를 추천해드려요!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                        <p class="text-xs text-yellow-800">
+                            ⚠️ <strong>AI가 생성한 정보입니다.</strong> 의학적 조언이 아니며, 섭취 전 반드시 전문가(의사, 약사)와 상담하세요. 알맹AI는 제공된 정보에 대해 책임지지 않습니다.
                         </p>
                     </div>
                 </header>
@@ -132,7 +145,30 @@
                             🛡️ 면역력
                         </button>
                     </div>
-                    <button @click="if (symptoms.length > 0) { message = symptoms.join(', ') + '에 좋은 영양제 추천해줘'; loading = true; $nextTick(() => { document.getElementById('chatForm').requestSubmit(); symptoms = [] }) }"
+                    <button @click="
+                        if (symptoms.length > 0) { 
+                            const symptomText = symptoms.join(', ') + '에 좋은 영양제 추천해줘';
+                            // 직접 form submit (검색창 우회)
+                            const formData = new FormData();
+                            formData.append('message', symptomText);
+                            formData.append('user_age', userProfile.age || '');
+                            formData.append('user_gender', userProfile.gender || '');
+                            
+                            fetch('/chat/send/', {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                                }
+                            })
+                            .then(response => response.text())
+                            .then(html => {
+                                document.getElementById('messages').insertAdjacentHTML('beforeend', html);
+                                document.getElementById('messages').scrollTo({top: document.getElementById('messages').scrollHeight, behavior: 'smooth'});
+                                symptoms = [];
+                            });
+                        }
+                    "
                         :disabled="symptoms.length === 0"
                         class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
                         <span x-show="symptoms.length === 0">💡 증상을 선택하면 AI가 추천해드려요</span>
