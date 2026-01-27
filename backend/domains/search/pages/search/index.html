@@ -34,10 +34,11 @@
                     type="text" 
                     name="q" 
                     x-model="searchQuery"
-                    placeholder="예: 겨울에 따뜻한 이어폰"
+                    placeholder="예: 피로 회복에 좋은 영양제"
                     class="w-full h-14 pl-5 pr-24 rounded-2xl bg-gray-50 border-2 border-gray-200 focus:ring-4 focus:ring-brand-400/30 focus:border-brand-500 text-base transition-all"
                     style="font-size: 16px;"
                     autocomplete="off"
+                    @keydown.enter="$event.target.form.submit()"
                     required>
                 <button type="submit"
                     :disabled="loading"
@@ -62,31 +63,43 @@
                 <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">💊</span>
                 <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">인기 카테고리</span>
             </div>
-            <div class="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
-                <button @click="searchQuery = '단백질'; $nextTick(() => document.querySelector('form').submit())"
-                    class="chip-toss whitespace-nowrap">
-                    💪 단백질
-                </button>
-                <button @click="searchQuery = '오메가3'; $nextTick(() => document.querySelector('form').submit())"
-                    class="chip-toss whitespace-nowrap">
-                    🐟 오메가3
-                </button>
+            <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
                 <button @click="searchQuery = '비타민D'; $nextTick(() => document.querySelector('form').submit())"
-                    class="chip-toss whitespace-nowrap">
-                    ☀️ 비타민D
-                </button>
-                <button @click="searchQuery = '홍삼'; $nextTick(() => document.querySelector('form').submit())"
-                    class="chip-toss whitespace-nowrap">
-                    🌿 홍삼
-                </button>
+                    class="chip-toss">☀️ 비타민D</button>
+                <button @click="searchQuery = '오메가3'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">🐟 오메가3</button>
+                <button @click="searchQuery = '비타민C'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">🍊 비타민C</button>
+                <button @click="searchQuery = '비타민B'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">💊 비타민B</button>
+                <button @click="searchQuery = '칼슘'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">🦴 칼슘</button>
+                <button @click="searchQuery = '철분'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">🩸 철분</button>
+                <button @click="searchQuery = '마그네슘'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">⚡ 마그네슘</button>
+                <button @click="searchQuery = '아연'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">🛡️ 아연</button>
+                <button @click="searchQuery = '단백질'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">💪 단백질</button>
                 <button @click="searchQuery = '프로바이오틱스'; $nextTick(() => document.querySelector('form').submit())"
-                    class="chip-toss whitespace-nowrap">
-                    🦠 장 건강
-                </button>
+                    class="chip-toss">🦠 유산균</button>
+                <button @click="searchQuery = '루테인'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">👁️ 루테인</button>
+                <button @click="searchQuery = '콜라겐'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">✨ 콜라겐</button>
+                <button @click="searchQuery = '홍삼'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">🌿 홍삼</button>
+                <button @click="searchQuery = '밀크씨슬'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">🌱 밀크씨슬</button>
+                <button @click="searchQuery = '코엔자임Q10'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">💛 코큐텐</button>
+                <button @click="searchQuery = 'MSM'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">🦵 MSM</button>
                 <button @click="searchQuery = 'BCAA'; $nextTick(() => document.querySelector('form').submit())"
-                    class="chip-toss whitespace-nowrap">
-                    🏋️ BCAA
-                </button>
+                    class="chip-toss">🏋️ BCAA</button>
+                <button @click="searchQuery = '글루코사민'; $nextTick(() => document.querySelector('form').submit())"
+                    class="chip-toss">🦴 글루코사민</button>
             </div>
         </section>
 

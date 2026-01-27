@@ -40,23 +40,6 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
     if not content:
         return HttpResponse("")
 
-    # 사용자 정보 가져오기
-    user_gender = request.POST.get("user_gender", "")
-    user_age = request.POST.get("user_age", "")
-    user_weight = request.POST.get("user_weight", "")
-    
-    # 사용자 정보 컨텍스트 생성
-    user_context = ""
-    if user_gender or user_age or user_weight:
-        user_context = f"\n\n[사용자 정보: "
-        if user_gender:
-            user_context += f"성별={user_gender}, "
-        if user_age:
-            user_context += f"나이={user_age}세, "
-        if user_weight:
-            user_context += f"몸무게={user_weight}kg"
-        user_context += "]"
-
     # 영양제 질문인지 확인
     nutrition_keywords = ["영양제", "비타민", "미네랄", "보충제", "건강", "피로", "면역", "오메가", "프로바이오틱스", "유산균", "칼슘", "철분", "아연", "마그네슘", "단백질", "콜라겐", "루테인", "홍삼", "BCAA", "글루타민"]
     is_nutrition_question = any(kw in content for kw in nutrition_keywords)
@@ -78,10 +61,9 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
         
         # Get AI Response
         try:
-            full_question = content + user_context
             response = ask_question(
-                question=full_question,
-                system_instruction="당신은 알맹AI의 영양제 전문 상담 AI '캐치'입니다. 영양제와 건강보조식품에 대해서만 답변합니다. 친근하게 상품을 추천해주세요. 답변 끝에 관련 검색 키워드 3개를 추출하여 '키워드: A, B, C' 형식으로 제공하세요.",
+                question=content,
+                system_instruction="당신은 알맹AI의 영양제 전문 상담 AI입니다. 영양제와 건강보조식품에 대해서만 답변합니다. 5060 세대도 쉽게 이해할 수 있도록 친근하고 간단하게 설명해주세요. 답변 끝에 관련 검색 키워드를 최대 12개 추출하여 '키워드: A, B, C, ...' 형식으로 제공하세요.",
             )
             answer = response.answer
             sources = response.sources or []
@@ -93,13 +75,13 @@ def send_message(request: HttpRequest, session_id: int | None = None) -> HttpRes
                 for delimiter in ["키워드:", "검색어:"]:
                     if delimiter in answer:
                         keyword_line = answer.split(delimiter)[-1].strip()
-                        ai_keywords = [k.strip() for k in keyword_line.split(",")[:3]]
+                        ai_keywords = [k.strip() for k in keyword_line.split(",")[:12]]
                         # 키워드 라인 제거
                         answer = answer.split(delimiter)[0].strip()
                         break
             
             # Gemini 추출 키워드와 AI 답변 키워드 합치기
-            all_keywords = list(dict.fromkeys(keywords + ai_keywords))[:5]  # 중복 제거, 최대 5개
+            all_keywords = list(dict.fromkeys(keywords + ai_keywords))[:12]  # 중복 제거, 최대 12개
             
         except Exception as e:
             answer = f"죄송합니다. 오류가 발생했습니다: {e}"
