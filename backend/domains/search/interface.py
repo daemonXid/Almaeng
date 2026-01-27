@@ -79,15 +79,12 @@ async def search_products(query: str) -> CompareResult:
 
     # Check cache first (24시간)
     from datetime import datetime, timedelta
-    from .state.models import ProductCache
+    
+    # ✅ DAEMON: state/interface.py를 통한 DB 접근
+    from .state.interface import get_cached_products
     
     cache_cutoff = datetime.now() - timedelta(hours=24)
-    cached_products = await sync_to_async(list)(
-        ProductCache.objects.filter(
-            search_keyword=search_term,
-            cached_at__gte=cache_cutoff
-        )[:20]
-    )
+    cached_products = await sync_to_async(get_cached_products)(search_term, cache_cutoff)
     
     # Search from multiple platforms (parallel) - 캐시 없을 때만
     import asyncio
