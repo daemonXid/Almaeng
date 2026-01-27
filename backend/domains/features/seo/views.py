@@ -20,8 +20,6 @@ def robots_txt(request: HttpRequest) -> HttpResponse:
         "",
         "# Disallow admin and private areas",
         "Disallow: /admin/",
-        "Disallow: /accounts/",
-        "Disallow: /billing/",
         "Disallow: /api/",
         "",
         "# Sitemaps",
